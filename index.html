@@ -6,90 +6,187 @@
 <title>阿忠 Dashboard</title>
 <style>
   :root {
-    --bg: #0d1117;
-    --card: #161b22;
-    --border: #30363d;
-    --text: #e6edf3;
-    --text-muted: #8b949e;
-    --red: #f85149;
-    --yellow: #d29922;
-    --blue: #58a6ff;
-    --green: #3fb950;
-    --purple: #bc8cff;
+    --bg: #f0f2f5;
+    --card: rgba(255,255,255,0.6);
+    --card-solid: #fff;
+    --border: rgba(0,0,0,0.08);
+    --text: #1a1a2e;
+    --text-muted: #6b7280;
+    --red: #ef4444;
+    --yellow: #f59e0b;
+    --blue: #3b82f6;
+    --green: #10b981;
+    --purple: #8b5cf6;
+    --accent1: #6366f1;
+    --accent2: #ec4899;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: var(--bg);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+    background: linear-gradient(135deg, #e0e7ff 0%, #f0f2f5 30%, #fdf2f8 60%, #ede9fe 100%);
+    background-attachment: fixed;
     color: var(--text);
     padding: 20px;
-    max-width: 800px;
+    max-width: 840px;
     margin: 0 auto;
     line-height: 1.6;
+    min-height: 100vh;
   }
-  h1 { font-size: 1.8em; margin-bottom: 4px; }
+  h1 {
+    font-size: 1.8em; margin-bottom: 4px; font-weight: 800;
+    background: linear-gradient(135deg, var(--accent1), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
   .updated { color: var(--text-muted); font-size: 0.85em; margin-bottom: 24px; }
-  .section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
-  .section-title { font-size: 1.15em; font-weight: 600; margin-bottom: 12px; }
+
+  /* 玻璃卡片 */
+  .glass {
+    background: var(--card);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+  }
+  .section { padding: 20px; margin-bottom: 14px; }
+  .section-title { font-size: 1.1em; font-weight: 700; margin-bottom: 12px; }
   .item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); }
   .item:last-child { border-bottom: none; }
   .item input[type="checkbox"] {
     appearance: none; -webkit-appearance: none;
     width: 20px; height: 20px; min-width: 20px;
-    border: 2px solid var(--border); border-radius: 4px;
-    background: transparent; cursor: pointer; margin-top: 2px;
-    position: relative;
+    border: 2px solid #d1d5db; border-radius: 6px;
+    background: #fff; cursor: pointer; margin-top: 2px;
+    position: relative; transition: all 0.15s;
   }
   .item input[type="checkbox"]:checked {
-    background: var(--green); border-color: var(--green);
+    background: linear-gradient(135deg, var(--accent1), var(--green));
+    border-color: transparent;
   }
   .item input[type="checkbox"]:checked::after {
-    content: '✓'; color: #fff; font-size: 14px; font-weight: bold;
-    position: absolute; top: -1px; left: 3px;
+    content: '✓'; color: #fff; font-size: 13px; font-weight: bold;
+    position: absolute; top: 0px; left: 3px;
   }
-  .item input[type="checkbox"].saving {
-    opacity: 0.4; pointer-events: none;
-  }
-  .item label { cursor: pointer; flex: 1; }
+  .item input[type="checkbox"].saving { opacity: 0.4; pointer-events: none; }
+  .item label { cursor: pointer; flex: 1; font-size: 0.95em; }
   .item label.checked { text-decoration: line-through; color: var(--text-muted); }
-  .item .sub { display: block; color: var(--text-muted); font-size: 0.85em; margin-top: 2px; }
+  .item .sub { display: block; color: var(--text-muted); font-size: 0.83em; margin-top: 2px; }
   .red .section-title { color: var(--red); }
   .yellow .section-title { color: var(--yellow); }
   .blue .section-title { color: var(--blue); }
   .reminder .section-title { color: var(--purple); }
   .green .section-title { color: var(--green); }
+
+  /* Header */
+  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  .header-actions { display: flex; align-items: center; gap: 12px; }
+  .btn-refresh {
+    background: var(--card); border: 1px solid var(--border);
+    color: var(--text-muted); padding: 6px 14px; border-radius: 10px;
+    font-size: 0.85em; cursor: pointer; backdrop-filter: blur(10px);
+    transition: all 0.15s;
+  }
+  .btn-refresh:hover { background: #fff; color: var(--text); }
+  .logout { color: var(--text-muted); font-size: 0.8em; cursor: pointer; text-decoration: underline; }
+
+  /* 快速新增 */
+  .add-form { display: flex; gap: 8px; margin-bottom: 24px; }
+  .add-form input {
+    flex: 1; background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); color: var(--text);
+    padding: 12px 16px; border-radius: 12px; font-size: 1em; outline: none;
+    transition: all 0.15s;
+  }
+  .add-form input:focus { border-color: var(--accent1); box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+  .add-form button {
+    background: linear-gradient(135deg, var(--accent1), var(--accent2));
+    color: #fff; border: none; padding: 12px 22px;
+    border-radius: 12px; font-size: 1em; font-weight: 700; cursor: pointer;
+    white-space: nowrap; transition: opacity 0.15s;
+  }
+  .add-form button:hover { opacity: 0.9; }
+  .add-form button:disabled { opacity: 0.4; pointer-events: none; }
+
+  /* 專案總覽 */
+  .projects-title {
+    font-size: 1.25em; font-weight: 800; margin: 0 0 16px;
+    background: linear-gradient(135deg, var(--accent1), var(--purple));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .projects-grid { display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 28px; }
+  @media (min-width: 560px) { .projects-grid { grid-template-columns: 1fr 1fr; } }
+
+  .proj-card {
+    position: relative; border-radius: 16px; padding: 22px;
+    background: rgba(255,255,255,0.55);
+    backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255,255,255,0.7);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.8);
+    overflow: hidden; transition: all 0.2s;
+  }
+  .proj-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8);
+  }
+  .proj-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  }
+  .proj-card:nth-child(1)::before { background: linear-gradient(90deg, #6366f1, #8b5cf6); }
+  .proj-card:nth-child(2)::before { background: linear-gradient(90deg, #ec4899, #f43f5e); }
+  .proj-card:nth-child(3)::before { background: linear-gradient(90deg, #10b981, #14b8a6); }
+  .proj-card:nth-child(4)::before { background: linear-gradient(90deg, #f59e0b, #f97316); }
+  .proj-card:nth-child(5)::before { background: linear-gradient(90deg, #3b82f6, #6366f1); }
+  .proj-card:nth-child(n+6)::before { background: linear-gradient(90deg, #8b5cf6, #ec4899); }
+
+  .proj-card .proj-name { font-size: 1.05em; font-weight: 700; margin-bottom: 6px; color: var(--text); }
+  .proj-card .proj-status {
+    display: inline-block; font-size: 0.72em; font-weight: 600; letter-spacing: 0.02em;
+    padding: 3px 10px; border-radius: 20px; margin-bottom: 14px;
+  }
+  .proj-status.active { background: rgba(16,185,129,0.12); color: #059669; }
+  .proj-status.waiting { background: rgba(245,158,11,0.12); color: #d97706; }
+  .proj-status.done { background: rgba(107,114,128,0.1); color: var(--text-muted); }
+
+  .proj-item {
+    display: flex; align-items: flex-start; gap: 10px; padding: 4px 0;
+    font-size: 0.88em; line-height: 1.5;
+  }
+  .proj-item .dot {
+    width: 7px; height: 7px; min-width: 7px; border-radius: 50%; margin-top: 7px;
+    background: var(--accent1); opacity: 0.7;
+  }
+  .proj-item.done .dot { background: var(--green); opacity: 0.5; }
+  .proj-item.done span { text-decoration: line-through; color: var(--text-muted); }
+  .proj-empty { color: var(--text-muted); font-size: 0.85em; font-style: italic; }
+
+  /* Dashboard 區塊標題 */
+  .dashboard-title {
+    font-size: 1.25em; font-weight: 800; margin: 0 0 16px;
+    background: linear-gradient(135deg, var(--red), var(--yellow));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 20px; right: 20px;
+    background: linear-gradient(135deg, var(--accent1), var(--green));
+    color: #fff; padding: 12px 22px; border-radius: 12px;
+    font-weight: 600; display: none; z-index: 999;
+    box-shadow: 0 8px 24px rgba(99,102,241,0.25);
+  }
+  .toast.error { background: linear-gradient(135deg, var(--red), #dc2626); box-shadow: 0 8px 24px rgba(239,68,68,0.25); }
+
+  /* Login */
   .token-form { text-align: center; margin-top: 100px; }
   .token-form input {
-    background: var(--card); border: 1px solid var(--border); color: var(--text);
-    padding: 10px 16px; border-radius: 8px; width: 400px; max-width: 90%; font-size: 1em;
+    background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); color: var(--text);
+    padding: 12px 16px; border-radius: 12px; width: 400px; max-width: 90%; font-size: 1em;
   }
-  .token-form button, .btn {
-    background: var(--green); color: #000; border: none; padding: 10px 20px;
-    border-radius: 8px; font-size: 1em; cursor: pointer; font-weight: 600; margin-top: 10px;
+  .token-form button {
+    background: linear-gradient(135deg, var(--accent1), var(--accent2));
+    color: #fff; border: none; padding: 12px 24px;
+    border-radius: 12px; font-size: 1em; cursor: pointer; font-weight: 700; margin-top: 12px;
   }
-  .btn-refresh {
-    background: var(--card); color: var(--text); border: 1px solid var(--border);
-    padding: 6px 14px; border-radius: 8px; font-size: 0.85em; cursor: pointer; float: right;
-  }
-  .btn-refresh:hover { background: var(--border); }
-  .toast {
-    position: fixed; bottom: 20px; right: 20px; background: var(--green); color: #000;
-    padding: 10px 20px; border-radius: 8px; font-weight: 600; display: none; z-index: 999;
-  }
-  .toast.error { background: var(--red); color: #fff; }
-  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
-  .logout { color: var(--text-muted); font-size: 0.8em; cursor: pointer; text-decoration: underline; }
-  .add-form { display: flex; gap: 8px; margin-bottom: 20px; }
-  .add-form input {
-    flex: 1; background: var(--card); border: 1px solid var(--border); color: var(--text);
-    padding: 12px 16px; border-radius: 10px; font-size: 1em; outline: none;
-  }
-  .add-form input:focus { border-color: var(--blue); }
-  .add-form button {
-    background: var(--green); color: #000; border: none; padding: 12px 20px;
-    border-radius: 10px; font-size: 1em; font-weight: 700; cursor: pointer; white-space: nowrap;
-  }
-  .add-form button:disabled { opacity: 0.4; pointer-events: none; }
 </style>
 </head>
 <body>
@@ -195,7 +292,7 @@ function renderDashboard(md) {
   let html = `
     <div class="header">
       <h1>Dashboard</h1>
-      <div>
+      <div class="header-actions">
         <button class="btn-refresh" onclick="loadDashboard()">重新整理</button>
         <span class="logout" onclick="clearToken();renderLogin()">登出</span>
       </div>
@@ -207,9 +304,15 @@ function renderDashboard(md) {
     </div>
   `;
 
+  // 專案總覽放最上面
+  html += `<div class="projects-title">專案總覽</div>`;
+  html += `<div class="projects-grid" id="projectsGrid"><div class="proj-empty">載入中...</div></div>`;
+
+  // Dashboard 各區塊
+  html += `<div class="dashboard-title">待辦追蹤</div>`;
   for (const sec of sections) {
     const cls = sectionClass(sec.title);
-    html += `<div class="section ${cls}"><div class="section-title">${sec.title}</div>`;
+    html += `<div class="section glass ${cls}"><div class="section-title">${sec.title}</div>`;
     if (sec.items.length === 0) {
       html += `<div style="color:var(--text-muted);font-size:0.9em;">（無項目）</div>`;
     }
@@ -227,6 +330,81 @@ function renderDashboard(md) {
   }
 
   document.getElementById('app').innerHTML = html;
+  loadProjects();
+}
+
+async function loadProjects() {
+  try {
+    const token = getToken();
+    const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/Projects?ref=${BRANCH}`, {
+      headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+    });
+    const files = await res.json();
+    if (!Array.isArray(files)) return;
+
+    const mdFiles = files.filter(f => f.name.endsWith('.md'));
+    const cards = await Promise.all(mdFiles.map(async f => {
+      const r = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/Projects/${encodeURIComponent(f.name)}?ref=${BRANCH}`, {
+        headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+      });
+      const data = await r.json();
+      const content = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ''))));
+      return parseProject(content);
+    }));
+
+    const grid = document.getElementById('projectsGrid');
+    if (!grid) return;
+    if (cards.length === 0) { grid.innerHTML = '<div class="proj-empty">（無專案）</div>'; return; }
+    grid.innerHTML = cards.map(renderProjectCard).join('');
+  } catch (e) {
+    const grid = document.getElementById('projectsGrid');
+    if (grid) grid.innerHTML = '<div class="proj-empty">載入專案失敗</div>';
+  }
+}
+
+function parseProject(md) {
+  const lines = md.split('\n');
+  const name = (lines.find(l => l.startsWith('# ')) || '# 未命名').replace('# ', '');
+  const statusLine = lines.find(l => l.startsWith('> 狀態：')) || '';
+  const status = statusLine.replace('> 狀態：', '').trim();
+
+  let inTodo = false;
+  const todos = [];
+  for (const line of lines) {
+    if (line.startsWith('## 待辦')) { inTodo = true; continue; }
+    if (inTodo && line.startsWith('## ')) break;
+    if (inTodo) {
+      const m = line.match(/^- \[([ x])\] (.+)/);
+      if (m) todos.push({ checked: m[1] === 'x', text: m[2] });
+    }
+  }
+
+  const last4 = todos.slice(-4);
+  return { name, status, items: last4 };
+}
+
+function renderProjectCard(proj) {
+  let statusClass = 'active';
+  if (proj.status.includes('等待')) statusClass = 'waiting';
+  if (proj.status.includes('完成')) statusClass = 'done';
+
+  let itemsHtml = '';
+  if (proj.items.length === 0) {
+    itemsHtml = '<div class="proj-empty">（無待辦項目）</div>';
+  } else {
+    itemsHtml = proj.items.map(item =>
+      `<div class="proj-item ${item.checked ? 'done' : ''}">
+        <div class="dot"></div>
+        <span>${escapeHtml(item.text)}</span>
+      </div>`
+    ).join('');
+  }
+
+  return `<div class="proj-card">
+    <div class="proj-name">${escapeHtml(proj.name)}</div>
+    <div class="proj-status ${statusClass}">${escapeHtml(proj.status || '進行中')}</div>
+    ${itemsHtml}
+  </div>`;
 }
 
 function escapeHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -256,7 +434,6 @@ async function addTodo() {
   if (!text) return;
   input.disabled = true;
 
-  // 找到「待處理」區塊，在該區塊最後一個 - [ ] 或 - [x] 之後插入
   const lines = currentContent.split('\n');
   let insertIndex = -1;
   let inSection = false;
@@ -269,7 +446,6 @@ async function addTodo() {
 
   lines.splice(insertIndex, 0, `- [ ] ${text}`);
 
-  // 更新「最後更新」時間
   const now = new Date();
   const ts = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
   const newContent = lines.join('\n').replace(/> 最後更新：.+/, `> 最後更新：${ts}`);
@@ -284,11 +460,11 @@ async function addTodo() {
 function renderLogin() {
   document.getElementById('app').innerHTML = `
     <div class="token-form">
-      <h1>阿忠 Dashboard</h1>
+      <h1 style="font-size:2em;margin-bottom:8px;">阿忠 Dashboard</h1>
       <p style="color:var(--text-muted);margin:16px 0;">請輸入 GitHub Personal Access Token<br><small>需要 repo 權限，Token 只存在你的瀏覽器</small></p>
       <input id="tokenInput" type="password" placeholder="ghp_xxxxx...">
       <br>
-      <button class="btn" onclick="submitToken()">登入</button>
+      <button onclick="submitToken()">登入</button>
     </div>`;
 }
 
