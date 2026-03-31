@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>阿忠 Dashboard</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --card: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --red: #f85149;
+    --yellow: #d29922;
+    --blue: #58a6ff;
+    --green: #3fb950;
+    --purple: #bc8cff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+  h1 { font-size: 1.8em; margin-bottom: 4px; }
+  .updated { color: var(--text-muted); font-size: 0.85em; margin-bottom: 24px; }
+  .section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+  .section-title { font-size: 1.15em; font-weight: 600; margin-bottom: 12px; }
+  .item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .item:last-child { border-bottom: none; }
+  .item input[type="checkbox"] {
+    appearance: none; -webkit-appearance: none;
+    width: 20px; height: 20px; min-width: 20px;
+    border: 2px solid var(--border); border-radius: 4px;
+    background: transparent; cursor: pointer; margin-top: 2px;
+    position: relative;
+  }
+  .item input[type="checkbox"]:checked {
+    background: var(--green); border-color: var(--green);
+  }
+  .item input[type="checkbox"]:checked::after {
+    content: '✓'; color: #fff; font-size: 14px; font-weight: bold;
+    position: absolute; top: -1px; left: 3px;
+  }
+  .item input[type="checkbox"].saving {
+    opacity: 0.4; pointer-events: none;
+  }
+  .item label { cursor: pointer; flex: 1; }
+  .item label.checked { text-decoration: line-through; color: var(--text-muted); }
+  .item .sub { display: block; color: var(--text-muted); font-size: 0.85em; margin-top: 2px; }
+  .red .section-title { color: var(--red); }
+  .yellow .section-title { color: var(--yellow); }
+  .blue .section-title { color: var(--blue); }
+  .reminder .section-title { color: var(--purple); }
+  .green .section-title { color: var(--green); }
+  .token-form { text-align: center; margin-top: 100px; }
+  .token-form input {
+    background: var(--card); border: 1px solid var(--border); color: var(--text);
+    padding: 10px 16px; border-radius: 8px; width: 400px; max-width: 90%; font-size: 1em;
+  }
+  .token-form button, .btn {
+    background: var(--green); color: #000; border: none; padding: 10px 20px;
+    border-radius: 8px; font-size: 1em; cursor: pointer; font-weight: 600; margin-top: 10px;
+  }
+  .btn-refresh {
+    background: var(--card); color: var(--text); border: 1px solid var(--border);
+    padding: 6px 14px; border-radius: 8px; font-size: 0.85em; cursor: pointer; float: right;
+  }
+  .btn-refresh:hover { background: var(--border); }
+  .toast {
+    position: fixed; bottom: 20px; right: 20px; background: var(--green); color: #000;
+    padding: 10px 20px; border-radius: 8px; font-weight: 600; display: none; z-index: 999;
+  }
+  .toast.error { background: var(--red); color: #fff; }
+  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  .logout { color: var(--text-muted); font-size: 0.8em; cursor: pointer; text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const OWNER = 'ArChung';
+const REPO = 'vault-dashboard';
+const FILE_PATH = 'Dashboard.md';
+const BRANCH = 'main';
+
+let currentSha = '';
+let currentContent = '';
+
+function getToken() { return localStorage.getItem('gh_token'); }
+function setToken(t) { localStorage.setItem('gh_token', t); }
+function clearToken() { localStorage.removeItem('gh_token'); }
+
+function showToast(msg, isError) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (isError ? ' error' : '');
+  t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 2500);
+}
+
+async function api(path, opts = {}) {
+  const token = getToken();
+  const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}?ref=${BRANCH}`, {
+    headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json', ...opts.headers },
+    ...opts
+  });
+  if (res.status === 401) { clearToken(); renderLogin(); throw new Error('Token 無效'); }
+  return res.json();
+}
+
+async function loadDashboard() {
+  const data = await api(FILE_PATH);
+  currentSha = data.sha;
+  currentContent = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ''))));
+  renderDashboard(currentContent);
+}
+
+async function saveDashboard(newContent) {
+  const token = getToken();
+  const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE_PATH}`, {
+    method: 'PUT',
+    headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      message: '更新 Dashboard',
+      content: btoa(unescape(encodeURIComponent(newContent))),
+      sha: currentSha,
+      branch: BRANCH
+    })
+  });
+  const data = await res.json();
+  if (data.content) {
+    currentSha = data.content.sha;
+    currentContent = newContent;
+    showToast('已同步更新');
+  } else {
+    showToast('更新失敗，請重新整理', true);
+  }
+}
+
+function parseDashboard(md) {
+  const sections = [];
+  let current = null;
+  for (const line of md.split('\n')) {
+    if (line.startsWith('## ')) {
+      current = { title: line.replace('## ', ''), items: [], raw: [] };
+      sections.push(current);
+    } else if (current) {
+      current.raw.push(line);
+      const checkMatch = line.match(/^- \[([ x])\] (.+)/);
+      if (checkMatch) {
+        const subLines = [];
+        current.items.push({ checked: checkMatch[1] === 'x', text: checkMatch[2], sub: subLines });
+      } else if (line.match(/^\s+→/) && current.items.length > 0) {
+        current.items[current.items.length - 1].sub.push(line.trim());
+      }
+    }
+  }
+  return sections;
+}
+
+function sectionClass(title) {
+  if (title.includes('待處理')) return 'red';
+  if (title.includes('等待回覆')) return 'yellow';
+  if (title.includes('今日關注')) return 'blue';
+  if (title.includes('提醒')) return 'reminder';
+  if (title.includes('完成')) return 'green';
+  return '';
+}
+
+function renderDashboard(md) {
+  const lines = md.split('\n');
+  const headerLine = lines.find(l => l.startsWith('> 最後更新'));
+  const sections = parseDashboard(md);
+
+  let html = `
+    <div class="header">
+      <h1>Dashboard</h1>
+      <div>
+        <button class="btn-refresh" onclick="loadDashboard()">重新整理</button>
+        <span class="logout" onclick="clearToken();renderLogin()">登出</span>
+      </div>
+    </div>
+    <div class="updated">${headerLine || ''}</div>
+  `;
+
+  for (const sec of sections) {
+    const cls = sectionClass(sec.title);
+    html += `<div class="section ${cls}"><div class="section-title">${sec.title}</div>`;
+    if (sec.items.length === 0) {
+      html += `<div style="color:var(--text-muted);font-size:0.9em;">（無項目）</div>`;
+    }
+    for (const item of sec.items) {
+      const checkedAttr = item.checked ? 'checked' : '';
+      const checkedClass = item.checked ? 'checked' : '';
+      const subHtml = item.sub.map(s => `<span class="sub">${s}</span>`).join('');
+      html += `
+        <div class="item">
+          <input type="checkbox" ${checkedAttr} onchange="toggleItem(this, '${escapeForAttr(item.text)}')">
+          <label class="${checkedClass}">${escapeHtml(item.text)}${subHtml}</label>
+        </div>`;
+    }
+    html += `</div>`;
+  }
+
+  document.getElementById('app').innerHTML = html;
+}
+
+function escapeHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escapeForAttr(s) { return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+
+async function toggleItem(checkbox, text) {
+  checkbox.classList.add('saving');
+  const isChecked = checkbox.checked;
+  const searchText = text.replace(/&quot;/g, '"').replace(/\\'/g, "'").replace(/\\\\/g, '\\');
+
+  const oldPattern = `- [${isChecked ? ' ' : 'x'}] ${searchText}`;
+  const newPattern = `- [${isChecked ? 'x' : ' '}] ${searchText}`;
+
+  if (currentContent.includes(oldPattern)) {
+    const newContent = currentContent.replace(oldPattern, newPattern);
+    await saveDashboard(newContent);
+    renderDashboard(currentContent);
+  } else {
+    showToast('找不到對應項目，請重新整理', true);
+    checkbox.classList.remove('saving');
+  }
+}
+
+function renderLogin() {
+  document.getElementById('app').innerHTML = `
+    <div class="token-form">
+      <h1>阿忠 Dashboard</h1>
+      <p style="color:var(--text-muted);margin:16px 0;">請輸入 GitHub Personal Access Token<br><small>需要 repo 權限，Token 只存在你的瀏覽器</small></p>
+      <input id="tokenInput" type="password" placeholder="ghp_xxxxx...">
+      <br>
+      <button class="btn" onclick="submitToken()">登入</button>
+    </div>`;
+}
+
+async function submitToken() {
+  const token = document.getElementById('tokenInput').value.trim();
+  if (!token) return;
+  setToken(token);
+  try {
+    await loadDashboard();
+  } catch (e) {
+    showToast('Token 無效或無法存取 repo', true);
+    clearToken();
+    renderLogin();
+  }
+}
+
+// Init
+if (getToken()) { loadDashboard(); } else { renderLogin(); }
+</script>
+</body>
+</html>
