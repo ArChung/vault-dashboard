@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>阿忠 Dashboard</title>
 <style>
   :root {
@@ -39,7 +42,6 @@
   }
   .updated { color: var(--text-muted); font-size: 0.85em; margin-bottom: 24px; }
 
-  /* 玻璃卡片 */
   .glass {
     background: var(--card);
     backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
@@ -76,7 +78,6 @@
   .reminder .section-title { color: var(--purple); }
   .green .section-title { color: var(--green); }
 
-  /* Header */
   .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
   .header-actions { display: flex; align-items: center; gap: 12px; }
   .btn-refresh {
@@ -86,9 +87,7 @@
     transition: all 0.15s;
   }
   .btn-refresh:hover { background: #fff; color: var(--text); }
-  .logout { color: var(--text-muted); font-size: 0.8em; cursor: pointer; text-decoration: underline; }
 
-  /* 快速新增 */
   .add-form { display: flex; gap: 8px; margin-bottom: 24px; }
   .add-form input {
     flex: 1; background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);
@@ -106,7 +105,6 @@
   .add-form button:hover { opacity: 0.9; }
   .add-form button:disabled { opacity: 0.4; pointer-events: none; }
 
-  /* 專案總覽 */
   .projects-title {
     font-size: 1.25em; font-weight: 800; margin: 0 0 16px;
     background: linear-gradient(135deg, var(--accent1), var(--purple));
@@ -158,14 +156,12 @@
   .proj-item.done span { text-decoration: line-through; color: var(--text-muted); }
   .proj-empty { color: var(--text-muted); font-size: 0.85em; font-style: italic; }
 
-  /* Dashboard 區塊標題 */
   .dashboard-title {
     font-size: 1.25em; font-weight: 800; margin: 0 0 16px;
     background: linear-gradient(135deg, var(--red), var(--yellow));
     -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
   }
 
-  /* Toast */
   .toast {
     position: fixed; bottom: 20px; right: 20px;
     background: linear-gradient(135deg, var(--accent1), var(--green));
@@ -175,23 +171,29 @@
   }
   .toast.error { background: linear-gradient(135deg, var(--red), #dc2626); box-shadow: 0 8px 24px rgba(239,68,68,0.25); }
 
-  /* Login */
-  .token-form { text-align: center; margin-top: 100px; }
-  .token-form input {
-    background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);
-    border: 1px solid var(--border); color: var(--text);
-    padding: 12px 16px; border-radius: 12px; width: 400px; max-width: 90%; font-size: 1em;
+  /* Token 設定（底部小區塊） */
+  .token-setup {
+    margin-top: 32px; padding: 16px 20px; border-radius: 12px;
+    background: rgba(255,255,255,0.4); backdrop-filter: blur(10px);
+    border: 1px solid var(--border); text-align: center;
   }
-  .token-form button {
-    background: linear-gradient(135deg, var(--accent1), var(--accent2));
-    color: #fff; border: none; padding: 12px 24px;
-    border-radius: 12px; font-size: 1em; cursor: pointer; font-weight: 700; margin-top: 12px;
+  .token-setup.has-token { background: rgba(16,185,129,0.06); border-color: rgba(16,185,129,0.2); }
+  .token-setup p { color: var(--text-muted); font-size: 0.82em; margin-bottom: 8px; }
+  .token-setup .token-row { display: flex; gap: 8px; justify-content: center; }
+  .token-setup input {
+    background: #fff; border: 1px solid var(--border); color: var(--text);
+    padding: 8px 12px; border-radius: 8px; width: 280px; max-width: 60%; font-size: 0.85em; outline: none;
   }
+  .token-setup button {
+    background: var(--accent1); color: #fff; border: none; padding: 8px 16px;
+    border-radius: 8px; font-size: 0.85em; font-weight: 600; cursor: pointer;
+  }
+  .token-status { color: var(--green); font-size: 0.82em; font-weight: 600; }
 </style>
 </head>
 <body>
 
-<div id="app"></div>
+<div id="app"><div style="text-align:center;padding:60px;color:#6b7280;">載入中...</div></div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -205,7 +207,6 @@ let currentContent = '';
 
 function getToken() { return localStorage.getItem('gh_token'); }
 function setToken(t) { localStorage.setItem('gh_token', t); }
-function clearToken() { localStorage.removeItem('gh_token'); }
 
 function showToast(msg, isError) {
   const t = document.getElementById('toast');
@@ -215,25 +216,23 @@ function showToast(msg, isError) {
   setTimeout(() => t.style.display = 'none', 2500);
 }
 
-async function api(path, opts = {}) {
+// 讀取：private repo 需要 token
+async function fetchApi(path) {
   const token = getToken();
-  const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}?ref=${BRANCH}`, {
-    headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json', ...opts.headers },
-    ...opts
-  });
-  if (res.status === 401) { clearToken(); renderLogin(); throw new Error('Token 無效'); }
+  const headers = { 'Accept': 'application/vnd.github.v3+json' };
+  if (token) headers['Authorization'] = `token ${token}`;
+  const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}?ref=${BRANCH}`, { headers });
+  if (res.status === 401 || res.status === 404) throw new Error('需要 Token');
   return res.json();
 }
 
-async function loadDashboard() {
-  const data = await api(FILE_PATH);
-  currentSha = data.sha;
-  currentContent = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ''))));
-  renderDashboard(currentContent);
-}
-
+// 寫入：需要 token
 async function saveDashboard(newContent) {
   const token = getToken();
+  if (!token) {
+    showToast('請先在底部設定 Token 才能修改', true);
+    return false;
+  }
   const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE_PATH}`, {
     method: 'PUT',
     headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
@@ -249,8 +248,30 @@ async function saveDashboard(newContent) {
     currentSha = data.content.sha;
     currentContent = newContent;
     showToast('已同步更新');
+    return true;
   } else {
-    showToast('更新失敗，請重新整理', true);
+    showToast('更新失敗，請確認 Token 或重新整理', true);
+    return false;
+  }
+}
+
+async function loadDashboard() {
+  try {
+    const data = await fetchApi(FILE_PATH);
+    currentSha = data.sha;
+    currentContent = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ''))));
+    renderDashboard(currentContent);
+  } catch (e) {
+    document.getElementById('app').innerHTML = `
+      <div style="text-align:center;padding:60px;">
+        <h1 style="font-size:2em;margin-bottom:12px;">阿忠 Dashboard</h1>
+        <p style="color:var(--text-muted);margin-bottom:20px;">請輸入 GitHub Token 以存取 Dashboard</p>
+        <div style="display:flex;gap:8px;justify-content:center;">
+          <input id="tokenInput" type="password" placeholder="ghp_xxxxx..." style="background:rgba(255,255,255,0.8);border:1px solid var(--border);color:var(--text);padding:12px 16px;border-radius:12px;width:320px;max-width:70%;font-size:1em;">
+          <button onclick="setToken(document.getElementById('tokenInput').value.trim());loadDashboard()" style="background:linear-gradient(135deg,var(--accent1),var(--accent2));color:#fff;border:none;padding:12px 20px;border-radius:12px;font-size:1em;font-weight:700;cursor:pointer;">登入</button>
+        </div>
+        <p style="color:var(--text-muted);font-size:0.78em;margin-top:12px;">Token 只存在你的瀏覽器，設定一次就不用再輸入</p>
+      </div>`;
   }
 }
 
@@ -294,7 +315,6 @@ function renderDashboard(md) {
       <h1>Dashboard</h1>
       <div class="header-actions">
         <button class="btn-refresh" onclick="loadDashboard()">重新整理</button>
-        <span class="logout" onclick="clearToken();renderLogin()">登出</span>
       </div>
     </div>
     <div class="updated">${headerLine || ''}</div>
@@ -304,7 +324,7 @@ function renderDashboard(md) {
     </div>
   `;
 
-  // 專案總覽放最上面
+  // 專案總覽
   html += `<div class="projects-title">專案總覽</div>`;
   html += `<div class="projects-grid" id="projectsGrid"><div class="proj-empty">載入中...</div></div>`;
 
@@ -329,25 +349,40 @@ function renderDashboard(md) {
     html += `</div>`;
   }
 
+  // Token 設定區
+  const hasToken = !!getToken();
+  html += `<div class="token-setup ${hasToken ? 'has-token' : ''}" id="tokenSetup">`;
+  if (hasToken) {
+    html += `<span class="token-status">已設定 Token</span> <button onclick="localStorage.removeItem('gh_token');loadDashboard()" style="background:transparent;color:var(--text-muted);font-size:0.78em;padding:4px 8px;">清除</button>`;
+  } else {
+    html += `<p>設定 GitHub Token 後即可在網頁上勾選和新增待辦</p>
+      <div class="token-row">
+        <input id="tokenInput" type="password" placeholder="ghp_xxxxx...">
+        <button onclick="saveToken()">儲存</button>
+      </div>`;
+  }
+  html += `</div>`;
+
   document.getElementById('app').innerHTML = html;
   loadProjects();
 }
 
+function saveToken() {
+  const v = document.getElementById('tokenInput').value.trim();
+  if (!v) return;
+  setToken(v);
+  showToast('Token 已儲存');
+  renderDashboard(currentContent);
+}
+
 async function loadProjects() {
   try {
-    const token = getToken();
-    const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/Projects?ref=${BRANCH}`, {
-      headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
-    });
-    const files = await res.json();
+    const files = await fetchApi('Projects');
     if (!Array.isArray(files)) return;
 
     const mdFiles = files.filter(f => f.name.endsWith('.md'));
     const cards = await Promise.all(mdFiles.map(async f => {
-      const r = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/Projects/${encodeURIComponent(f.name)}?ref=${BRANCH}`, {
-        headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
-      });
-      const data = await r.json();
+      const data = await fetchApi(`Projects/${encodeURIComponent(f.name)}`);
       const content = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ''))));
       return parseProject(content);
     }));
@@ -411,6 +446,7 @@ function escapeHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').rep
 function escapeForAttr(s) { return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
 
 async function toggleItem(checkbox, text) {
+  if (!getToken()) { showToast('請先在底部設定 Token', true); checkbox.checked = !checkbox.checked; return; }
   checkbox.classList.add('saving');
   const isChecked = checkbox.checked;
   const searchText = text.replace(/&quot;/g, '"').replace(/\\'/g, "'").replace(/\\\\/g, '\\');
@@ -429,6 +465,7 @@ async function toggleItem(checkbox, text) {
 }
 
 async function addTodo() {
+  if (!getToken()) { showToast('請先在底部設定 Token', true); return; }
   const input = document.getElementById('newTodoInput');
   const text = input.value.trim();
   if (!text) return;
@@ -457,32 +494,8 @@ async function addTodo() {
   input.focus();
 }
 
-function renderLogin() {
-  document.getElementById('app').innerHTML = `
-    <div class="token-form">
-      <h1 style="font-size:2em;margin-bottom:8px;">阿忠 Dashboard</h1>
-      <p style="color:var(--text-muted);margin:16px 0;">請輸入 GitHub Personal Access Token<br><small>需要 repo 權限，Token 只存在你的瀏覽器</small></p>
-      <input id="tokenInput" type="password" placeholder="ghp_xxxxx...">
-      <br>
-      <button onclick="submitToken()">登入</button>
-    </div>`;
-}
-
-async function submitToken() {
-  const token = document.getElementById('tokenInput').value.trim();
-  if (!token) return;
-  setToken(token);
-  try {
-    await loadDashboard();
-  } catch (e) {
-    showToast('Token 無效或無法存取 repo', true);
-    clearToken();
-    renderLogin();
-  }
-}
-
-// Init
-if (getToken()) { loadDashboard(); } else { renderLogin(); }
+// 直接載入，不需要登入
+loadDashboard();
 </script>
 </body>
 </html>
