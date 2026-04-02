@@ -41,41 +41,6 @@
   }
   .updated { color: var(--text-muted); font-size: 0.85em; margin-bottom: 24px; }
 
-  .glass {
-    background: var(--card);
-    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
-  }
-  .section { padding: 20px; margin-bottom: 14px; }
-  .section-title { font-size: 1.1em; font-weight: 700; margin-bottom: 12px; }
-  .item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); }
-  .item:last-child { border-bottom: none; }
-  .item input[type="checkbox"] {
-    appearance: none; -webkit-appearance: none;
-    width: 20px; height: 20px; min-width: 20px;
-    border: 2px solid #d1d5db; border-radius: 6px;
-    background: #fff; cursor: pointer; margin-top: 2px;
-    position: relative; transition: all 0.15s;
-  }
-  .item input[type="checkbox"]:checked {
-    background: linear-gradient(135deg, var(--accent1), var(--green));
-    border-color: transparent;
-  }
-  .item input[type="checkbox"]:checked::after {
-    content: '✓'; color: #fff; font-size: 13px; font-weight: bold;
-    position: absolute; top: 0px; left: 3px;
-  }
-  .item input[type="checkbox"].saving { opacity: 0.4; pointer-events: none; }
-  .item label { cursor: pointer; flex: 1; font-size: 0.95em; }
-  .item label.checked { text-decoration: line-through; color: var(--text-muted); }
-  .item .sub { display: block; color: var(--text-muted); font-size: 0.83em; margin-top: 2px; }
-  .red .section-title { color: var(--red); }
-  .yellow .section-title { color: var(--yellow); }
-  .blue .section-title { color: var(--blue); }
-  .reminder .section-title { color: var(--purple); }
-  .green .section-title { color: var(--green); }
 
   .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
   .btn-refresh {
@@ -86,22 +51,6 @@
   }
   .btn-refresh:hover { background: #fff; color: var(--text); }
 
-  .add-form { display: flex; gap: 8px; margin-bottom: 24px; }
-  .add-form input {
-    flex: 1; background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);
-    border: 1px solid var(--border); color: var(--text);
-    padding: 12px 16px; border-radius: 12px; font-size: 1em; outline: none;
-    transition: all 0.15s;
-  }
-  .add-form input:focus { border-color: var(--accent1); box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
-  .add-form button {
-    background: linear-gradient(135deg, var(--accent1), var(--accent2));
-    color: #fff; border: none; padding: 12px 22px;
-    border-radius: 12px; font-size: 1em; font-weight: 700; cursor: pointer;
-    white-space: nowrap; transition: opacity 0.15s;
-  }
-  .add-form button:hover { opacity: 0.9; }
-  .add-form button:disabled { opacity: 0.4; pointer-events: none; }
 
   .projects-title {
     font-size: 1.25em; font-weight: 800; margin: 0 0 16px;
@@ -154,12 +103,6 @@
   .proj-item.done span { text-decoration: line-through; color: var(--text-muted); }
   .proj-empty { color: var(--text-muted); font-size: 0.85em; font-style: italic; }
 
-  .dashboard-title {
-    font-size: 1.25em; font-weight: 800; margin: 0 0 16px;
-    background: linear-gradient(135deg, var(--red), var(--yellow));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-  }
-
   .toast {
     position: fixed; bottom: 20px; right: 20px;
     background: linear-gradient(135deg, var(--accent1), var(--green));
@@ -181,21 +124,6 @@ const REPO = 'vault-dashboard';
 const FILE_PATH = 'Dashboard.md';
 const BRANCH = 'master';
 
-let currentSha = '';
-let currentContent = '';
-
-// Token 靜默管理：URL 帶 ?token=xxx 自動存入，頁面上不顯示任何 token UI
-(function() {
-  const params = new URLSearchParams(location.search);
-  const t = params.get('token');
-  if (t) {
-    localStorage.setItem('gh_token', t);
-    history.replaceState(null, '', location.pathname);
-  }
-})();
-
-function getToken() { return localStorage.getItem('gh_token'); }
-
 function showToast(msg, isError) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -212,32 +140,6 @@ async function fetchPublic(path) {
   return res.json();
 }
 
-// 寫入需要 token（靜默處理）
-async function saveDashboard(newContent) {
-  const token = getToken();
-  if (!token) { showToast('唯讀模式', true); return false; }
-  const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE_PATH}`, {
-    method: 'PUT',
-    headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      message: '更新 Dashboard',
-      content: btoa(unescape(encodeURIComponent(newContent))),
-      sha: currentSha,
-      branch: BRANCH
-    })
-  });
-  const data = await res.json();
-  if (data.content) {
-    currentSha = data.content.sha;
-    currentContent = newContent;
-    showToast('已同步更新');
-    return true;
-  } else {
-    showToast('更新失敗，請重新整理', true);
-    return false;
-  }
-}
-
 async function loadDashboard() {
   try {
     const data = await fetchPublic(FILE_PATH);
@@ -249,40 +151,9 @@ async function loadDashboard() {
   }
 }
 
-function parseDashboard(md) {
-  const sections = [];
-  let current = null;
-  for (const line of md.split('\n')) {
-    if (line.startsWith('## ')) {
-      current = { title: line.replace('## ', ''), items: [], raw: [] };
-      sections.push(current);
-    } else if (current) {
-      current.raw.push(line);
-      const checkMatch = line.match(/^- \[([ x])\] (.+)/);
-      if (checkMatch) {
-        const subLines = [];
-        current.items.push({ checked: checkMatch[1] === 'x', text: checkMatch[2], sub: subLines });
-      } else if (line.match(/^\s+→/) && current.items.length > 0) {
-        current.items[current.items.length - 1].sub.push(line.trim());
-      }
-    }
-  }
-  return sections;
-}
-
-function sectionClass(title) {
-  if (title.includes('待處理')) return 'red';
-  if (title.includes('等待回覆')) return 'yellow';
-  if (title.includes('今日關注')) return 'blue';
-  if (title.includes('提醒')) return 'reminder';
-  if (title.includes('完成')) return 'green';
-  return '';
-}
-
 function renderDashboard(md) {
   const lines = md.split('\n');
   const headerLine = lines.find(l => l.startsWith('> 最後更新'));
-  const sections = parseDashboard(md);
 
   let html = `
     <div class="header">
@@ -290,34 +161,10 @@ function renderDashboard(md) {
       <button class="btn-refresh" onclick="loadDashboard()">重新整理</button>
     </div>
     <div class="updated">${headerLine || ''}</div>
-    <div class="add-form">
-      <input type="text" id="newTodoInput" placeholder="新增待辦事項..." onkeydown="if(event.key==='Enter')addTodo()">
-      <button onclick="addTodo()">新增</button>
-    </div>
   `;
 
   html += `<div class="projects-title">專案總覽</div>`;
   html += `<div class="projects-grid" id="projectsGrid"><div class="proj-empty">載入中...</div></div>`;
-
-  html += `<div class="dashboard-title">待辦追蹤</div>`;
-  for (const sec of sections) {
-    const cls = sectionClass(sec.title);
-    html += `<div class="section glass ${cls}"><div class="section-title">${sec.title}</div>`;
-    if (sec.items.length === 0) {
-      html += `<div style="color:var(--text-muted);font-size:0.9em;">（無項目）</div>`;
-    }
-    for (const item of sec.items) {
-      const checkedAttr = item.checked ? 'checked' : '';
-      const checkedClass = item.checked ? 'checked' : '';
-      const subHtml = item.sub.map(s => `<span class="sub">${s}</span>`).join('');
-      html += `
-        <div class="item">
-          <input type="checkbox" ${checkedAttr} onchange="toggleItem(this, '${escapeForAttr(item.text)}')">
-          <label class="${checkedClass}">${escapeHtml(item.text)}${subHtml}</label>
-        </div>`;
-    }
-    html += `</div>`;
-  }
 
   document.getElementById('app').innerHTML = html;
   loadProjects();
@@ -350,6 +197,8 @@ function parseProject(md) {
   const name = (lines.find(l => l.startsWith('# ')) || '# 未命名').replace('# ', '');
   const statusLine = lines.find(l => l.startsWith('> 狀態：')) || '';
   const status = statusLine.replace('> 狀態：', '').trim();
+  const contactLine = lines.find(l => l.startsWith('> 窗口：')) || '';
+  const contact = contactLine.replace('> 窗口：', '').trim();
 
   let inTodo = false;
   const todos = [];
@@ -363,7 +212,7 @@ function parseProject(md) {
   }
 
   const last4 = todos.slice(-4);
-  return { name, status, items: last4 };
+  return { name, status, contact, items: last4 };
 }
 
 function renderProjectCard(proj) {
@@ -386,62 +235,12 @@ function renderProjectCard(proj) {
   return `<div class="proj-card">
     <div class="proj-name">${escapeHtml(proj.name)}</div>
     <div class="proj-status ${statusClass}">${escapeHtml(proj.status || '進行中')}</div>
+    ${proj.contact ? `<div style="color:var(--text-muted);font-size:0.8em;margin-bottom:10px;">窗口：${escapeHtml(proj.contact)}</div>` : ''}
     ${itemsHtml}
   </div>`;
 }
 
 function escapeHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function escapeForAttr(s) { return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
-
-async function toggleItem(checkbox, text) {
-  if (!getToken()) { showToast('唯讀模式', true); checkbox.checked = !checkbox.checked; return; }
-  checkbox.classList.add('saving');
-  const isChecked = checkbox.checked;
-  const searchText = text.replace(/&quot;/g, '"').replace(/\\'/g, "'").replace(/\\\\/g, '\\');
-
-  const oldPattern = `- [${isChecked ? ' ' : 'x'}] ${searchText}`;
-  const newPattern = `- [${isChecked ? 'x' : ' '}] ${searchText}`;
-
-  if (currentContent.includes(oldPattern)) {
-    const newContent = currentContent.replace(oldPattern, newPattern);
-    await saveDashboard(newContent);
-    renderDashboard(currentContent);
-  } else {
-    showToast('找不到對應項目，請重新整理', true);
-    checkbox.classList.remove('saving');
-  }
-}
-
-async function addTodo() {
-  if (!getToken()) { showToast('唯讀模式', true); return; }
-  const input = document.getElementById('newTodoInput');
-  const text = input.value.trim();
-  if (!text) return;
-  input.disabled = true;
-
-  const lines = currentContent.split('\n');
-  let insertIndex = -1;
-  let inSection = false;
-  for (let i = 0; i < lines.length; i++) {
-    if (lines[i].includes('🔴 待處理')) { inSection = true; continue; }
-    if (inSection && lines[i].startsWith('## ')) { insertIndex = i; break; }
-    if (inSection && lines[i].match(/^- \[[ x]\]/)) { insertIndex = i + 1; }
-  }
-  if (insertIndex === -1) insertIndex = lines.length;
-
-  lines.splice(insertIndex, 0, `- [ ] ${text}`);
-
-  const now = new Date();
-  const ts = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-  const newContent = lines.join('\n').replace(/> 最後更新：.+/, `> 最後更新：${ts}`);
-
-  await saveDashboard(newContent);
-  input.value = '';
-  input.disabled = false;
-  renderDashboard(currentContent);
-  input.focus();
-}
-
 loadDashboard();
 </script>
 </body>
