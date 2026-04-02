@@ -82,6 +82,12 @@
   .proj-card:nth-child(5)::before { background: linear-gradient(90deg, #3b82f6, #6366f1); }
   .proj-card:nth-child(n+6)::before { background: linear-gradient(90deg, #8b5cf6, #ec4899); }
 
+  .proj-contact-tag {
+    position: absolute; top: 12px; right: 12px;
+    font-size: 0.7em; font-weight: 600; color: var(--text-muted);
+    background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.15);
+    padding: 2px 10px; border-radius: 20px; letter-spacing: 0.02em;
+  }
   .proj-card .proj-name { font-size: 1.05em; font-weight: 700; margin-bottom: 6px; color: var(--text); }
   .proj-card .proj-status {
     display: inline-block; font-size: 0.72em; font-weight: 600; letter-spacing: 0.02em;
@@ -227,7 +233,7 @@ function renderProjectCard(proj) {
     itemsHtml = proj.items.map(item =>
       `<div class="proj-item ${item.checked ? 'done' : ''}">
         <div class="dot"></div>
-        <span>${escapeHtml(item.text)}</span>
+        <span>${formatDates(escapeHtml(item.text))}</span>
       </div>`
     ).join('');
   }
@@ -235,12 +241,38 @@ function renderProjectCard(proj) {
   return `<div class="proj-card">
     <div class="proj-name">${escapeHtml(proj.name)}</div>
     <div class="proj-status ${statusClass}">${escapeHtml(proj.status || '進行中')}</div>
-    ${proj.contact ? `<div style="color:var(--text-muted);font-size:0.8em;margin-bottom:10px;">窗口：${escapeHtml(proj.contact)}</div>` : ''}
+    ${proj.contact ? `<div class="proj-contact-tag">${escapeHtml(proj.contact)}</div>` : ''}
     ${itemsHtml}
   </div>`;
 }
 
 function escapeHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function formatDates(text) {
+  const weekdays = ['日','一','二','三','四','五','六'];
+  const today = new Date(); today.setHours(0,0,0,0);
+  return text.replace(/(\d{4})-(\d{2})-(\d{2})/g, (match, y, m, d) => {
+    const target = new Date(+y, +m - 1, +d); target.setHours(0,0,0,0);
+    const diff = Math.round((target - today) / 86400000);
+    const wd = weekdays[target.getDay()];
+    const short = `${+m}/${+d}`;
+    if (diff === 0) return `${short}(${wd}) 今天`;
+    if (diff === 1) return `${short}(${wd}) 明天`;
+    if (diff === -1) return `${short}(${wd}) 昨天`;
+    const todayDay = today.getDay() || 7; // 1=Mon..7=Sun
+    const targetDay = target.getDay() || 7;
+    const thisWeekStart = new Date(today); thisWeekStart.setDate(today.getDate() - todayDay + 1);
+    const nextWeekEnd = new Date(thisWeekStart); nextWeekEnd.setDate(thisWeekStart.getDate() + 13);
+    if (diff > 1 && diff < 7 && target < new Date(thisWeekStart.getTime() + 7*86400000)) {
+      return `${short} 本週${wd}`;
+    }
+    if (diff > 0 && target >= new Date(thisWeekStart.getTime() + 7*86400000) && target < nextWeekEnd) {
+      return `${short} 下週${wd}`;
+    }
+    if (diff < 0 && diff > -7) return `${short}(${wd}) ${Math.abs(diff)}天前`;
+    return `${short}(${wd})`;
+  });
+}
 loadDashboard();
 </script>
 </body>
