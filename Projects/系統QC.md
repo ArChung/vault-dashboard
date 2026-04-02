@@ -1,4 +1,4 @@
-# Nancy
+# 系統QC
 > 狀態：等待
 > 客戶：Nancy
 > 窗口：Nancy
