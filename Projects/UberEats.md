@@ -1,7 +1,7 @@
 # Uber Eats 合作
 > 狀態：進行中
 > 客戶：Uber Eats
-> 窗口：
+> 窗口：Crystal(LINE)
 > 開始日期：2026-03-31
 
 ## 最新結論
