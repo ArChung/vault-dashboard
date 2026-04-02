@@ -8,12 +8,14 @@
 <meta http-equiv="Expires" content="0">
 <title>阿忠 Dashboard</title>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
   :root {
-    --bg: #f0f2f5;
-    --card: rgba(255,255,255,0.6);
-    --border: rgba(0,0,0,0.08);
-    --text: #1a1a2e;
-    --text-muted: #6b7280;
+    --bg: #f8f9fc;
+    --card: rgba(255,255,255,0.65);
+    --border: rgba(0,0,0,0.06);
+    --text: #1e1e2e;
+    --text-secondary: #4a4a5a;
+    --text-muted: #9ca3af;
     --red: #ef4444;
     --yellow: #f59e0b;
     --blue: #3b82f6;
@@ -21,93 +23,110 @@
     --purple: #8b5cf6;
     --accent1: #6366f1;
     --accent2: #ec4899;
+    --date-future: #6366f1;
+    --date-urgent: #f59e0b;
+    --annotation: #9ca3af;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
-    background: linear-gradient(135deg, #e0e7ff 0%, #f0f2f5 30%, #fdf2f8 60%, #ede9fe 100%);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    background-image:
+      radial-gradient(at 20% 0%, rgba(99,102,241,0.08) 0%, transparent 50%),
+      radial-gradient(at 80% 100%, rgba(236,72,153,0.06) 0%, transparent 50%),
+      radial-gradient(at 50% 50%, rgba(139,92,246,0.04) 0%, transparent 70%);
     background-attachment: fixed;
     color: var(--text);
-    padding: 20px;
-    max-width: 840px;
+    padding: 24px 20px;
+    max-width: 860px;
     margin: 0 auto;
     line-height: 1.6;
     min-height: 100vh;
   }
   h1 {
-    font-size: 1.8em; margin-bottom: 4px; font-weight: 800;
+    font-size: 1.6em; margin-bottom: 2px; font-weight: 800; letter-spacing: -0.02em;
     background: linear-gradient(135deg, var(--accent1), var(--accent2));
     -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
   }
-  .updated { color: var(--text-muted); font-size: 0.85em; margin-bottom: 24px; }
-
+  .updated { color: var(--text-muted); font-size: 0.8em; margin-bottom: 28px; letter-spacing: 0.01em; }
 
   .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
   .btn-refresh {
-    background: var(--card); border: 1px solid var(--border);
-    color: var(--text-muted); padding: 6px 14px; border-radius: 10px;
-    font-size: 0.85em; cursor: pointer; backdrop-filter: blur(10px);
-    transition: all 0.15s;
+    background: rgba(255,255,255,0.7); border: 1px solid var(--border);
+    color: var(--text-muted); padding: 6px 16px; border-radius: 10px;
+    font-size: 0.8em; cursor: pointer; backdrop-filter: blur(12px);
+    transition: all 0.2s; font-weight: 500;
   }
-  .btn-refresh:hover { background: #fff; color: var(--text); }
-
+  .btn-refresh:hover { background: #fff; color: var(--text); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
 
   .projects-title {
-    font-size: 1.25em; font-weight: 800; margin: 0 0 16px;
-    background: linear-gradient(135deg, var(--accent1), var(--purple));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    font-size: 1.1em; font-weight: 700; margin: 0 0 18px; letter-spacing: -0.01em;
+    color: var(--text-secondary);
   }
-  .projects-grid { display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 28px; }
+  .projects-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 28px; }
   @media (min-width: 560px) { .projects-grid { grid-template-columns: 1fr 1fr; } }
 
   .proj-card {
-    position: relative; border-radius: 16px; padding: 22px;
-    background: rgba(255,255,255,0.55);
-    backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-    border: 1px solid rgba(255,255,255,0.7);
-    box-shadow: 0 4px 24px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.8);
-    overflow: hidden; transition: all 0.2s;
+    position: relative; border-radius: 18px; padding: 24px;
+    background: rgba(255,255,255,0.6);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.8);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 6px 24px rgba(0,0,0,0.03);
+    overflow: hidden; transition: all 0.25s ease;
   }
   .proj-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8);
+    transform: translateY(-3px);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06), 0 12px 36px rgba(0,0,0,0.06);
   }
   .proj-card::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2.5px;
   }
-  .proj-card:nth-child(1)::before { background: linear-gradient(90deg, #6366f1, #8b5cf6); }
-  .proj-card:nth-child(2)::before { background: linear-gradient(90deg, #ec4899, #f43f5e); }
-  .proj-card:nth-child(3)::before { background: linear-gradient(90deg, #10b981, #14b8a6); }
-  .proj-card:nth-child(4)::before { background: linear-gradient(90deg, #f59e0b, #f97316); }
-  .proj-card:nth-child(5)::before { background: linear-gradient(90deg, #3b82f6, #6366f1); }
-  .proj-card:nth-child(n+6)::before { background: linear-gradient(90deg, #8b5cf6, #ec4899); }
+  .proj-card:nth-child(1)::before { background: linear-gradient(90deg, #6366f1, #818cf8); }
+  .proj-card:nth-child(2)::before { background: linear-gradient(90deg, #ec4899, #f472b6); }
+  .proj-card:nth-child(3)::before { background: linear-gradient(90deg, #10b981, #34d399); }
+  .proj-card:nth-child(4)::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+  .proj-card:nth-child(5)::before { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+  .proj-card:nth-child(n+6)::before { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
 
   .proj-contact-tag {
-    position: absolute; top: 12px; right: 12px;
-    font-size: 0.7em; font-weight: 600; color: var(--text-muted);
-    background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.15);
-    padding: 2px 10px; border-radius: 20px; letter-spacing: 0.02em;
+    position: absolute; top: 14px; right: 14px;
+    font-size: 0.68em; font-weight: 500; color: var(--text-muted);
+    background: rgba(99,102,241,0.06); border: 1px solid rgba(99,102,241,0.1);
+    padding: 3px 12px; border-radius: 20px; letter-spacing: 0.02em;
   }
-  .proj-card .proj-name { font-size: 1.05em; font-weight: 700; margin-bottom: 6px; color: var(--text); }
+  .proj-card .proj-name {
+    font-size: 1.05em; font-weight: 700; margin-bottom: 8px;
+    color: var(--text); letter-spacing: -0.01em;
+  }
   .proj-card .proj-status {
-    display: inline-block; font-size: 0.72em; font-weight: 600; letter-spacing: 0.02em;
-    padding: 3px 10px; border-radius: 20px; margin-bottom: 14px;
+    display: inline-block; font-size: 0.68em; font-weight: 600; letter-spacing: 0.03em;
+    padding: 3px 12px; border-radius: 20px; margin-bottom: 16px; text-transform: uppercase;
   }
-  .proj-status.active { background: rgba(16,185,129,0.12); color: #059669; }
-  .proj-status.waiting { background: rgba(245,158,11,0.12); color: #d97706; }
-  .proj-status.done { background: rgba(107,114,128,0.1); color: var(--text-muted); }
+  .proj-status.active { background: rgba(16,185,129,0.1); color: #059669; }
+  .proj-status.waiting { background: rgba(245,158,11,0.1); color: #d97706; }
+  .proj-status.done { background: rgba(107,114,128,0.08); color: var(--text-muted); }
 
+  .proj-items { display: flex; flex-direction: column; gap: 2px; }
   .proj-item {
-    display: flex; align-items: flex-start; gap: 10px; padding: 4px 0;
-    font-size: 0.88em; line-height: 1.5;
+    display: flex; align-items: flex-start; gap: 10px; padding: 5px 0;
+    font-size: 0.85em; line-height: 1.55; color: var(--text-secondary);
   }
   .proj-item .dot {
-    width: 7px; height: 7px; min-width: 7px; border-radius: 50%; margin-top: 7px;
-    background: var(--accent1); opacity: 0.7;
+    width: 6px; height: 6px; min-width: 6px; border-radius: 50%; margin-top: 8px;
+    background: var(--accent1); opacity: 0.5;
   }
-  .proj-item.done .dot { background: var(--green); opacity: 0.5; }
-  .proj-item.done span { text-decoration: line-through; color: var(--text-muted); }
-  .proj-empty { color: var(--text-muted); font-size: 0.85em; font-style: italic; }
+  .proj-item.done .dot { background: var(--green); opacity: 0.35; }
+  .proj-item.done span { text-decoration: line-through; color: var(--text-muted); opacity: 0.7; }
+  .proj-empty { color: var(--text-muted); font-size: 0.82em; font-style: italic; }
+
+  .date-tag {
+    display: inline-block; font-weight: 600; font-size: 0.92em;
+    color: var(--date-future); letter-spacing: 0.01em;
+  }
+  .date-tag.past { color: var(--text-muted); font-weight: 500; }
+  .date-tag.today { color: var(--red); font-weight: 700; }
+  .date-tag.tomorrow { color: var(--date-urgent); font-weight: 600; }
+  .annotation { color: var(--annotation); font-size: 0.92em; }
 
   .toast {
     position: fixed; bottom: 20px; right: 20px;
@@ -230,12 +249,12 @@ function renderProjectCard(proj) {
   if (proj.items.length === 0) {
     itemsHtml = '<div class="proj-empty">（無待辦項目）</div>';
   } else {
-    itemsHtml = proj.items.map(item =>
+    itemsHtml = '<div class="proj-items">' + proj.items.map(item =>
       `<div class="proj-item ${item.checked ? 'done' : ''}">
         <div class="dot"></div>
         <span>${formatDates(escapeHtml(item.text))}</span>
       </div>`
-    ).join('');
+    ).join('') + '</div>';
   }
 
   return `<div class="proj-card">
@@ -251,27 +270,39 @@ function escapeHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').rep
 function formatDates(text) {
   const weekdays = ['日','一','二','三','四','五','六'];
   const today = new Date(); today.setHours(0,0,0,0);
-  return text.replace(/(\d{4})-(\d{2})-(\d{2})/g, (match, y, m, d) => {
+  // 1) Replace dates with styled spans
+  let result = text.replace(/(\d{4})-(\d{2})-(\d{2})/g, (match, y, m, d) => {
     const target = new Date(+y, +m - 1, +d); target.setHours(0,0,0,0);
     const diff = Math.round((target - today) / 86400000);
     const wd = weekdays[target.getDay()];
     const short = `${+m}/${+d}`;
-    if (diff === 0) return `${short}(${wd}) 今天`;
-    if (diff === 1) return `${short}(${wd}) 明天`;
-    if (diff === -1) return `${short}(${wd}) 昨天`;
-    const todayDay = today.getDay() || 7; // 1=Mon..7=Sun
-    const targetDay = target.getDay() || 7;
-    const thisWeekStart = new Date(today); thisWeekStart.setDate(today.getDate() - todayDay + 1);
-    const nextWeekEnd = new Date(thisWeekStart); nextWeekEnd.setDate(thisWeekStart.getDate() + 13);
-    if (diff > 1 && diff < 7 && target < new Date(thisWeekStart.getTime() + 7*86400000)) {
-      return `${short} 本週${wd}`;
+    let label, cls;
+    if (diff === 0) { label = `${short}(${wd}) 今天`; cls = 'today'; }
+    else if (diff === 1) { label = `${short}(${wd}) 明天`; cls = 'tomorrow'; }
+    else if (diff === -1) { label = `${short}(${wd}) 昨天`; cls = 'past'; }
+    else {
+      const todayDay = today.getDay() || 7;
+      const thisWeekStart = new Date(today); thisWeekStart.setDate(today.getDate() - todayDay + 1);
+      const nextWeekEnd = new Date(thisWeekStart); nextWeekEnd.setDate(thisWeekStart.getDate() + 13);
+      if (diff > 1 && diff < 7 && target < new Date(thisWeekStart.getTime() + 7*86400000)) {
+        label = `${short} 本週${wd}`; cls = '';
+      } else if (diff > 0 && target >= new Date(thisWeekStart.getTime() + 7*86400000) && target < nextWeekEnd) {
+        label = `${short} 下週${wd}`; cls = '';
+      } else if (diff < 0) {
+        label = `${short}(${wd})`; cls = 'past';
+      } else {
+        label = `${short}(${wd})`; cls = '';
+      }
     }
-    if (diff > 0 && target >= new Date(thisWeekStart.getTime() + 7*86400000) && target < nextWeekEnd) {
-      return `${short} 下週${wd}`;
-    }
-    if (diff < 0 && diff > -7) return `${short}(${wd}) ${Math.abs(diff)}天前`;
-    return `${short}(${wd})`;
+    return `<span class="date-tag ${cls}">${label}</span>`;
   });
+  // 2) Wrap parenthetical annotations in styled spans
+  result = result.replace(/（([^）]+)）/g, '<span class="annotation">（$1）</span>');
+  result = result.replace(/\(([^)]+)\)/g, (match) => {
+    if (match.includes('date-tag')) return match; // skip already-wrapped date tags
+    return `<span class="annotation">${match}</span>`;
+  });
+  return result;
 }
 loadDashboard();
 </script>
