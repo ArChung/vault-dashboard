@@ -183,7 +183,6 @@
 <script>
 const OWNER = 'ArChung';
 const REPO = 'vault-dashboard';
-const FILE_PATH = 'Dashboard.md';
 const BRANCH = 'master';
 
 function showToast(msg, isError) {
@@ -194,7 +193,6 @@ function showToast(msg, isError) {
   setTimeout(() => t.style.display = 'none', 2500);
 }
 
-// 公開讀取，不需要 token
 async function fetchPublic(path) {
   const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}?ref=${BRANCH}`, {
     headers: { 'Accept': 'application/vnd.github.v3+json' }
@@ -208,33 +206,19 @@ async function fetchPublic(path) {
   return res.json();
 }
 
-async function loadDashboard() {
-  try {
-    const data = await fetchPublic(FILE_PATH);
-    currentSha = data.sha;
-    currentContent = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ''))));
-    renderDashboard(currentContent);
-  } catch (e) {
-    document.getElementById('app').innerHTML = `<div style="text-align:center;padding:60px;color:var(--red);font-size:0.9em;">${escapeHtml(e.message)}<br><button class="btn-refresh" style="margin-top:16px;" onclick="loadDashboard()">重新整理</button></div>`;
-  }
-}
+async function loadApp() {
+  const now = new Date();
+  const ts = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
 
-function renderDashboard(md) {
-  const lines = md.split('\n');
-  const headerLine = lines.find(l => l.startsWith('> 最後更新'));
-
-  let html = `
+  document.getElementById('app').innerHTML = `
     <div class="header">
       <h1>Dashboard</h1>
-      <button class="btn-refresh" onclick="loadDashboard()">重新整理</button>
+      <button class="btn-refresh" onclick="loadApp()">重新整理</button>
     </div>
-    <div class="updated">${headerLine || ''}</div>
+    <div class="updated">讀取時間：${ts}</div>
+    <div class="projects-title">專案總覽</div>
+    <div class="projects-grid" id="projectsGrid"><div class="proj-empty">載入中...</div></div>
   `;
-
-  html += `<div class="projects-title">專案總覽</div>`;
-  html += `<div class="projects-grid" id="projectsGrid"><div class="proj-empty">載入中...</div></div>`;
-
-  document.getElementById('app').innerHTML = html;
   loadProjects();
 }
 
@@ -256,7 +240,7 @@ async function loadProjects() {
     grid.innerHTML = cards.map(renderProjectCard).join('');
   } catch (e) {
     const grid = document.getElementById('projectsGrid');
-    if (grid) grid.innerHTML = '<div class="proj-empty">載入專案失敗</div>';
+    if (grid) grid.innerHTML = `<div class="proj-empty">${escapeHtml(e.message)}<br><button class="btn-refresh" style="margin-top:12px;" onclick="loadApp()">重新整理</button></div>`;
   }
 }
 
@@ -384,7 +368,7 @@ function formatDates(text) {
   });
   return result;
 }
-loadDashboard();
+loadApp();
 </script>
 </body>
 </html>
