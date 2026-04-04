@@ -2,6 +2,7 @@
 > 狀態：進行中
 > 客戶：Uber Eats
 > 窗口：Crystal(LINE)
+> 報價：64,000 未稅
 > 開始日期：2026-03-31
 
 ## 最新結論
@@ -18,5 +19,6 @@
 - [ ] 夏日只想躺在家 Podcast Reels（剩 2 篇）
 
 ## 備註
-- 強強滾一家：半年內 2 篇 Reels，低曝光提及 Uber Eats
-- 夏日只想躺在家：半年內 2 篇 Podcast Reels，低曝光提及 Uber Eats
+- 強強滾一家：半年內 2 篇 Reels，2 萬/支，小計 40,000
+- 夏日只想躺在家：半年內 2 篇 Podcast Reels，1.2 萬/支，小計 24,000
+- 低曝光提及 Uber Eats
