@@ -199,6 +199,12 @@ async function fetchPublic(path) {
   const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}?ref=${BRANCH}`, {
     headers: { 'Accept': 'application/vnd.github.v3+json' }
   });
+  if (res.status === 403) {
+    const reset = res.headers.get('x-ratelimit-reset');
+    const wait = reset ? Math.ceil((parseInt(reset) * 1000 - Date.now()) / 60000) : '?';
+    throw new Error(`API 流量限制，請約 ${wait} 分鐘後重試`);
+  }
+  if (!res.ok) throw new Error(`GitHub API 錯誤 (${res.status})`);
   return res.json();
 }
 
@@ -209,7 +215,7 @@ async function loadDashboard() {
     currentContent = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ''))));
     renderDashboard(currentContent);
   } catch (e) {
-    document.getElementById('app').innerHTML = '<div style="text-align:center;padding:60px;color:var(--red);">載入失敗，請重新整理</div>';
+    document.getElementById('app').innerHTML = `<div style="text-align:center;padding:60px;color:var(--red);font-size:0.9em;">${escapeHtml(e.message)}<br><button class="btn-refresh" style="margin-top:16px;" onclick="loadDashboard()">重新整理</button></div>`;
   }
 }
 
