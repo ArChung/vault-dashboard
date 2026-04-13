@@ -284,6 +284,89 @@
   }
   .annotation { color: var(--blue); opacity: 0.55; font-size: 0.92em; }
 
+  /* Brand section — 強強滾一家 */
+  .brand-section { margin-top: 48px; }
+  .brand-title {
+    font-family: 'Anton', 'Noto Sans TC', sans-serif;
+    font-weight: 900;
+    font-size: 1.9em;
+    letter-spacing: 0.04em;
+    margin: 0 0 10px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: var(--ink);
+  }
+  .brand-title::before {
+    content: '';
+    width: 16px; height: 16px;
+    background: var(--pink);
+    border: 2px solid var(--ink);
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+  .brand-title .zh {
+    font-family: 'Noto Sans TC', sans-serif;
+    font-weight: 900; font-size: 0.55em;
+    color: var(--ink); opacity: 0.6;
+    letter-spacing: 0; margin-top: 4px;
+  }
+  .brand-sub {
+    font-family: 'Noto Sans TC', sans-serif;
+    font-weight: 900; font-size: 1.05em;
+    margin: 20px 0 14px; color: var(--ink);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .brand-sub::before {
+    content: ''; width: 10px; height: 10px;
+    background: var(--yellow); border: 2px solid var(--ink);
+    border-radius: 3px; flex-shrink: 0;
+  }
+
+  .brand-card {
+    position: relative;
+    background: #fff;
+    border: 2px solid var(--ink);
+    border-radius: 16px;
+    padding: 22px;
+    box-shadow: 4px 4px 0 var(--ink);
+    transition: all 0.15s ease;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    border-left: 5px solid var(--pink);
+  }
+  .brand-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--ink);
+  }
+  .brand-card .proj-name { padding-right: 90px; }
+  .brand-type-tag {
+    position: absolute; top: 16px; right: 16px;
+    font-size: 0.7em; font-weight: 900;
+    color: #fff; background: var(--pink);
+    border: 2px solid var(--ink);
+    padding: 3px 12px; border-radius: 999px;
+  }
+
+  .group-buy-box {
+    background: #fff;
+    border: 2px solid var(--ink);
+    border-radius: 16px;
+    padding: 20px 22px;
+    box-shadow: 4px 4px 0 var(--ink);
+  }
+  .group-buy-item {
+    display: flex; align-items: flex-start; gap: 11px;
+    padding: 7px 0; font-size: 0.88em; line-height: 1.55;
+    color: var(--ink); border-bottom: 1px solid var(--gray-soft);
+  }
+  .group-buy-item:last-child { border-bottom: none; }
+  .group-buy-item .dot {
+    width: 8px; height: 8px; min-width: 8px;
+    border-radius: 2px; margin-top: 8px;
+    background: var(--pink);
+  }
+
   .toast {
     position: fixed; bottom: 20px; right: 20px;
     background: var(--green);
@@ -356,9 +439,18 @@ async function loadApp() {
     <div class="main">
       <div class="projects-title">PROJECTS <span class="zh">／ 專案總覽</span></div>
       <div class="projects-grid" id="projectsGrid"><div class="proj-empty">載入中...</div></div>
+
+      <div class="brand-section">
+        <div class="brand-title">QQGFAMILY <span class="zh">／ 強強滾一家</span></div>
+        <div class="brand-sub">業配 & Reels</div>
+        <div class="projects-grid" id="brandGrid"><div class="proj-empty">載入中...</div></div>
+        <div class="brand-sub">團購 & 公關品</div>
+        <div class="group-buy-box" id="groupBuyBox"><div class="proj-empty">載入中...</div></div>
+      </div>
     </div>
   `;
   loadProjects();
+  loadBrand();
 }
 
 async function loadProjects() {
@@ -507,6 +599,109 @@ function formatDates(text) {
   });
   return result;
 }
+async function loadBrand() {
+  const brandFiles = [
+    { path: 'Brand/%E5%BC%B7%E5%BC%B7%E6%BB%BE%E4%B8%80%E5%AE%B6-%E6%A5%AD%E9%85%8D.md', type: '業配' },
+    { path: 'Brand/%E5%BC%B7%E5%BC%B7%E6%BB%BE%E4%B8%80%E5%AE%B6-Reels.md', type: 'Reels' },
+  ];
+  try {
+    const allCards = [];
+    for (const f of brandFiles) {
+      try {
+        const data = await fetchPublic(f.path);
+        const content = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ''))));
+        const items = parseBrandCollab(content, f.type);
+        allCards.push(...items);
+      } catch(e) { /* file may not exist yet */ }
+    }
+    const grid = document.getElementById('brandGrid');
+    if (!grid) return;
+    if (allCards.length === 0) {
+      grid.innerHTML = '<div class="proj-empty">（目前沒有進行中的業配或 Reels）</div>';
+    } else {
+      grid.innerHTML = allCards.map(renderBrandCard).join('');
+    }
+  } catch(e) {
+    const grid = document.getElementById('brandGrid');
+    if (grid) grid.innerHTML = `<div class="proj-empty">${escapeHtml(e.message)}</div>`;
+  }
+
+  // Group buy
+  try {
+    const data = await fetchPublic('Brand/%E5%BC%B7%E5%BC%B7%E6%BB%BE%E4%B8%80%E5%AE%B6-%E5%9C%98%E8%B3%BC.md');
+    const content = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ''))));
+    const items = parseGroupBuy(content);
+    const box = document.getElementById('groupBuyBox');
+    if (!box) return;
+    if (items.length === 0) {
+      box.innerHTML = '<div class="proj-empty">（目前沒有進行中的團購）</div>';
+    } else {
+      box.innerHTML = items.map(text =>
+        `<div class="group-buy-item"><div class="dot"></div><span>${formatDates(escapeHtml(text))}</span></div>`
+      ).join('');
+    }
+  } catch(e) {
+    const box = document.getElementById('groupBuyBox');
+    if (box) box.innerHTML = '<div class="proj-empty">（目前沒有進行中的團購）</div>';
+  }
+}
+
+function parseBrandCollab(md, type) {
+  const sections = md.split(/^## /m).slice(1);
+  return sections.map(sec => {
+    const lines = sec.split('\n');
+    const name = lines[0].trim();
+    const statusLine = lines.find(l => l.startsWith('> 狀態：')) || '';
+    const status = statusLine.replace('> 狀態：', '').trim();
+    const contactLine = lines.find(l => l.startsWith('> 窗口：')) || '';
+    const contact = contactLine.replace('> 窗口：', '').trim();
+    const feeLine = lines.find(l => l.startsWith('> 費用：')) || '';
+    const fee = feeLine.replace('> 費用：', '').trim();
+    const bullets = lines.filter(l => l.match(/^- /)).map(l => l.replace(/^- /, ''));
+    return { name, status, contact, fee, type, bullets };
+  }).filter(item => item.name);
+}
+
+function parseGroupBuy(md) {
+  const lines = md.split('\n');
+  let inActive = false;
+  const items = [];
+  for (const line of lines) {
+    if (line.startsWith('## 進行中')) { inActive = true; continue; }
+    if (inActive && line.startsWith('## ')) break;
+    if (inActive && line.match(/^- /)) {
+      items.push(line.replace(/^- /, ''));
+    }
+  }
+  return items;
+}
+
+function renderBrandCard(item) {
+  let statusClass = 'active';
+  if (item.status.includes('等待')) statusClass = 'waiting';
+  if (item.status.includes('完成') || item.status.includes('結束')) statusClass = 'done';
+
+  const bulletsHtml = item.bullets.length > 0
+    ? '<div class="proj-items">' + item.bullets.map(b =>
+        `<div class="proj-item"><div class="dot"></div><span>${formatDates(escapeHtml(b))}</span></div>`
+      ).join('') + '</div>'
+    : '<div class="proj-empty">（無進度項目）</div>';
+
+  let footerHtml = '';
+  if (item.fee) {
+    footerHtml = `<div class="proj-footer"><span class="proj-price">${escapeHtml(item.fee)}</span></div>`;
+  }
+
+  return `<div class="brand-card">
+    <div class="proj-name">${escapeHtml(item.name)}</div>
+    ${item.status ? `<div class="proj-status ${statusClass}">${escapeHtml(item.status)}</div>` : ''}
+    <div class="brand-type-tag">${escapeHtml(item.type)}</div>
+    ${item.contact ? `<div class="proj-contact-tag" style="top:42px">${escapeHtml(item.contact)}</div>` : ''}
+    ${bulletsHtml}
+    ${footerHtml}
+  </div>`;
+}
+
 loadApp();
 </script>
 </body>
