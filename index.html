@@ -260,13 +260,13 @@
     gap: 18px;
   }
 
-  /* —— Card v2 (unified) —— */
+  /* —— Card v3 (editorial minimal) —— */
   .card {
     position: relative;
     background: var(--card-bg);
     border: 1px solid var(--hairline);
     border-radius: var(--r-md);
-    padding: 20px 22px 18px;
+    padding: 22px 24px 54px;
     box-shadow: var(--shadow-sm);
     transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.2s ease;
     display: flex;
@@ -298,85 +298,50 @@
     20%, 60% { box-shadow: 0 0 0 4px var(--moss-200), var(--shadow-md); }
   }
 
-  .card-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
-    min-height: 22px;
-  }
-  .card-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 0.66em;
-    font-weight: 800;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    padding: 3px 10px;
-    border-radius: 999px;
-    background: var(--moss-50);
-    color: var(--moss-700);
-  }
-  .card-chip.is-brand-promo { background: rgba(200,144,122,0.16); color: var(--clay-pink); }
-  .card-chip.is-brand-reels { background: rgba(155,174,150,0.22); color: #6E8B70; }
-  .card-chip.is-brand-group { background: rgba(212,184,150,0.28); color: #8A6D43; }
-
-  .card-contact {
-    font-size: 0.74em;
-    font-weight: 700;
-    color: var(--moss-700);
-    background: var(--moss-50);
-    padding: 3px 10px;
-    border-radius: 999px;
-  }
-
   .card-title {
     font-family: 'Noto Sans TC', sans-serif;
     font-weight: 900;
-    font-size: 1.12em;
+    font-size: 1.25em;
     color: var(--ink);
-    letter-spacing: -0.005em;
-    line-height: 1.35;
+    letter-spacing: -0.008em;
+    line-height: 1.28;
     display: flex;
-    align-items: center;
+    align-items: baseline;
     gap: 8px;
+    margin-bottom: 10px;
   }
   .card-title .pause-icon {
     color: var(--status-wait);
     flex-shrink: 0;
     display: inline-flex;
     align-items: center;
+    transform: translateY(2px);
   }
   .card-title .pause-icon svg { width: 14px; height: 14px; display: block; }
 
-  .card-status-row {
+  .card-tags {
     display: flex;
-    align-items: center;
+    gap: 8px;
     flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 8px;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
   }
-  .status-pill {
-    display: inline-flex;
-    align-items: center;
-    font-size: 0.7em;
+  .card-tags .pill {
+    font-size: 0.72em;
     font-weight: 800;
     letter-spacing: 0.08em;
-    padding: 4px 11px;
+    padding: 4px 12px;
     border-radius: 999px;
-    color: #fff;
-    background: var(--status-active);
+    display: inline-flex;
+    align-items: center;
   }
-  .status-pill.is-waiting { background: var(--status-wait); color: #3D2E12; }
-  .status-pill.is-done    { background: var(--status-done); color: #2E332E; }
-  .status-pill.is-hold    { background: var(--status-hold); color: #fff; }
-  .card-meta-text {
-    font-size: 0.74em;
-    color: var(--ink-mute);
-    font-weight: 600;
+  .pill-status.is-active  { background: var(--moss-700); color: #fff; }
+  .pill-status.is-waiting { background: var(--status-wait); color: #3D2E12; }
+  .pill-status.is-done    { background: var(--status-done); color: #2E332E; }
+  .pill-status.is-hold    { background: var(--status-hold); color: #fff; }
+  .pill-contact {
+    background: var(--moss-50);
+    color: var(--moss-700);
+    letter-spacing: 0.02em;
   }
 
   hr.hairline {
@@ -431,67 +396,50 @@
   }
 
   .card-footer {
-    padding-top: 12px;
+    padding-top: 14px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
   }
-  .card-price-row {
+  .card-money {
     display: flex;
-    justify-content: space-between;
     align-items: baseline;
-    gap: 12px;
+    flex-wrap: wrap;
+    gap: 14px;
   }
   .card-price {
     font-family: 'Anton', 'Noto Sans TC', sans-serif;
     font-weight: 900;
     color: var(--ink);
-    font-size: 1.18em;
+    font-size: 1.42em;
     letter-spacing: 0.02em;
+    line-height: 1;
   }
   .card-price .unit {
     font-family: 'Noto Sans TC', sans-serif;
     font-weight: 700;
-    font-size: 0.62em;
+    font-size: 0.46em;
     color: var(--ink-soft);
-    margin-left: 4px;
-    letter-spacing: 0.04em;
+    margin-left: 6px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
   }
   .card-price.na {
     font-family: 'Noto Sans TC', sans-serif;
     font-weight: 700;
     color: var(--ink-mute);
-    font-size: 0.92em;
+    font-size: 0.88em;
   }
   .card-invoiced {
     font-size: 0.78em;
     color: var(--ink-soft);
     font-weight: 700;
+    letter-spacing: 0.02em;
   }
-  .progress-bar {
-    width: 100%;
-    height: 6px;
-    border-radius: 999px;
-    background: var(--paper-3);
-    overflow: hidden;
-  }
-  .progress-bar > div {
-    height: 100%;
-    background: var(--moss-500);
-    transition: width 0.4s ease;
-  }
-  .progress-labels {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.72em;
-    font-weight: 700;
-    color: var(--ink-soft);
-  }
-  .splits-row {
+  .card-splits {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-    padding-top: 4px;
   }
   .split-tag {
     font-size: 0.7em;
@@ -500,22 +448,35 @@
     background: var(--sand);
     padding: 3px 10px;
     border-radius: 999px;
+    letter-spacing: 0.02em;
   }
   .fee-line {
     font-family: 'Anton', 'Noto Sans TC', sans-serif;
     font-weight: 900;
-    font-size: 1.0em;
+    font-size: 0.96em;
     color: var(--ink);
     letter-spacing: 0.01em;
     line-height: 1.5;
   }
 
-  .card-cal-btn {
+  .card-meta-bottom {
     position: absolute;
-    bottom: 12px;
-    right: 12px;
-    width: 30px;
-    height: 30px;
+    left: 24px;
+    right: 14px;
+    bottom: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.7em;
+    color: var(--ink-mute);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    z-index: 2;
+  }
+  .card-cal-btn {
+    width: 28px;
+    height: 28px;
     border-radius: 999px;
     background: var(--moss-50);
     color: var(--moss-700);
@@ -524,12 +485,11 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    z-index: 2;
     transition: all 0.15s ease;
+    flex-shrink: 0;
   }
   .card-cal-btn:hover { background: var(--moss-700); color: #fff; }
-  .card-cal-btn svg { width: 14px; height: 14px; }
-  .card.has-footer .card-cal-btn { bottom: 12px; }
+  .card-cal-btn svg { width: 13px; height: 13px; }
 
   /* —— Date tags (inline) —— */
   .date-tag {
@@ -556,145 +516,36 @@
   }
   .annotation { color: var(--moss-500); opacity: 0.8; font-size: 0.92em; }
 
-  /* —— Calendar popover (per-card) —— */
-  .cal-popover {
-    position: absolute;
-    background: var(--card-bg);
-    border: 1px solid var(--hairline);
-    border-radius: var(--r-md);
-    box-shadow: var(--shadow-lg);
-    padding: 16px;
-    width: 320px;
-    z-index: 100;
-    font-size: 0.88em;
-  }
-  .cal-popover-title {
-    font-weight: 900;
-    font-size: 1.0em;
-    color: var(--moss-700);
-    margin-bottom: 10px;
-  }
-  .cal-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-    font-size: 0.92em;
-    font-weight: 800;
-    color: var(--ink);
-  }
-  .cal-nav button {
-    width: 26px; height: 26px;
-    border-radius: 999px;
-    border: 0;
-    background: var(--paper-2);
-    color: var(--ink);
-    cursor: pointer;
-    font-weight: 900;
-    line-height: 1;
-  }
-  .cal-nav button:hover { background: var(--moss-50); }
-  .cal-nav button svg { width: 14px; height: 14px; display: block; margin: auto; }
-  .cal-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 2px;
-    font-size: 0.78em;
-  }
-  .cal-grid .wd {
-    text-align: center;
-    color: var(--ink-mute);
-    font-weight: 700;
-    padding: 4px 0;
-  }
-  .cal-cell {
-    aspect-ratio: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 6px;
-    color: var(--ink-soft);
-    font-weight: 600;
-    cursor: default;
-    position: relative;
-  }
-  .cal-cell.other { color: var(--ink-mute); opacity: 0.45; }
-  .cal-cell.today {
-    box-shadow: inset 0 0 0 1.5px var(--terracotta);
-    color: var(--terracotta);
-    font-weight: 900;
-  }
-  .cal-cell.has-event {
-    background: var(--moss-700);
-    color: #fff;
-    font-weight: 800;
-    cursor: pointer;
-  }
-  .cal-cell.has-event:hover { background: var(--moss-900); }
-  .cal-cell.in-range {
-    background: var(--moss-200);
-    color: var(--moss-900);
-  }
-  .cal-events {
-    margin-top: 12px;
-    padding-top: 10px;
-    border-top: 1px solid var(--hairline-soft);
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    max-height: 200px;
-    overflow-y: auto;
-  }
-  .cal-event-row {
-    display: flex;
-    gap: 8px;
-    font-size: 0.85em;
-    line-height: 1.4;
-  }
-  .cal-event-row .d {
-    font-weight: 800;
-    color: var(--moss-700);
-    flex-shrink: 0;
-    min-width: 44px;
-  }
-  .cal-event-row .t {
-    color: var(--ink-mute);
-    margin-right: 4px;
-    font-weight: 600;
-  }
-
-  /* —— Master calendar modal —— */
+  /* —— Fullscreen calendar modal (Google Calendar-ish) —— */
   .modal-backdrop {
     position: fixed; inset: 0;
-    background: rgba(31,42,36,0.55);
+    background: rgba(31,42,36,0.35);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
     z-index: 200;
     display: none;
-    align-items: stretch;
-    justify-content: center;
-    padding: 20px;
   }
-  .modal-backdrop.open { display: flex; }
+  .modal-backdrop.open { display: block; }
   .modal-card {
+    position: absolute;
+    inset: 0;
     background: var(--paper);
-    border-radius: var(--r-lg);
-    width: 100%;
-    max-width: 1080px;
-    max-height: 90vh;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    box-shadow: var(--shadow-lg);
   }
   .modal-header {
-    padding: 18px 22px;
+    padding: 14px 24px;
     border-bottom: 1px solid var(--hairline);
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
     flex-wrap: wrap;
+    background: var(--card-bg);
+  }
+  .modal-header-left {
+    display: flex; align-items: center; gap: 12px;
   }
   .modal-header h2 {
     font-family: 'Noto Sans TC', sans-serif;
@@ -706,7 +557,52 @@
     gap: 10px;
   }
   .modal-header h2 svg { width: 20px; height: 20px; color: var(--moss-700); }
-  .modal-close {
+  .modal-header .filter-label {
+    font-size: 0.78em;
+    font-weight: 700;
+    color: var(--moss-700);
+    background: var(--moss-50);
+    padding: 4px 12px;
+    border-radius: 999px;
+    letter-spacing: 0.02em;
+  }
+  .modal-nav {
+    display: flex; align-items: center; gap: 6px;
+  }
+  .modal-nav-btn {
+    width: 36px; height: 36px;
+    border-radius: 999px;
+    border: 0;
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    font-size: 1.15em;
+    line-height: 1;
+    font-weight: 700;
+    transition: background 0.15s ease;
+  }
+  .modal-nav-btn:hover { background: var(--paper-2); }
+  .modal-nav-ym {
+    font-weight: 900;
+    font-size: 1.0em;
+    color: var(--ink);
+    min-width: 96px;
+    text-align: center;
+    letter-spacing: 0.02em;
+  }
+  .modal-today-btn {
+    font-size: 0.78em;
+    font-weight: 700;
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--hairline);
+    background: var(--card-bg);
+    color: var(--ink);
+    cursor: pointer;
+    letter-spacing: 0.02em;
+  }
+  .modal-today-btn:hover { border-color: var(--moss-500); }
+  .modal-close-x {
     width: 36px; height: 36px;
     border-radius: 999px;
     border: 0;
@@ -715,83 +611,86 @@
     cursor: pointer;
     font-size: 1.1em;
     line-height: 1;
+    margin-left: 6px;
   }
+  .modal-close-x:hover { background: var(--paper-3); }
+
   .modal-body {
     flex: 1;
     overflow: hidden;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-  @media (min-width: 820px) {
-    .modal-body { grid-template-columns: 1.85fr 1fr; }
-  }
-  .modal-cal-pane {
-    padding: 18px 22px;
-    overflow-y: auto;
-  }
-  .modal-side {
-    border-top: 1px solid var(--hairline);
-    background: var(--card-bg);
-    padding: 18px 22px;
-    overflow-y: auto;
-  }
-  @media (min-width: 820px) {
-    .modal-side { border-top: 0; border-left: 1px solid var(--hairline); }
-  }
-  .modal-side h3 {
-    font-size: 0.88em;
-    font-weight: 800;
-    color: var(--moss-700);
-    margin-bottom: 12px;
-    letter-spacing: 0.04em;
+    display: flex;
+    flex-direction: column;
+    padding: 14px 22px 22px;
   }
   .mc-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 4px;
+    grid-auto-rows: 1fr;
+    gap: 1px;
+    background: var(--hairline-soft);
+    border: 1px solid var(--hairline-soft);
+    border-radius: var(--r-sm);
+    overflow: hidden;
+    flex: 1;
+    min-height: 0;
     font-size: 0.85em;
   }
   .mc-grid .wd {
     text-align: center;
     color: var(--ink-mute);
     font-weight: 800;
-    padding: 6px 0;
-    font-size: 0.85em;
-    letter-spacing: 0.04em;
+    padding: 8px 0;
+    font-size: 0.78em;
+    letter-spacing: 0.08em;
+    background: var(--card-bg);
+    text-transform: uppercase;
   }
+  .mc-grid .wd.weekend { color: var(--ink-mute); opacity: 0.75; }
   .mc-cell {
-    background: var(--paper-2);
-    border-radius: var(--r-sm);
-    min-height: 92px;
-    padding: 6px 7px;
+    background: var(--card-bg);
+    min-height: 0;
+    padding: 6px 8px;
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 2px;
     cursor: pointer;
-    transition: background 0.15s ease;
+    transition: background 0.12s ease;
+    overflow: hidden;
   }
-  .mc-cell:hover { background: var(--paper-3); }
-  .mc-cell.other { opacity: 0.5; }
-  .mc-cell.today { box-shadow: inset 0 0 0 1.5px var(--terracotta); }
+  .mc-cell:hover { background: var(--paper-2); }
+  .mc-cell.other { background: var(--paper-2); }
+  .mc-cell.other .day-num { color: var(--ink-mute); opacity: 0.55; }
+  .mc-cell.weekend .day-num { color: var(--ink-mute); }
   .mc-cell .day-num {
-    font-weight: 800;
-    font-size: 0.86em;
-    color: var(--ink);
-  }
-  .mc-cell.today .day-num { color: var(--terracotta); }
-  .mc-event {
-    font-size: 0.7em;
     font-weight: 700;
-    padding: 2px 6px;
-    border-radius: 4px;
+    font-size: 0.82em;
+    color: var(--ink);
+    padding: 2px 4px;
+    line-height: 1;
+    align-self: flex-start;
+  }
+  .mc-cell.today .day-num {
+    background: var(--terracotta);
+    color: #fff;
+    border-radius: 999px;
+    padding: 3px 7px;
+    font-weight: 900;
+  }
+  .mc-event {
+    font-size: 0.74em;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 3px;
     color: #fff;
     background: var(--moss-700);
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     cursor: pointer;
+    letter-spacing: 0.01em;
+    line-height: 1.4;
   }
+  .mc-event:hover { filter: brightness(1.08); }
   .mc-event.brand-promo { background: var(--clay-pink); }
   .mc-event.brand-reels { background: var(--sage); color: #2A3A2C; }
   .mc-event.brand-group { background: var(--sand); color: #5C4528; }
@@ -802,35 +701,82 @@
     font-size: 0.68em;
     color: var(--ink-soft);
     font-weight: 700;
+    padding: 0 4px;
   }
-  .mc-list {
+
+  /* —— Day sheet (bottom) —— */
+  .day-sheet {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    max-height: 58vh;
+    background: var(--paper);
+    border-top: 1px solid var(--hairline);
+    box-shadow: 0 -18px 40px -20px rgba(31,42,36,0.22);
+    padding: 18px 24px 24px;
+    transform: translateY(100%);
+    transition: transform 0.24s ease;
+    z-index: 210;
+    overflow-y: auto;
+  }
+  .day-sheet.open { transform: translateY(0); }
+  .day-sheet-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .day-sheet-head h3 {
+    font-family: 'Noto Sans TC', sans-serif;
+    font-weight: 900;
+    font-size: 1.1em;
+    color: var(--ink);
+    letter-spacing: 0.01em;
+  }
+  .day-sheet-head .count {
+    font-weight: 700;
+    color: var(--ink-mute);
+    font-size: 0.88em;
+    margin-left: 8px;
+  }
+  .day-sheet-list {
     display: flex;
     flex-direction: column;
     gap: 8px;
   }
-  .mc-list-row {
-    background: var(--paper-2);
-    padding: 10px 12px;
+  .ds-row {
+    background: var(--card-bg);
+    border: 1px solid var(--hairline-soft);
+    padding: 12px 14px;
     border-radius: var(--r-sm);
     cursor: pointer;
-    transition: background 0.15s ease;
+    transition: border-color 0.15s ease, background 0.15s ease;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
   }
-  .mc-list-row:hover { background: var(--paper-3); }
-  .mc-list-row .when {
-    font-size: 0.78em;
-    color: var(--moss-700);
-    font-weight: 800;
-    margin-bottom: 3px;
+  .ds-row:hover { border-color: var(--moss-500); background: var(--paper-2); }
+  .ds-row .ds-bar {
+    width: 3px;
+    align-self: stretch;
+    border-radius: 999px;
+    background: var(--moss-700);
+    flex-shrink: 0;
   }
-  .mc-list-row .what {
-    font-size: 0.86em;
+  .ds-row.brand-promo .ds-bar { background: var(--clay-pink); }
+  .ds-row.brand-reels .ds-bar { background: var(--sage); }
+  .ds-row.brand-group .ds-bar { background: var(--sand); }
+  .ds-row .ds-main { flex: 1; }
+  .ds-row .ds-what {
+    font-size: 0.92em;
     color: var(--ink);
-    line-height: 1.4;
+    line-height: 1.45;
+    font-weight: 600;
   }
-  .mc-list-row .who {
-    font-size: 0.74em;
+  .ds-row .ds-who {
+    font-size: 0.76em;
     color: var(--ink-mute);
-    margin-top: 4px;
+    margin-top: 5px;
+    letter-spacing: 0.02em;
   }
 
   /* —— Toast —— */
@@ -853,27 +799,24 @@
 
   /* —— RWD —— */
   @media (max-width: 639px) {
-    .hero { padding: 40px 20px 48px; }
-    .hero-title { font-size: 3.5em; }
-    .hero-eyebrow { font-size: 0.7em; }
-    .toolbar-inner { padding: 12px 18px; gap: 8px; }
+    .hero { padding: 22px 18px 22px; }
+    .hero-inner { flex-direction: column; align-items: flex-start; gap: 4px; }
+    .hero-title { font-size: 1.55em; }
+    .hero-time { font-size: 0.7em; }
+    .toolbar-inner { padding: 10px 16px; gap: 8px; }
     .seg button { padding: 6px 10px; font-size: 0.74em; }
-    .toolbar-search { flex: 1 1 100%; order: -1; }
     .sort-select { font-size: 0.78em; padding: 6px 10px; }
-    .main { padding: 22px 18px 60px; }
-    .card { padding: 18px 18px 16px; }
-    .card-title { font-size: 1.05em; }
-    .cal-popover {
-      position: fixed;
-      bottom: 0; left: 0; right: 0; top: auto;
-      width: 100%;
-      border-radius: var(--r-lg) var(--r-lg) 0 0;
-      max-height: 78vh;
-      overflow-y: auto;
-    }
-    .modal-card { max-height: 96vh; }
-    .modal-cal-pane { display: none; }
-    .modal-body { grid-template-columns: 1fr; }
+    .main { padding: 22px 16px 60px; }
+    .card { padding: 18px 18px 48px; }
+    .card-title { font-size: 1.1em; }
+    .card-meta-bottom { left: 18px; right: 12px; bottom: 12px; }
+    .modal-header { padding: 12px 16px; }
+    .modal-title { font-size: 0.95em; }
+    .mc-grid { gap: 1px; }
+    .mc-cell { padding: 4px 5px; }
+    .mc-cell .day-num { font-size: 0.72em; }
+    .mc-event { font-size: 0.62em; padding: 1px 4px; }
+    .day-sheet { max-height: 68vh; padding: 16px 18px; }
   }
 </style>
 </head>
@@ -1392,8 +1335,7 @@ function renderToolbar() {
       <div class="seg" role="tablist" aria-label="分組">
         ${groupOpts.map(([k,l]) => `<button class="${p.groupBy===k?'on':''}" onclick="setPref('groupBy','${k}')">${l}</button>`).join('')}
       </div>
-      <div class="toolbar-search">${I.search}<input id="q" type="text" placeholder="搜專案、窗口、關鍵字…" value="${escapeHtml(p.q)}" oninput="setPref('q', this.value)">
-      </div>
+      <div class="toolbar-spacer"></div>
       <select class="sort-select" onchange="setPref('sort', this.value)">
         ${sortOpts.map(([k,l]) => `<option value="${k}" ${p.sort===k?'selected':''}>${l}</option>`).join('')}
       </select>
@@ -1787,9 +1729,7 @@ function renderShell() {
   document.getElementById('app').innerHTML = `
     <div class="hero">
       <div class="hero-inner">
-        <div class="hero-eyebrow">ARCHUNG · DASHBOARD</div>
-        <div class="hero-title">阿忠戰情</div>
-        <div class="hero-subtitle">工作室專案 · 強強滾一家品牌合作 · 團購</div>
+        <h1 class="hero-title">阿忠戰情表</h1>
         <div class="hero-time" id="loadTime"></div>
       </div>
     </div>
