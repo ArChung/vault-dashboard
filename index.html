@@ -191,6 +191,11 @@
     min-width: 60px;
   }
   .toolbar-search input::placeholder { color: var(--ink-mute); }
+  .toolbar-search > svg {
+    width: 16px; height: 16px;
+    flex-shrink: 0;
+    color: var(--ink-mute);
+  }
   .sort-select {
     border: 1px solid var(--hairline);
     background: var(--card-bg);
@@ -384,9 +389,11 @@
   }
   .card-title .pause-icon {
     color: var(--status-wait);
-    width: 14px; height: 14px;
     flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
   }
+  .card-title .pause-icon svg { width: 14px; height: 14px; display: block; }
 
   .card-status-row {
     display: flex;
@@ -631,6 +638,7 @@
     line-height: 1;
   }
   .cal-nav button:hover { background: var(--moss-50); }
+  .cal-nav button svg { width: 14px; height: 14px; display: block; margin: auto; }
   .cal-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
