@@ -9,396 +9,948 @@
 <title>阿忠 Dashboard</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
+
   :root {
-    --cream: #F5F1E4;
-    --ink: #1a1a1a;
-    --orange: #E8441E;
-    --green: #1BB24B;
-    --blue: #1F3FD4;
-    --pink: #E6298A;
-    --yellow: #F7C93A;
-    --gray: #9ca3af;
-    --gray-soft: #e5e5e5;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: var(--cream);
-    color: var(--ink);
-    line-height: 1.6;
-    min-height: 100vh;
-    font-weight: 500;
+    /* —— Paper / Ink (中性紙墨) —— */
+    --paper:        #F8F4E9;
+    --paper-2:      #F1EADA;
+    --paper-3:      #E8E0CC;
+    --card-bg:      #FCFAF3;
+    --ink:          #1F2A24;
+    --ink-soft:     #55615A;
+    --ink-mute:     #8A8F85;
+    --hairline:     #D9D1BD;
+    --hairline-soft:#E5DDC8;
+
+    /* —— Moss (主強調) —— */
+    --moss-900: #1E3A2F;
+    --moss-700: #2F5A46;
+    --moss-500: #5B8470;
+    --moss-200: #C8D6CC;
+    --moss-50:  #ECF1EC;
+
+    /* —— Status (大地化) —— */
+    --status-active: #2F5A46;
+    --status-wait:   #C9A56A;
+    --status-done:   #A8A89E;
+    --status-hold:   #B88A6A;
+
+    /* —— 分類色 —— */
+    --clay-pink:  #C8907A;
+    --sand:       #D4B896;
+    --sage:       #9BAE96;
+    --terracotta: #B8563A;
+
+    /* —— Gradients (僅 3 處) —— */
+    --grad-hero:        linear-gradient(135deg, #2F5A46 0%, #1E3A2F 55%, #17302A 100%);
+    --grad-paper:       linear-gradient(180deg, #F8F4E9 0%, #F1EADA 100%);
+    --grad-card-hover:  linear-gradient(180deg, rgba(47,90,70,0.00) 0%, rgba(47,90,70,0.05) 100%);
+
+    /* —— Shadows (軟陰影、偏綠) —— */
+    --shadow-sm: 0 1px 2px rgba(31,42,36,0.04), 0 1px 1px rgba(31,42,36,0.06);
+    --shadow-md: 0 6px 20px -8px rgba(31,42,36,0.12), 0 2px 4px rgba(31,42,36,0.05);
+    --shadow-lg: 0 18px 40px -20px rgba(31,42,36,0.22);
+
+    /* —— Radius —— */
+    --r-sm: 8px;
+    --r-md: 14px;
+    --r-lg: 20px;
   }
 
-  /* Hero — full-bleed orange block */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { min-height: 100%; }
+  body {
+    font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--grad-paper) fixed;
+    color: var(--ink);
+    line-height: 1.6;
+    font-weight: 500;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* —— Hero —— */
   .hero {
-    background: var(--orange);
+    background: var(--grad-hero);
     color: #fff;
-    padding: 44px 20px 56px;
-    border-bottom: 3px solid var(--ink);
+    padding: 56px 24px 64px;
     position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 85% 20%, rgba(200,214,204,0.18), transparent 55%);
+    pointer-events: none;
   }
   .hero-inner {
-    max-width: 860px;
+    max-width: 980px;
     margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 24px;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-eyebrow {
+    font-family: 'Noto Sans TC', sans-serif;
+    font-weight: 700;
+    font-size: 0.78em;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--moss-200);
+    margin-bottom: 14px;
   }
   .hero-title {
     font-family: 'Anton', 'Noto Sans TC', sans-serif;
     font-weight: 900;
-    font-size: 5em;
+    font-size: 5.2em;
     line-height: 0.92;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.025em;
     text-transform: uppercase;
+    color: rgba(255,255,255,0.96);
+    text-shadow: 0 2px 28px rgba(0,0,0,0.18);
   }
   .hero-subtitle {
-    font-family: 'Noto Sans TC', sans-serif;
-    font-weight: 900;
-    font-size: 1.05em;
-    margin-top: 8px;
-    opacity: 0.95;
-    letter-spacing: 0.02em;
+    font-weight: 700;
+    font-size: 1.0em;
+    margin-top: 14px;
+    color: rgba(255,255,255,0.82);
+    letter-spacing: 0.04em;
   }
   .hero-time {
     font-size: 0.78em;
-    opacity: 0.75;
-    margin-top: 12px;
-    font-weight: 500;
-    letter-spacing: 0.02em;
-  }
-
-  .btn-refresh {
-    background: #fff;
-    border: 2px solid var(--ink);
-    color: var(--orange);
-    padding: 10px 22px;
-    border-radius: 999px;
-    font-size: 0.85em;
-    font-weight: 900;
-    cursor: pointer;
-    font-family: 'Noto Sans TC', sans-serif;
-    box-shadow: 3px 3px 0 var(--ink);
-    transition: all 0.12s ease;
-    flex-shrink: 0;
-  }
-  .btn-refresh:hover {
-    transform: translate(-1px, -1px);
-    box-shadow: 4px 4px 0 var(--ink);
-  }
-  .btn-refresh:active {
-    transform: translate(2px, 2px);
-    box-shadow: 1px 1px 0 var(--ink);
-  }
-
-  /* Main */
-  .main {
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 36px 20px 60px;
-  }
-
-  .projects-title {
-    font-family: 'Anton', 'Noto Sans TC', sans-serif;
-    font-weight: 900;
-    font-size: 1.9em;
+    margin-top: 8px;
+    color: rgba(255,255,255,0.6);
     letter-spacing: 0.04em;
-    margin: 0 0 22px;
+  }
+
+  /* —— Toolbar (sticky) —— */
+  .toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: rgba(248,244,233,0.82);
+    backdrop-filter: saturate(180%) blur(14px);
+    -webkit-backdrop-filter: saturate(180%) blur(14px);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .toolbar-inner {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 14px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+  }
+  .seg {
+    display: inline-flex;
+    background: var(--paper-2);
+    border-radius: 999px;
+    padding: 3px;
+    box-shadow: inset 0 0 0 1px var(--hairline);
+  }
+  .seg button {
+    border: 0;
+    background: transparent;
+    color: var(--ink-soft);
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.78em;
+    padding: 7px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: all 0.18s ease;
+  }
+  .seg button.on {
+    background: var(--moss-700);
+    color: #fff;
+    box-shadow: var(--shadow-sm);
+  }
+  .toolbar-search {
+    flex: 1 1 220px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--card-bg);
+    border: 1px solid var(--hairline);
+    border-radius: 999px;
+    padding: 7px 14px;
+    transition: border-color 0.15s ease;
+  }
+  .toolbar-search:focus-within {
+    border-color: var(--moss-500);
+    box-shadow: 0 0 0 3px var(--moss-50);
+  }
+  .toolbar-search input {
+    border: 0;
+    background: transparent;
+    flex: 1;
+    font-family: inherit;
+    color: var(--ink);
+    font-size: 0.88em;
+    outline: none;
+    min-width: 60px;
+  }
+  .toolbar-search input::placeholder { color: var(--ink-mute); }
+  .sort-select {
+    border: 1px solid var(--hairline);
+    background: var(--card-bg);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 0.82em;
+    font-weight: 700;
+    padding: 8px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .icon-btn {
+    width: 38px; height: 38px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 999px;
+    background: var(--moss-700);
+    color: #fff;
+    border: 0;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .icon-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+  .icon-btn.ghost {
+    background: var(--card-bg);
+    color: var(--ink);
+    border: 1px solid var(--hairline);
+  }
+  .icon-btn svg { width: 18px; height: 18px; }
+
+  .chips-row {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .chip-toggle {
+    border: 1px solid var(--hairline);
+    background: var(--card-bg);
+    color: var(--ink-soft);
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.78em;
+    padding: 6px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s ease;
+  }
+  .chip-toggle .dot {
+    width: 8px; height: 8px; border-radius: 999px;
+    background: var(--ink-mute);
+  }
+  .chip-toggle.on {
+    background: var(--moss-700);
+    color: #fff;
+    border-color: var(--moss-700);
+  }
+  .chip-toggle.on .dot { background: rgba(255,255,255,0.8); }
+  .chip-toggle .count {
+    background: rgba(0,0,0,0.08);
+    border-radius: 999px;
+    padding: 0 6px;
+    font-size: 0.85em;
+    font-weight: 800;
+  }
+  .chip-toggle.on .count { background: rgba(255,255,255,0.18); }
+
+  /* —— Main —— */
+  .main {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 28px 24px 80px;
+  }
+  .group-section + .group-section { margin-top: 36px; }
+  .group-header {
     display: flex;
     align-items: center;
     gap: 14px;
-    color: var(--ink);
+    margin: 0 0 18px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--hairline);
   }
-  .projects-title::before {
-    content: '';
-    width: 16px;
-    height: 16px;
-    background: var(--green);
-    border: 2px solid var(--ink);
-    border-radius: 4px;
-    flex-shrink: 0;
-  }
-  .projects-title .zh {
+  .group-header h2 {
     font-family: 'Noto Sans TC', sans-serif;
     font-weight: 900;
-    font-size: 0.55em;
+    font-size: 1.05em;
     color: var(--ink);
-    opacity: 0.6;
-    letter-spacing: 0;
-    margin-top: 4px;
-  }
-
-  .projects-grid { display: grid; grid-template-columns: 1fr; gap: 22px; }
-  @media (min-width: 560px) { .projects-grid { grid-template-columns: 1fr 1fr; } }
-
-  .proj-card {
-    position: relative;
-    background: #fff;
-    border: 2px solid var(--ink);
-    border-radius: 16px;
-    padding: 22px;
-    box-shadow: 4px 4px 0 var(--ink);
-    transition: all 0.15s ease;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-  .proj-card:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0 var(--ink);
-  }
-
-  .proj-contact-tag {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    font-size: 0.7em;
-    font-weight: 700;
-    color: var(--blue);
-    background: #fff;
-    border: 2px solid var(--blue);
-    padding: 3px 12px;
-    border-radius: 999px;
     letter-spacing: 0.02em;
   }
+  .group-header .count {
+    font-weight: 700;
+    color: var(--ink-mute);
+    font-size: 0.85em;
+  }
 
-  .proj-card .proj-name {
+  .cards-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  @media (min-width: 640px) {
+    .cards-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* —— Card v2 (unified) —— */
+  .card {
+    position: relative;
+    background: var(--card-bg);
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-md);
+    padding: 20px 22px 18px;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .card::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--grad-card-hover);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+    border-radius: inherit;
+  }
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  .card:hover::after { opacity: 1; }
+
+  .card.is-waiting { background: var(--paper-2); }
+  .card.is-done { opacity: 0.72; }
+  .card.flash {
+    animation: flash-card 1.6s ease;
+  }
+  @keyframes flash-card {
+    0%, 100% { box-shadow: var(--shadow-sm); }
+    20%, 60% { box-shadow: 0 0 0 4px var(--moss-200), var(--shadow-md); }
+  }
+
+  .card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    min-height: 22px;
+  }
+  .card-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.66em;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--moss-50);
+    color: var(--moss-700);
+  }
+  .card-chip.is-brand-promo { background: rgba(200,144,122,0.16); color: var(--clay-pink); }
+  .card-chip.is-brand-reels { background: rgba(155,174,150,0.22); color: #6E8B70; }
+  .card-chip.is-brand-group { background: rgba(212,184,150,0.28); color: #8A6D43; }
+
+  .card-contact {
+    font-size: 0.74em;
+    font-weight: 700;
+    color: var(--moss-700);
+    background: var(--moss-50);
+    padding: 3px 10px;
+    border-radius: 999px;
+  }
+
+  .card-title {
     font-family: 'Noto Sans TC', sans-serif;
     font-weight: 900;
-    font-size: 1.2em;
-    margin-bottom: 10px;
+    font-size: 1.12em;
     color: var(--ink);
-    letter-spacing: -0.01em;
-    padding-right: 90px;
+    letter-spacing: -0.005em;
+    line-height: 1.35;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title .pause-icon {
+    color: var(--status-wait);
+    width: 14px; height: 14px;
+    flex-shrink: 0;
   }
 
-  .proj-card .proj-status {
-    display: inline-block;
-    font-size: 0.68em;
-    font-weight: 900;
-    letter-spacing: 0.06em;
-    padding: 4px 14px;
+  .card-status-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
+    margin-bottom: 14px;
+  }
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.7em;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    padding: 4px 11px;
     border-radius: 999px;
-    margin-bottom: 16px;
-    text-transform: uppercase;
-    border: 2px solid var(--ink);
+    color: #fff;
+    background: var(--status-active);
   }
-  .proj-status.active { background: var(--green); color: #fff; }
-  .proj-status.waiting { background: var(--yellow); color: var(--ink); }
-  .proj-status.done { background: var(--gray-soft); color: var(--ink); }
+  .status-pill.is-waiting { background: var(--status-wait); color: #3D2E12; }
+  .status-pill.is-done    { background: var(--status-done); color: #2E332E; }
+  .status-pill.is-hold    { background: var(--status-hold); color: #fff; }
+  .card-meta-text {
+    font-size: 0.74em;
+    color: var(--ink-mute);
+    font-weight: 600;
+  }
 
-  .proj-items { display: flex; flex-direction: column; gap: 4px; flex: 1 0 auto; }
-  .proj-empty { flex: 1 0 auto; }
-  .proj-item {
-    display: flex; align-items: flex-start; gap: 11px; padding: 5px 0;
-    font-size: 0.86em; line-height: 1.55; color: var(--ink);
+  hr.hairline {
+    border: 0;
+    border-top: 1px solid var(--hairline-soft);
+    margin: 0;
   }
-  .proj-item .dot {
-    width: 8px; height: 8px; min-width: 8px;
-    border-radius: 2px; margin-top: 8px;
-    background: var(--orange);
-  }
-  .proj-item.done .dot { background: var(--green); }
-  .proj-item.done span {
-    text-decoration: line-through;
-    color: var(--gray);
-    opacity: 0.7;
-  }
-  .proj-empty { color: var(--gray); font-size: 0.85em; font-style: italic; }
 
-  .proj-footer {
-    margin: 18px -22px -22px;
-    padding: 14px 22px 16px;
-    border-top: 2px solid var(--ink);
-    background: var(--cream);
-    border-radius: 0 0 14px 14px;
+  .card-body {
+    padding: 12px 0;
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
   }
-  .proj-footer-row {
-    display: flex; justify-content: space-between; align-items: center;
-    font-size: 0.8em; line-height: 1.8;
+  .card-body-empty {
+    color: var(--ink-mute);
+    font-size: 0.84em;
+    font-style: italic;
   }
-  .proj-price {
+  .card-todo {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 0.86em;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+  .card-todo .marker {
+    width: 6px; height: 6px;
+    border-radius: 999px;
+    background: var(--moss-700);
+    margin-top: 9px;
+    flex-shrink: 0;
+  }
+  .card-todo.done .marker { background: var(--ink-mute); }
+  .card-todo.done span { text-decoration: line-through; color: var(--ink-mute); }
+  .card-last-log {
+    font-size: 0.85em;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+  .card-last-log .label {
+    display: inline-block;
+    font-size: 0.78em;
+    font-weight: 700;
+    color: var(--moss-700);
+    background: var(--moss-50);
+    padding: 1px 8px;
+    border-radius: 999px;
+    margin-right: 6px;
+  }
+
+  .card-footer {
+    padding-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .card-price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .card-price {
     font-family: 'Anton', 'Noto Sans TC', sans-serif;
     font-weight: 900;
     color: var(--ink);
-    font-size: 1.3em;
+    font-size: 1.18em;
     letter-spacing: 0.02em;
   }
-  .proj-price.na {
+  .card-price .unit {
     font-family: 'Noto Sans TC', sans-serif;
     font-weight: 700;
-    color: var(--gray);
-    font-size: 0.95em;
+    font-size: 0.62em;
+    color: var(--ink-soft);
+    margin-left: 4px;
+    letter-spacing: 0.04em;
   }
-  .proj-invoice-bar {
-    width: 100%; height: 9px;
+  .card-price.na {
+    font-family: 'Noto Sans TC', sans-serif;
+    font-weight: 700;
+    color: var(--ink-mute);
+    font-size: 0.92em;
+  }
+  .card-invoiced {
+    font-size: 0.78em;
+    color: var(--ink-soft);
+    font-weight: 700;
+  }
+  .progress-bar {
+    width: 100%;
+    height: 6px;
     border-radius: 999px;
-    background: #fff;
-    border: 2px solid var(--ink);
-    margin: 8px 0 6px;
+    background: var(--paper-3);
     overflow: hidden;
   }
-  .proj-invoice-fill {
+  .progress-bar > div {
     height: 100%;
-    background: var(--green);
+    background: var(--moss-500);
     transition: width 0.4s ease;
   }
-  .proj-invoice-labels {
-    display: flex; justify-content: space-between;
-    font-size: 0.74em; color: var(--ink); font-weight: 700;
+  .progress-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72em;
+    font-weight: 700;
+    color: var(--ink-soft);
   }
-  .proj-splits {
-    margin-top: 9px; display: flex; flex-wrap: wrap; gap: 6px;
+  .splits-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding-top: 4px;
   }
-  .proj-split-tag {
-    font-size: 0.7em; font-weight: 700; color: var(--ink);
-    background: var(--yellow);
-    border: 2px solid var(--ink);
-    padding: 2px 11px;
+  .split-tag {
+    font-size: 0.7em;
+    font-weight: 700;
+    color: #5C4528;
+    background: var(--sand);
+    padding: 3px 10px;
     border-radius: 999px;
   }
+  .fee-line {
+    font-family: 'Anton', 'Noto Sans TC', sans-serif;
+    font-weight: 900;
+    font-size: 1.0em;
+    color: var(--ink);
+    letter-spacing: 0.01em;
+    line-height: 1.5;
+  }
 
+  .card-cal-btn {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    width: 30px;
+    height: 30px;
+    border-radius: 999px;
+    background: var(--moss-50);
+    color: var(--moss-700);
+    border: 1px solid var(--moss-200);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+    transition: all 0.15s ease;
+  }
+  .card-cal-btn:hover { background: var(--moss-700); color: #fff; }
+  .card-cal-btn svg { width: 14px; height: 14px; }
+  .card.has-footer .card-cal-btn { bottom: 12px; }
+
+  /* —— Date tags (inline) —— */
   .date-tag {
     display: inline-block;
     font-weight: 700;
     font-size: 0.92em;
-    color: var(--blue);
+    color: var(--moss-700);
     letter-spacing: 0.01em;
   }
-  .date-tag.past { color: var(--gray); font-weight: 500; }
+  .date-tag.past { color: var(--ink-mute); font-weight: 500; }
   .date-tag.today {
     color: #fff;
-    background: var(--orange);
-    padding: 0 7px;
-    border-radius: 4px;
+    background: var(--terracotta);
+    padding: 0 8px;
+    border-radius: 6px;
     font-weight: 900;
   }
   .date-tag.tomorrow {
-    color: var(--ink);
-    background: var(--yellow);
-    padding: 0 7px;
-    border-radius: 4px;
+    color: #3D2E12;
+    background: var(--status-wait);
+    padding: 0 8px;
+    border-radius: 6px;
     font-weight: 900;
   }
-  .annotation { color: var(--blue); opacity: 0.55; font-size: 0.92em; }
+  .annotation { color: var(--moss-500); opacity: 0.8; font-size: 0.92em; }
 
-  /* Brand section — 強強滾一家 */
-  .brand-section { margin-top: 48px; }
-  .brand-title {
-    font-family: 'Anton', 'Noto Sans TC', sans-serif;
+  /* —— Calendar popover (per-card) —— */
+  .cal-popover {
+    position: absolute;
+    background: var(--card-bg);
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-lg);
+    padding: 16px;
+    width: 320px;
+    z-index: 100;
+    font-size: 0.88em;
+  }
+  .cal-popover-title {
     font-weight: 900;
-    font-size: 1.9em;
-    letter-spacing: 0.04em;
-    margin: 0 0 10px;
+    font-size: 1.0em;
+    color: var(--moss-700);
+    margin-bottom: 10px;
+  }
+  .cal-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 0.92em;
+    font-weight: 800;
+    color: var(--ink);
+  }
+  .cal-nav button {
+    width: 26px; height: 26px;
+    border-radius: 999px;
+    border: 0;
+    background: var(--paper-2);
+    color: var(--ink);
+    cursor: pointer;
+    font-weight: 900;
+    line-height: 1;
+  }
+  .cal-nav button:hover { background: var(--moss-50); }
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    font-size: 0.78em;
+  }
+  .cal-grid .wd {
+    text-align: center;
+    color: var(--ink-mute);
+    font-weight: 700;
+    padding: 4px 0;
+  }
+  .cal-cell {
+    aspect-ratio: 1;
     display: flex;
     align-items: center;
-    gap: 14px;
+    justify-content: center;
+    border-radius: 6px;
+    color: var(--ink-soft);
+    font-weight: 600;
+    cursor: default;
+    position: relative;
+  }
+  .cal-cell.other { color: var(--ink-mute); opacity: 0.45; }
+  .cal-cell.today {
+    box-shadow: inset 0 0 0 1.5px var(--terracotta);
+    color: var(--terracotta);
+    font-weight: 900;
+  }
+  .cal-cell.has-event {
+    background: var(--moss-700);
+    color: #fff;
+    font-weight: 800;
+    cursor: pointer;
+  }
+  .cal-cell.has-event:hover { background: var(--moss-900); }
+  .cal-cell.in-range {
+    background: var(--moss-200);
+    color: var(--moss-900);
+  }
+  .cal-events {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--hairline-soft);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  .cal-event-row {
+    display: flex;
+    gap: 8px;
+    font-size: 0.85em;
+    line-height: 1.4;
+  }
+  .cal-event-row .d {
+    font-weight: 800;
+    color: var(--moss-700);
+    flex-shrink: 0;
+    min-width: 44px;
+  }
+  .cal-event-row .t {
+    color: var(--ink-mute);
+    margin-right: 4px;
+    font-weight: 600;
+  }
+
+  /* —— Master calendar modal —— */
+  .modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(31,42,36,0.55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 200;
+    display: none;
+    align-items: stretch;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal-card {
+    background: var(--paper);
+    border-radius: var(--r-lg);
+    width: 100%;
+    max-width: 1080px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+  }
+  .modal-header {
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--hairline);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .modal-header h2 {
+    font-family: 'Noto Sans TC', sans-serif;
+    font-weight: 900;
+    font-size: 1.1em;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .modal-header h2 svg { width: 20px; height: 20px; color: var(--moss-700); }
+  .modal-close {
+    width: 36px; height: 36px;
+    border-radius: 999px;
+    border: 0;
+    background: var(--paper-2);
+    color: var(--ink);
+    cursor: pointer;
+    font-size: 1.1em;
+    line-height: 1;
+  }
+  .modal-body {
+    flex: 1;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  @media (min-width: 820px) {
+    .modal-body { grid-template-columns: 1.85fr 1fr; }
+  }
+  .modal-cal-pane {
+    padding: 18px 22px;
+    overflow-y: auto;
+  }
+  .modal-side {
+    border-top: 1px solid var(--hairline);
+    background: var(--card-bg);
+    padding: 18px 22px;
+    overflow-y: auto;
+  }
+  @media (min-width: 820px) {
+    .modal-side { border-top: 0; border-left: 1px solid var(--hairline); }
+  }
+  .modal-side h3 {
+    font-size: 0.88em;
+    font-weight: 800;
+    color: var(--moss-700);
+    margin-bottom: 12px;
+    letter-spacing: 0.04em;
+  }
+  .mc-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    font-size: 0.85em;
+  }
+  .mc-grid .wd {
+    text-align: center;
+    color: var(--ink-mute);
+    font-weight: 800;
+    padding: 6px 0;
+    font-size: 0.85em;
+    letter-spacing: 0.04em;
+  }
+  .mc-cell {
+    background: var(--paper-2);
+    border-radius: var(--r-sm);
+    min-height: 92px;
+    padding: 6px 7px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .mc-cell:hover { background: var(--paper-3); }
+  .mc-cell.other { opacity: 0.5; }
+  .mc-cell.today { box-shadow: inset 0 0 0 1.5px var(--terracotta); }
+  .mc-cell .day-num {
+    font-weight: 800;
+    font-size: 0.86em;
     color: var(--ink);
   }
-  .brand-title::before {
-    content: '';
-    width: 16px; height: 16px;
-    background: var(--pink);
-    border: 2px solid var(--ink);
+  .mc-cell.today .day-num { color: var(--terracotta); }
+  .mc-event {
+    font-size: 0.7em;
+    font-weight: 700;
+    padding: 2px 6px;
     border-radius: 4px;
-    flex-shrink: 0;
-  }
-  .brand-title .zh {
-    font-family: 'Noto Sans TC', sans-serif;
-    font-weight: 900; font-size: 0.55em;
-    color: var(--ink); opacity: 0.6;
-    letter-spacing: 0; margin-top: 4px;
-  }
-  .brand-sub {
-    font-family: 'Noto Sans TC', sans-serif;
-    font-weight: 900; font-size: 1.05em;
-    margin: 20px 0 14px; color: var(--ink);
-    display: flex; align-items: center; gap: 8px;
-  }
-  .brand-sub::before {
-    content: ''; width: 10px; height: 10px;
-    background: var(--yellow); border: 2px solid var(--ink);
-    border-radius: 3px; flex-shrink: 0;
-  }
-
-  .brand-card {
-    position: relative;
-    background: #fff;
-    border: 2px solid var(--ink);
-    border-radius: 16px;
-    padding: 22px;
-    box-shadow: 4px 4px 0 var(--ink);
-    transition: all 0.15s ease;
+    color: #fff;
+    background: var(--moss-700);
     overflow: hidden;
-    display: flex; flex-direction: column;
-    border-left: 5px solid var(--pink);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    cursor: pointer;
   }
-  .brand-card:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0 var(--ink);
+  .mc-event.brand-promo { background: var(--clay-pink); }
+  .mc-event.brand-reels { background: var(--sage); color: #2A3A2C; }
+  .mc-event.brand-group { background: var(--sand); color: #5C4528; }
+  .mc-event.range {
+    background: linear-gradient(90deg, var(--clay-pink) 0%, var(--terracotta) 100%);
   }
-  .brand-card .proj-name { padding-right: 90px; }
-  .brand-type-tag {
-    position: absolute; top: 16px; right: 16px;
-    font-size: 0.7em; font-weight: 900;
-    color: #fff; background: var(--pink);
-    border: 2px solid var(--ink);
-    padding: 3px 12px; border-radius: 999px;
+  .mc-more {
+    font-size: 0.68em;
+    color: var(--ink-soft);
+    font-weight: 700;
+  }
+  .mc-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .mc-list-row {
+    background: var(--paper-2);
+    padding: 10px 12px;
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .mc-list-row:hover { background: var(--paper-3); }
+  .mc-list-row .when {
+    font-size: 0.78em;
+    color: var(--moss-700);
+    font-weight: 800;
+    margin-bottom: 3px;
+  }
+  .mc-list-row .what {
+    font-size: 0.86em;
+    color: var(--ink);
+    line-height: 1.4;
+  }
+  .mc-list-row .who {
+    font-size: 0.74em;
+    color: var(--ink-mute);
+    margin-top: 4px;
   }
 
-  .group-buy-box {
-    background: #fff;
-    border: 2px solid var(--ink);
-    border-radius: 16px;
-    padding: 20px 22px;
-    box-shadow: 4px 4px 0 var(--ink);
-  }
-  .group-buy-item {
-    display: flex; align-items: flex-start; gap: 11px;
-    padding: 7px 0; font-size: 0.88em; line-height: 1.55;
-    color: var(--ink); border-bottom: 1px solid var(--gray-soft);
-  }
-  .group-buy-item:last-child { border-bottom: none; }
-  .group-buy-item .dot {
-    width: 8px; height: 8px; min-width: 8px;
-    border-radius: 2px; margin-top: 8px;
-    background: var(--pink);
-  }
-
+  /* —— Toast —— */
   .toast {
-    position: fixed; bottom: 20px; right: 20px;
-    background: var(--green);
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--moss-700);
     color: #fff;
     padding: 12px 22px;
     border-radius: 999px;
-    font-weight: 900;
+    font-weight: 800;
     display: none;
     z-index: 999;
-    border: 2px solid var(--ink);
-    box-shadow: 4px 4px 0 var(--ink);
+    box-shadow: var(--shadow-md);
+    font-size: 0.9em;
+    letter-spacing: 0.02em;
   }
-  .toast.error { background: var(--orange); }
+  .toast.error { background: var(--terracotta); }
 
-  @media (max-width: 559px) {
-    .hero { padding: 36px 20px 48px; }
-    .hero-inner { flex-direction: column; align-items: flex-start; gap: 18px; }
-    .hero-title { font-size: 3.4em; }
-    .main { padding: 28px 20px 50px; }
-    .projects-title { font-size: 1.6em; }
+  /* —— RWD —— */
+  @media (max-width: 639px) {
+    .hero { padding: 40px 20px 48px; }
+    .hero-title { font-size: 3.5em; }
+    .hero-eyebrow { font-size: 0.7em; }
+    .toolbar-inner { padding: 12px 18px; gap: 8px; }
+    .seg button { padding: 6px 10px; font-size: 0.74em; }
+    .toolbar-search { flex: 1 1 100%; order: -1; }
+    .sort-select { font-size: 0.78em; padding: 6px 10px; }
+    .main { padding: 22px 18px 60px; }
+    .card { padding: 18px 18px 16px; }
+    .card-title { font-size: 1.05em; }
+    .cal-popover {
+      position: fixed;
+      bottom: 0; left: 0; right: 0; top: auto;
+      width: 100%;
+      border-radius: var(--r-lg) var(--r-lg) 0 0;
+      max-height: 78vh;
+      overflow-y: auto;
+    }
+    .modal-card { max-height: 96vh; }
+    .modal-cal-pane { display: none; }
+    .modal-body { grid-template-columns: 1fr; }
   }
 </style>
 </head>
 <body>
 
-<div id="app"><div style="text-align:center;padding:60px;color:#6b7280;">載入中...</div></div>
+<div id="app"><div style="text-align:center;padding:80px;color:var(--ink-mute);">載入中...</div></div>
 <div class="toast" id="toast"></div>
+<div class="modal-backdrop" id="masterModal" onclick="if(event.target===this)closeMasterCal()"></div>
 
 <script>
 const OWNER = 'ArChung';
 const REPO = 'vault-dashboard';
 const BRANCH = 'master';
+const MD_CACHE_KEY = 'archung-md-cache-v1';
+const PREFS_KEY = 'archung-prefs-v1';
+
+// ——— Icons ———
+const I = {
+  search:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
+  calendar:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="17" rx="2.5"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></svg>',
+  refresh: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15.6-6.1L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.6 6.1L3 16"/><path d="M3 21v-5h5"/></svg>',
+  pause:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9 9.5v5M15 9.5v5"/></svg>',
+  arrowL:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 6l-6 6 6 6"/></svg>',
+  arrowR:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 6l6 6-6 6"/></svg>',
+};
+
+// ——— State ———
+const state = {
+  projects: [],
+  brand: [],
+  groupBuy: [],
+  prefs: loadPrefs(),
+  popover: null,
+  masterMonth: null,
+};
+
+function loadPrefs() {
+  try { return Object.assign({ groupBy:'status', sort:'updated', q:'', statuses:['active','waiting','hold'] }, JSON.parse(localStorage.getItem(PREFS_KEY) || '{}')); }
+  catch { return { groupBy:'status', sort:'updated', q:'', statuses:['active','waiting','hold'] }; }
+}
+function savePrefs() { localStorage.setItem(PREFS_KEY, JSON.stringify(state.prefs)); }
 
 function showToast(msg, isError) {
   const t = document.getElementById('toast');
@@ -408,7 +960,14 @@ function showToast(msg, isError) {
   setTimeout(() => t.style.display = 'none', 2500);
 }
 
-async function fetchPublic(path) {
+// ——— Fetch with sessionStorage cache ———
+async function fetchPublic(path, useCache = true) {
+  if (useCache) {
+    try {
+      const cache = JSON.parse(sessionStorage.getItem(MD_CACHE_KEY) || '{}');
+      if (cache[path]) return cache[path];
+    } catch {}
+  }
   const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}?ref=${BRANCH}`, {
     headers: { 'Accept': 'application/vnd.github.v3+json' }
   });
@@ -418,232 +977,182 @@ async function fetchPublic(path) {
     throw new Error(`API 流量限制，請約 ${wait} 分鐘後重試`);
   }
   if (!res.ok) throw new Error(`GitHub API 錯誤 (${res.status})`);
-  return res.json();
-}
-
-async function loadApp() {
-  const now = new Date();
-  const ts = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-
-  document.getElementById('app').innerHTML = `
-    <div class="hero">
-      <div class="hero-inner">
-        <div>
-          <div class="hero-title">DASHBOARD</div>
-          <div class="hero-subtitle">阿忠的戰情看板</div>
-          <div class="hero-time">讀取時間：${ts}</div>
-        </div>
-        <button class="btn-refresh" onclick="loadApp()">重新整理</button>
-      </div>
-    </div>
-    <div class="main">
-      <div class="projects-title">PROJECTS <span class="zh">／ 專案總覽</span></div>
-      <div class="projects-grid" id="projectsGrid"><div class="proj-empty">載入中...</div></div>
-
-      <div class="brand-section">
-        <div class="brand-title">QQGFAMILY <span class="zh">／ 強強滾一家</span></div>
-        <div class="brand-sub">業配 & Reels</div>
-        <div class="projects-grid" id="brandGrid"><div class="proj-empty">載入中...</div></div>
-        <div class="brand-sub">團購 & 公關品</div>
-        <div class="group-buy-box" id="groupBuyBox"><div class="proj-empty">載入中...</div></div>
-      </div>
-    </div>
-  `;
-  loadProjects();
-  loadBrand();
-}
-
-async function loadProjects() {
-  try {
-    const files = await fetchPublic('Projects');
-    if (!Array.isArray(files)) return;
-
-    const mdFiles = files.filter(f => f.name.endsWith('.md'));
-    const cards = await Promise.all(mdFiles.map(async f => {
-      const data = await fetchPublic(`Projects/${encodeURIComponent(f.name)}`);
-      const content = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ''))));
-      return parseProject(content);
-    }));
-
-    const grid = document.getElementById('projectsGrid');
-    if (!grid) return;
-    if (cards.length === 0) { grid.innerHTML = '<div class="proj-empty">（無專案）</div>'; return; }
-    grid.innerHTML = cards.map(renderProjectCard).join('');
-  } catch (e) {
-    const grid = document.getElementById('projectsGrid');
-    if (grid) grid.innerHTML = `<div class="proj-empty">${escapeHtml(e.message)}<br><button class="btn-refresh" style="margin-top:12px;" onclick="loadApp()">重新整理</button></div>`;
+  const data = await res.json();
+  if (useCache) {
+    try {
+      const cache = JSON.parse(sessionStorage.getItem(MD_CACHE_KEY) || '{}');
+      cache[path] = data;
+      sessionStorage.setItem(MD_CACHE_KEY, JSON.stringify(cache));
+    } catch {}
   }
+  return data;
 }
 
+function decodeMd(data) {
+  return decodeURIComponent(escape(atob(data.content.replace(/\n/g, ''))));
+}
+
+function escapeHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ——— Date utilities ———
+function startOfDay(d) { const x = new Date(d); x.setHours(0,0,0,0); return x; }
+function fmtMD(d) { return `${d.getMonth()+1}/${d.getDate()}`; }
+const WEEKDAYS = ['日','一','二','三','四','五','六'];
+
+// ——— Date extraction ———
+// Returns: [{ date, endDate?, type, source, text, time?, raw }]
+// types: start | todo | done | log | note | campaign
+function extractDates(md, projectName) {
+  const events = [];
+  const seen = new Set();
+  const lines = md.split('\n');
+  let section = '';
+  const today = startOfDay(new Date());
+  const thisYear = today.getFullYear();
+
+  function pushEvent(dateStr, type, source, text, opts={}) {
+    const k = `${dateStr}|${type}|${text.slice(0, 30)}`;
+    if (seen.has(k)) return;
+    seen.add(k);
+    events.push({ date: new Date(dateStr), type, source, text, raw: opts.raw, time: opts.time, endDate: opts.endDate });
+  }
+
+  function tryISO(s, type, source, sourceText, opts={}) {
+    const r = /\b(\d{4})-(\d{1,2})-(\d{1,2})\b/g;
+    let m;
+    while ((m = r.exec(s))) {
+      const y = +m[1], mo = +m[2], d = +m[3];
+      if (y < 2020 || y > 2035 || mo < 1 || mo > 12 || d < 1 || d > 31) continue;
+      const iso = `${y}-${String(mo).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      // detect time range after the date
+      let time = null;
+      const tail = s.slice(m.index + m[0].length, m.index + m[0].length + 30);
+      const tm = tail.match(/(\d{1,2}):(\d{2})\s*[~–\-至]?\s*(\d{1,2}:\d{2})?/);
+      if (tm) time = tm[0].trim();
+      pushEvent(iso, type, source, sourceText, { raw: m[0], time, ...opts });
+    }
+  }
+
+  function tryRange(s, source, sourceText) {
+    // 2026-05 中 ~ 2026-07 中  /  2026-05 ~ 2026-07
+    const r = /(\d{4})-(\d{1,2})\s*(?:月)?\s*(?:中|初|底)?\s*[~～\-–至]\s*(\d{4})-(\d{1,2})/g;
+    let m;
+    while ((m = r.exec(s))) {
+      const y1=+m[1], mo1=+m[2], y2=+m[3], mo2=+m[4];
+      if (y1 < 2020 || y2 > 2035) continue;
+      const start = `${y1}-${String(mo1).padStart(2,'0')}-15`;
+      const end   = `${y2}-${String(mo2).padStart(2,'0')}-15`;
+      pushEvent(start, 'campaign', source, sourceText, { raw: m[0], endDate: new Date(end) });
+    }
+  }
+
+  function tryCN(s, type, source, sourceText) {
+    const r = /(\d{4})\s*年\s*(\d{1,2})\s*月\s*(\d{1,2})\s*日?/g;
+    let m;
+    while ((m = r.exec(s))) {
+      const y=+m[1], mo=+m[2], d=+m[3];
+      if (y < 2020 || y > 2035) continue;
+      const iso = `${y}-${String(mo).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      pushEvent(iso, type, source, sourceText, { raw: m[0] });
+    }
+  }
+
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+    if (!line) continue;
+    if (line.startsWith('## ')) { section = line.replace(/^##+\s*/, ''); continue; }
+    if (line.startsWith('### ')) { continue; }
+
+    const isMeta = line.startsWith('> ');
+    if (isMeta) {
+      // Only specific meta keys yield dates
+      if (line.startsWith('> 開始日期：')) {
+        tryISO(line, 'start', '開始日期', '開始：' + line.replace('> 開始日期：','').trim());
+      }
+      // Skip other > lines (avoid 報價/已開發票/分潤誤判)
+      continue;
+    }
+
+    let type = 'note';
+    if (section.includes('待辦')) {
+      const checked = /^- \[x\]/i.test(line);
+      type = checked ? 'done' : 'todo';
+    } else if (section.includes('進度')) {
+      type = 'log';
+    } else if (section.includes('最新') || section.includes('備註') || section === '') {
+      type = 'note';
+    }
+
+    // The displayed source text for the event: strip checkbox markers
+    const display = line.replace(/^- \[[ x]\]\s*/i, '').replace(/^- /, '');
+
+    tryISO(line, type, section || '備註', display);
+    tryCN(line, type, section || '備註', display);
+    tryRange(line, section || '備註', display);
+  }
+
+  // Filter: drop way-out-of-range dates (extra safety)
+  return events.filter(e => {
+    const y = e.date.getFullYear();
+    return y >= 2020 && y <= 2035 && !isNaN(e.date.getTime());
+  }).sort((a,b) => a.date - b.date);
+}
+
+// ——— Markdown parsing ———
 function parseProject(md) {
   const lines = md.split('\n');
-  const name = (lines.find(l => l.startsWith('# ')) || '# 未命名').replace('# ', '');
-  const statusLine = lines.find(l => l.startsWith('> 狀態：')) || '';
-  const status = statusLine.replace('> 狀態：', '').trim();
-  const contactLine = lines.find(l => l.startsWith('> 窗口：')) || '';
-  const contact = contactLine.replace('> 窗口：', '').trim();
+  const name = (lines.find(l => l.startsWith('# ')) || '# 未命名').replace('# ', '').trim();
+  const meta = (key) => {
+    const l = lines.find(l => l.startsWith(`> ${key}：`));
+    return l ? l.replace(`> ${key}：`, '').trim() : '';
+  };
+  const status = meta('狀態');
+  const contact = meta('窗口');
+  const client = meta('客戶');
+  const quoteRaw = meta('報價');
+  const invoicedRaw = meta('已開發票');
+  const splitRaw = meta('分潤');
+  const startDateRaw = meta('開始日期');
 
-  const quoteLine = lines.find(l => l.startsWith('> 報價：')) || '';
-  const quoteRaw = quoteLine.replace('> 報價：', '').trim();
-
-  const invoicedLine = lines.find(l => l.startsWith('> 已開發票：')) || '';
-  const invoicedRaw = invoicedLine.replace('> 已開發票：', '').trim();
-
-  const splitLine = lines.find(l => l.startsWith('> 分潤：')) || '';
-  const splitRaw = splitLine.replace('> 分潤：', '').trim();
-
-  // Parse numbers from strings like "649,000 未稅（...）"
   const parseAmount = s => { const m = s.replace(/,/g,'').match(/(\d+)/); return m ? parseInt(m[1]) : 0; };
   const quoteAmount = parseAmount(quoteRaw);
   const invoicedAmount = parseAmount(invoicedRaw);
-
-  // Parse split tags: "老甘 186,000（設計）、阿吉 待確認（前端）"
   const splits = splitRaw ? splitRaw.split('、').map(s => s.trim()).filter(Boolean) : [];
 
-  let inTodo = false;
-  const todos = [];
+  // Todos & last log
+  let inTodo = false, inLog = false;
+  const todos = [], logs = [];
   for (const line of lines) {
-    if (line.startsWith('## 待辦')) { inTodo = true; continue; }
-    if (inTodo && line.startsWith('## ')) break;
+    if (line.startsWith('## 待辦')) { inTodo = true; inLog = false; continue; }
+    if (line.startsWith('## 進度')) { inTodo = false; inLog = true; continue; }
+    if (line.startsWith('## ')) { inTodo = false; inLog = false; continue; }
     if (inTodo) {
-      const m = line.match(/^- \[([ x])\] (.+)/);
-      if (m) todos.push({ checked: m[1] === 'x', text: m[2] });
+      const m = line.match(/^- \[([ x])\] (.+)/i);
+      if (m) todos.push({ checked: m[1].toLowerCase() === 'x', text: m[2] });
+    }
+    if (inLog) {
+      const m = line.match(/^- (.+)/);
+      if (m) logs.push(m[1]);
     }
   }
+  const openTodos = todos.filter(t => !t.checked).slice(0, 2);
+  const lastLog = logs.length > 0 ? logs[logs.length - 1] : '';
+  const events = extractDates(md, name);
+  // Last meaningful update = max log date or start date
+  let lastUpdate = null;
+  for (const e of events) { if (e.type === 'log' || e.type === 'done') lastUpdate = e.date; }
 
-  const last4 = todos.slice(-4);
-  return { name, status, contact, items: last4, quoteRaw, quoteAmount, invoicedAmount, splits };
-}
-
-function renderProjectCard(proj) {
-  let statusClass = 'active';
-  if (proj.status.includes('等待')) statusClass = 'waiting';
-  if (proj.status.includes('完成')) statusClass = 'done';
-
-  let itemsHtml = '';
-  if (proj.items.length === 0) {
-    itemsHtml = '<div class="proj-empty">（無待辦項目）</div>';
-  } else {
-    itemsHtml = '<div class="proj-items">' + proj.items.map(item =>
-      `<div class="proj-item ${item.checked ? 'done' : ''}">
-        <div class="dot"></div>
-        <span>${formatDates(escapeHtml(item.text))}</span>
-      </div>`
-    ).join('') + '</div>';
-  }
-
-  // Footer: pricing + invoice + splits
-  let footerHtml = '';
-  const q = proj.quoteRaw;
-  if (q && q !== '未報價' && q !== '未成案') {
-    const fmt = n => n.toLocaleString('zh-TW');
-    const pct = proj.quoteAmount > 0 ? Math.round((proj.invoicedAmount / proj.quoteAmount) * 100) : 0;
-    footerHtml = `<div class="proj-footer">
-      <div class="proj-footer-row">
-        <span class="proj-price">${fmt(proj.quoteAmount)} 未稅</span>
-        ${proj.invoicedAmount > 0 ? `<span class="proj-invoice-labels">已開 ${fmt(proj.invoicedAmount)}</span>` : ''}
-      </div>
-      ${proj.invoicedAmount > 0 ? `<div class="proj-invoice-bar"><div class="proj-invoice-fill" style="width:${pct}%"></div></div>
-      <div class="proj-invoice-labels"><span>已收 ${pct}%</span><span>尾款 ${fmt(proj.quoteAmount - proj.invoicedAmount)}</span></div>` : ''}
-      ${proj.splits.length > 0 ? `<div class="proj-splits">${proj.splits.map(s => `<span class="proj-split-tag">${escapeHtml(s)}</span>`).join('')}</div>` : ''}
-    </div>`;
-  } else if (q) {
-    footerHtml = `<div class="proj-footer"><span class="proj-price na">${escapeHtml(q)}</span></div>`;
-  }
-
-  return `<div class="proj-card">
-    <div class="proj-name">${escapeHtml(proj.name)}</div>
-    <div class="proj-status ${statusClass}">${escapeHtml(proj.status || '進行中')}</div>
-    ${proj.contact ? `<div class="proj-contact-tag">${escapeHtml(proj.contact)}</div>` : ''}
-    ${itemsHtml}
-    ${footerHtml}
-  </div>`;
-}
-
-function escapeHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-function formatDates(text) {
-  const weekdays = ['日','一','二','三','四','五','六'];
-  const today = new Date(); today.setHours(0,0,0,0);
-  // 1) Replace dates with styled spans
-  let result = text.replace(/(\d{4})-(\d{2})-(\d{2})/g, (match, y, m, d) => {
-    const target = new Date(+y, +m - 1, +d); target.setHours(0,0,0,0);
-    const diff = Math.round((target - today) / 86400000);
-    const wd = weekdays[target.getDay()];
-    const short = `${+m}/${+d}`;
-    let label, cls;
-    if (diff === 0) { label = `${short}(${wd}) 今天`; cls = 'today'; }
-    else if (diff === 1) { label = `${short}(${wd}) 明天`; cls = 'tomorrow'; }
-    else if (diff === -1) { label = `${short}(${wd}) 昨天`; cls = 'past'; }
-    else {
-      const todayDay = today.getDay() || 7;
-      const thisWeekStart = new Date(today); thisWeekStart.setDate(today.getDate() - todayDay + 1);
-      const nextWeekEnd = new Date(thisWeekStart); nextWeekEnd.setDate(thisWeekStart.getDate() + 13);
-      if (diff > 1 && diff < 7 && target < new Date(thisWeekStart.getTime() + 7*86400000)) {
-        label = `${short} 本週${wd}`; cls = '';
-      } else if (diff > 0 && target >= new Date(thisWeekStart.getTime() + 7*86400000) && target < nextWeekEnd) {
-        label = `${short} 下週${wd}`; cls = '';
-      } else if (diff < 0) {
-        label = `${short}(${wd})`; cls = 'past';
-      } else {
-        label = `${short}(${wd})`; cls = '';
-      }
-    }
-    return `<span class="date-tag ${cls}">${label}</span>`;
-  });
-  // 2) Wrap parenthetical annotations in styled spans
-  result = result.replace(/（([^）]+)）/g, '<span class="annotation">（$1）</span>');
-  result = result.replace(/\(([^)]+)\)/g, (match) => {
-    if (match.includes('date-tag')) return match; // skip already-wrapped date tags
-    return `<span class="annotation">${match}</span>`;
-  });
-  return result;
-}
-async function loadBrand() {
-  const brandFiles = [
-    { path: 'Brand/%E5%BC%B7%E5%BC%B7%E6%BB%BE%E4%B8%80%E5%AE%B6-%E6%A5%AD%E9%85%8D.md', type: '業配' },
-    { path: 'Brand/%E5%BC%B7%E5%BC%B7%E6%BB%BE%E4%B8%80%E5%AE%B6-Reels.md', type: 'Reels' },
-  ];
-  try {
-    const allCards = [];
-    for (const f of brandFiles) {
-      try {
-        const data = await fetchPublic(f.path);
-        const content = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ''))));
-        const items = parseBrandCollab(content, f.type);
-        allCards.push(...items);
-      } catch(e) { /* file may not exist yet */ }
-    }
-    const grid = document.getElementById('brandGrid');
-    if (!grid) return;
-    if (allCards.length === 0) {
-      grid.innerHTML = '<div class="proj-empty">（目前沒有進行中的業配或 Reels）</div>';
-    } else {
-      grid.innerHTML = allCards.map(renderBrandCard).join('');
-    }
-  } catch(e) {
-    const grid = document.getElementById('brandGrid');
-    if (grid) grid.innerHTML = `<div class="proj-empty">${escapeHtml(e.message)}</div>`;
-  }
-
-  // Group buy
-  try {
-    const data = await fetchPublic('Brand/%E5%BC%B7%E5%BC%B7%E6%BB%BE%E4%B8%80%E5%AE%B6-%E5%9C%98%E8%B3%BC.md');
-    const content = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ''))));
-    const items = parseGroupBuy(content);
-    const box = document.getElementById('groupBuyBox');
-    if (!box) return;
-    if (items.length === 0) {
-      box.innerHTML = '<div class="proj-empty">（目前沒有進行中的團購）</div>';
-    } else {
-      box.innerHTML = items.map(text =>
-        `<div class="group-buy-item"><div class="dot"></div><span>${formatDates(escapeHtml(text))}</span></div>`
-      ).join('');
-    }
-  } catch(e) {
-    const box = document.getElementById('groupBuyBox');
-    if (box) box.innerHTML = '<div class="proj-empty">（目前沒有進行中的團購）</div>';
-  }
+  return {
+    kind: 'project',
+    chip: 'PROJECT',
+    chipClass: '',
+    name, status, contact, client,
+    quoteRaw, quoteAmount, invoicedAmount, splits,
+    startDateRaw,
+    openTodos, allTodos: todos, lastLog,
+    events,
+    lastUpdate,
+  };
 }
 
 function parseBrandCollab(md, type) {
@@ -651,58 +1160,693 @@ function parseBrandCollab(md, type) {
   return sections.map(sec => {
     const lines = sec.split('\n');
     const name = lines[0].trim();
-    const statusLine = lines.find(l => l.startsWith('> 狀態：')) || '';
-    const status = statusLine.replace('> 狀態：', '').trim();
-    const contactLine = lines.find(l => l.startsWith('> 窗口：')) || '';
-    const contact = contactLine.replace('> 窗口：', '').trim();
-    const feeLine = lines.find(l => l.startsWith('> 費用：')) || '';
-    const fee = feeLine.replace('> 費用：', '').trim();
+    const body = lines.slice(1).join('\n');
+    const meta = (key) => {
+      const l = lines.find(l => l.startsWith(`> ${key}：`));
+      return l ? l.replace(`> ${key}：`, '').trim() : '';
+    };
+    const status = meta('狀態');
+    const contact = meta('窗口');
+    const fee = meta('費用');
     const bullets = lines.filter(l => l.match(/^- /)).map(l => l.replace(/^- /, ''));
-    return { name, status, contact, fee, type, bullets };
+    const events = extractDates('## ' + sec, name);
+    return {
+      kind: 'brand',
+      brandType: type, // '業配' | 'Reels'
+      chip: type === '業配' ? 'BRAND · 業配' : 'BRAND · REELS',
+      chipClass: type === '業配' ? 'is-brand-promo' : 'is-brand-reels',
+      name, status, contact, fee,
+      bullets,
+      openTodos: bullets.slice(0, 2).map(b => ({ checked: false, text: b })),
+      lastLog: bullets.length > 0 ? bullets[bullets.length - 1] : '',
+      events,
+      lastUpdate: events.length ? events[events.length - 1].date : null,
+    };
   }).filter(item => item.name);
 }
 
 function parseGroupBuy(md) {
-  const lines = md.split('\n');
-  let inActive = false;
+  const sections = md.split(/^## /m).slice(1);
   const items = [];
-  for (const line of lines) {
-    if (line.startsWith('## 進行中')) { inActive = true; continue; }
-    if (inActive && line.startsWith('## ')) break;
-    if (inActive && line.match(/^- /)) {
-      items.push(line.replace(/^- /, ''));
+  for (const sec of sections) {
+    const lines = sec.split('\n');
+    const sectionName = lines[0].trim(); // 進行中 / 已結束
+    if (!sectionName.includes('進行中')) continue;
+    for (const l of lines) {
+      const m = l.match(/^- (.+)/);
+      if (m) {
+        const text = m[1];
+        // Try parse "品牌：狀態"
+        const colon = text.match(/^([^：:]+)[：:](.+)$/);
+        const itemName = colon ? colon[1].trim() : text;
+        const itemDesc = colon ? colon[2].trim() : '';
+        items.push({
+          kind: 'brand',
+          brandType: '團購',
+          chip: 'BRAND · 團購',
+          chipClass: 'is-brand-group',
+          name: itemName,
+          status: '進行中',
+          contact: '',
+          fee: '',
+          bullets: itemDesc ? [itemDesc] : [],
+          openTodos: itemDesc ? [{ checked: false, text: itemDesc }] : [],
+          lastLog: itemDesc,
+          events: extractDates('## ' + sec, itemName).filter(e => e.text.includes(itemName) || e.text.includes(itemDesc.slice(0,8))),
+          lastUpdate: null,
+        });
+      }
     }
   }
   return items;
 }
 
-function renderBrandCard(item) {
-  let statusClass = 'active';
-  if (item.status.includes('等待')) statusClass = 'waiting';
-  if (item.status.includes('完成') || item.status.includes('結束')) statusClass = 'done';
+// ——— Card rendering ———
+function statusBucket(status) {
+  if (!status) return 'active';
+  if (status.includes('完成') || status.includes('結束')) return 'done';
+  if (status.includes('考慮')) return 'hold';
+  if (status.includes('等待')) return 'waiting';
+  return 'active';
+}
 
-  const bulletsHtml = item.bullets.length > 0
-    ? '<div class="proj-items">' + item.bullets.map(b =>
-        `<div class="proj-item"><div class="dot"></div><span>${formatDates(escapeHtml(b))}</span></div>`
-      ).join('') + '</div>'
-    : '<div class="proj-empty">（無進度項目）</div>';
+function renderCard(item, idx) {
+  const bucket = statusBucket(item.status);
+  const cardClasses = ['card', 'has-footer'];
+  if (bucket === 'waiting') cardClasses.push('is-waiting');
+  if (bucket === 'done') cardClasses.push('is-done');
 
-  let footerHtml = '';
-  if (item.fee) {
-    footerHtml = `<div class="proj-footer"><span class="proj-price">${escapeHtml(item.fee)}</span></div>`;
+  const pauseIcon = bucket === 'waiting' ? `<span class="pause-icon">${I.pause}</span>` : '';
+  const chipHtml = `<span class="card-chip ${item.chipClass}">${escapeHtml(item.chip)}</span>`;
+  const contactHtml = item.contact ? `<span class="card-contact">${escapeHtml(item.contact)}</span>` : '';
+
+  // Status row meta (start date · last update)
+  const metaPieces = [];
+  if (item.startDateRaw) metaPieces.push(`${item.startDateRaw} 開始`);
+  if (item.lastUpdate) metaPieces.push(`更新於 ${item.lastUpdate.getMonth()+1}/${item.lastUpdate.getDate()}`);
+  const metaText = metaPieces.length ? `<span class="card-meta-text">${metaPieces.join(' · ')}</span>` : '';
+
+  // Body: open todos > last log > bullets fallback
+  let bodyHtml = '';
+  if (item.openTodos && item.openTodos.length > 0) {
+    bodyHtml = item.openTodos.map(t => `
+      <div class="card-todo ${t.checked?'done':''}">
+        <div class="marker"></div>
+        <span>${formatDates(escapeHtml(t.text))}</span>
+      </div>`).join('');
+  } else if (item.lastLog) {
+    bodyHtml = `<div class="card-last-log"><span class="label">最後</span>${formatDates(escapeHtml(item.lastLog))}</div>`;
+  } else {
+    bodyHtml = `<div class="card-body-empty">（無待辦或紀錄）</div>`;
   }
 
-  return `<div class="brand-card">
-    <div class="proj-name">${escapeHtml(item.name)}</div>
-    ${item.status ? `<div class="proj-status ${statusClass}">${escapeHtml(item.status)}</div>` : ''}
-    <div class="brand-type-tag">${escapeHtml(item.type)}</div>
-    ${item.contact ? `<div class="proj-contact-tag" style="top:42px">${escapeHtml(item.contact)}</div>` : ''}
-    ${bulletsHtml}
-    ${footerHtml}
+  // Footer: pricing / fee / splits
+  const fmt = n => n.toLocaleString('zh-TW');
+  let footerInner = '';
+  if (item.kind === 'project') {
+    const q = item.quoteRaw;
+    if (q && q !== '未報價' && q !== '未成案' && item.quoteAmount > 0) {
+      const pct = Math.round((item.invoicedAmount / item.quoteAmount) * 100);
+      footerInner += `<div class="card-price-row">
+        <div><span class="card-price">${fmt(item.quoteAmount)}</span><span class="unit">未稅</span></div>
+        ${item.invoicedAmount > 0 ? `<span class="card-invoiced">已開 ${fmt(item.invoicedAmount)}</span>` : ''}
+      </div>`;
+      if (item.invoicedAmount > 0) {
+        footerInner += `<div class="progress-bar"><div style="width:${pct}%"></div></div>
+          <div class="progress-labels"><span>已收 ${pct}%</span><span>尾款 ${fmt(item.quoteAmount - item.invoicedAmount)}</span></div>`;
+      }
+      if (item.splits.length > 0) {
+        footerInner += `<div class="splits-row">${item.splits.map(s=>`<span class="split-tag">${escapeHtml(s)}</span>`).join('')}</div>`;
+      }
+    } else if (q) {
+      footerInner += `<span class="card-price na">${escapeHtml(q)}</span>`;
+    }
+  } else if (item.kind === 'brand') {
+    if (item.fee) {
+      footerInner += `<div class="fee-line">${escapeHtml(item.fee)}</div>`;
+    }
+  }
+  const footerHtml = footerInner ? `<div class="card-footer">${footerInner}</div>` : '';
+
+  // Calendar button (only if there are events)
+  const calBtn = item.events.length > 0
+    ? `<button class="card-cal-btn" data-cardid="card-${idx}" title="${item.events.length} 個日期" onclick="openCardCal(event, ${idx})">${I.calendar}</button>`
+    : '';
+
+  return `<div class="${cardClasses.join(' ')}" id="card-${idx}" data-bucket="${bucket}" data-kind="${item.kind}-${item.brandType||''}">
+    <div class="card-meta">${chipHtml}${contactHtml}</div>
+    <div class="card-title">${escapeHtml(item.name)}${pauseIcon}</div>
+    <div class="card-status-row">
+      <span class="status-pill is-${bucket}">${escapeHtml(item.status || '進行中')}</span>
+      ${metaText}
+    </div>
+    <hr class="hairline">
+    <div class="card-body">${bodyHtml}</div>
+    ${footerHtml ? '<hr class="hairline">' + footerHtml : ''}
+    ${calBtn}
   </div>`;
 }
 
-loadApp();
+// ——— Format dates inline ———
+function formatDates(text) {
+  const today = startOfDay(new Date());
+  let result = text.replace(/(\d{4})-(\d{1,2})-(\d{1,2})/g, (match, y, m, d) => {
+    const target = startOfDay(new Date(+y, +m - 1, +d));
+    const diff = Math.round((target - today) / 86400000);
+    const wd = WEEKDAYS[target.getDay()];
+    const short = `${+m}/${+d}`;
+    let label, cls;
+    if (diff === 0) { label = `${short}(${wd}) 今天`; cls = 'today'; }
+    else if (diff === 1) { label = `${short}(${wd}) 明天`; cls = 'tomorrow'; }
+    else if (diff === -1) { label = `${short}(${wd}) 昨天`; cls = 'past'; }
+    else if (diff < 0) { label = `${short}(${wd})`; cls = 'past'; }
+    else if (diff < 7) { label = `${short} 本週${wd}`; cls = ''; }
+    else if (diff < 14) { label = `${short} 下週${wd}`; cls = ''; }
+    else { label = `${short}(${wd})`; cls = ''; }
+    return `<span class="date-tag ${cls}">${label}</span>`;
+  });
+  result = result.replace(/（([^）]+)）/g, '<span class="annotation">（$1）</span>');
+  return result;
+}
+
+// ——— Filter / sort / group ———
+function getFilteredItems() {
+  const all = [...state.projects, ...state.brand, ...state.groupBuy];
+  const q = state.prefs.q.trim().toLowerCase();
+  const allowedBuckets = state.prefs.statuses;
+  return all.filter(it => {
+    const b = statusBucket(it.status);
+    if (!allowedBuckets.includes(b)) return false;
+    if (!q) return true;
+    const hay = [it.name, it.contact, it.client, it.lastLog, ...(it.openTodos||[]).map(t=>t.text), ...(it.bullets||[])].join(' ').toLowerCase();
+    return hay.includes(q);
+  });
+}
+
+function sortItems(items) {
+  const s = state.prefs.sort;
+  const arr = [...items];
+  if (s === 'updated') {
+    arr.sort((a,b) => (b.lastUpdate?.getTime()||0) - (a.lastUpdate?.getTime()||0));
+  } else if (s === 'amount') {
+    arr.sort((a,b) => (b.quoteAmount||0) - (a.quoteAmount||0));
+  } else if (s === 'start') {
+    arr.sort((a,b) => {
+      const da = a.startDateRaw ? new Date(a.startDateRaw).getTime() : 0;
+      const db = b.startDateRaw ? new Date(b.startDateRaw).getTime() : 0;
+      return db - da;
+    });
+  } else if (s === 'name') {
+    arr.sort((a,b) => a.name.localeCompare(b.name, 'zh-Hant'));
+  }
+  return arr;
+}
+
+function groupItems(items) {
+  const g = state.prefs.groupBy;
+  if (g === 'none') return [{ key: '全部', items }];
+  if (g === 'status') {
+    const order = [['active','進行中'],['waiting','等待中'],['hold','考慮中'],['done','已完成']];
+    return order.map(([key,label]) => ({ key: label, items: items.filter(it => statusBucket(it.status) === key) }))
+      .filter(g => g.items.length > 0);
+  }
+  if (g === 'kind') {
+    const order = [
+      ['project','工作室專案', it => it.kind === 'project'],
+      ['promo','業配', it => it.brandType === '業配'],
+      ['reels','Reels', it => it.brandType === 'Reels'],
+      ['group','團購 & 公關品', it => it.brandType === '團購'],
+    ];
+    return order.map(([k, label, fn]) => ({ key: label, items: items.filter(fn) }))
+      .filter(g => g.items.length > 0);
+  }
+  return [{ key: '全部', items }];
+}
+
+// ——— Render dashboard body ———
+function renderBody() {
+  const filtered = getFilteredItems();
+  const sorted = sortItems(filtered);
+  const groups = groupItems(sorted);
+  const container = document.getElementById('cardsArea');
+  if (!container) return;
+
+  if (groups.length === 0) {
+    container.innerHTML = `<div class="card-body-empty" style="padding:48px;text-align:center;">（沒有符合條件的項目）</div>`;
+    return;
+  }
+
+  let html = '';
+  let idx = 0;
+  for (const g of groups) {
+    html += `<div class="group-section">
+      <div class="group-header"><h2>${escapeHtml(g.key)}</h2><span class="count">${g.items.length}</span></div>
+      <div class="cards-grid">${g.items.map(it => renderCard(it, idx++)).join('')}</div>
+    </div>`;
+  }
+  container.innerHTML = html;
+
+  // Update chip counts
+  const counts = { active:0, waiting:0, done:0, hold:0 };
+  for (const it of [...state.projects, ...state.brand, ...state.groupBuy]) {
+    counts[statusBucket(it.status)]++;
+  }
+  for (const k of Object.keys(counts)) {
+    const el = document.querySelector(`.chip-toggle[data-status="${k}"] .count`);
+    if (el) el.textContent = counts[k];
+  }
+}
+
+// ——— Toolbar wiring ———
+function renderToolbar() {
+  const p = state.prefs;
+  const groupOpts = [['status','依狀態'],['kind','依類型'],['none','不分組']];
+  const sortOpts = [['updated','最近更新'],['start','開始日期'],['amount','金額大→小'],['name','名稱排序']];
+  const statusList = [['active','進行中'],['waiting','等待'],['hold','考慮'],['done','完成']];
+  return `<div class="toolbar">
+    <div class="toolbar-inner">
+      <div class="seg" role="tablist" aria-label="分組">
+        ${groupOpts.map(([k,l]) => `<button class="${p.groupBy===k?'on':''}" onclick="setPref('groupBy','${k}')">${l}</button>`).join('')}
+      </div>
+      <div class="toolbar-search">${I.search}<input id="q" type="text" placeholder="搜專案、窗口、關鍵字…" value="${escapeHtml(p.q)}" oninput="setPref('q', this.value)">
+      </div>
+      <select class="sort-select" onchange="setPref('sort', this.value)">
+        ${sortOpts.map(([k,l]) => `<option value="${k}" ${p.sort===k?'selected':''}>${l}</option>`).join('')}
+      </select>
+      <button class="icon-btn" onclick="openMasterCal()" title="總表月曆">${I.calendar}</button>
+      <button class="icon-btn ghost" onclick="hardRefresh()" title="重新整理">${I.refresh}</button>
+      <div class="chips-row">
+        ${statusList.map(([k,l]) => `<button class="chip-toggle ${p.statuses.includes(k)?'on':''}" data-status="${k}" onclick="toggleStatus('${k}')"><span class="dot"></span>${l}<span class="count">0</span></button>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+window.setPref = function(key, val) {
+  state.prefs[key] = val;
+  savePrefs();
+  if (key === 'q' || key === 'sort' || key === 'groupBy') renderBody();
+  if (key === 'groupBy' || key === 'sort') {
+    document.querySelectorAll('.toolbar .seg').forEach(seg => {
+      seg.querySelectorAll('button').forEach(b => b.classList.remove('on'));
+    });
+    document.querySelectorAll('.toolbar .seg button').forEach(b => {
+      const txt = b.textContent.trim();
+      if (state.prefs.groupBy === 'status' && txt === '依狀態') b.classList.add('on');
+      if (state.prefs.groupBy === 'kind' && txt === '依類型') b.classList.add('on');
+      if (state.prefs.groupBy === 'none' && txt === '不分組') b.classList.add('on');
+    });
+  }
+};
+
+window.toggleStatus = function(k) {
+  const arr = state.prefs.statuses;
+  const idx = arr.indexOf(k);
+  if (idx >= 0) arr.splice(idx, 1); else arr.push(k);
+  savePrefs();
+  document.querySelector(`.chip-toggle[data-status="${k}"]`).classList.toggle('on');
+  renderBody();
+};
+
+window.hardRefresh = function() {
+  sessionStorage.removeItem(MD_CACHE_KEY);
+  loadAll();
+};
+
+// ——— Card calendar popover ———
+window.openCardCal = function(ev, idx) {
+  ev.stopPropagation();
+  closePopover();
+  const card = document.getElementById(`card-${idx}`);
+  const all = [...state.projects, ...state.brand, ...state.groupBuy];
+  // find the item matching this card index by re-running grouping
+  const filtered = getFilteredItems();
+  const sorted = sortItems(filtered);
+  const groups = groupItems(sorted);
+  let cnt = 0, item = null;
+  for (const g of groups) for (const it of g.items) { if (cnt === idx) { item = it; break; } cnt++; if (item) break; }
+  if (!item) return;
+
+  const pop = document.createElement('div');
+  pop.className = 'cal-popover';
+  pop.dataset.month = formatYM(new Date());
+  pop.innerHTML = renderPopoverContent(item, new Date());
+  document.body.appendChild(pop);
+  positionPopover(pop, ev.currentTarget);
+  state.popover = { el: pop, item };
+  setTimeout(() => document.addEventListener('click', popoverOutsideClose, { once: true }), 0);
+};
+
+function popoverOutsideClose(ev) {
+  if (state.popover && !state.popover.el.contains(ev.target)) closePopover();
+}
+
+function closePopover() {
+  if (state.popover) {
+    state.popover.el.remove();
+    state.popover = null;
+  }
+}
+
+function positionPopover(pop, anchor) {
+  const isMobile = window.innerWidth < 640;
+  if (isMobile) return; // mobile uses fixed bottom-sheet via CSS
+  const r = anchor.getBoundingClientRect();
+  const popW = 320;
+  let left = r.right + window.scrollX - popW;
+  if (left < 12) left = 12;
+  let top = r.top + window.scrollY - 8 - 380;
+  if (top < window.scrollY + 70) top = r.bottom + window.scrollY + 8;
+  pop.style.left = left + 'px';
+  pop.style.top = top + 'px';
+}
+
+function formatYM(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; }
+
+function renderPopoverContent(item, monthDate) {
+  return `
+    <div class="cal-popover-title">${escapeHtml(item.name)}</div>
+    <div class="cal-nav">
+      <button onclick="popMonth(-1)">${I.arrowL}</button>
+      <span>${monthDate.getFullYear()} 年 ${monthDate.getMonth()+1} 月</span>
+      <button onclick="popMonth(1)">${I.arrowR}</button>
+    </div>
+    ${renderMiniGrid(monthDate, item.events)}
+    ${renderEventsList(item.events, monthDate)}
+  `;
+}
+
+window.popMonth = function(delta) {
+  if (!state.popover) return;
+  const [y,m] = state.popover.el.dataset.month.split('-').map(Number);
+  const d = new Date(y, m - 1 + delta, 1);
+  state.popover.el.dataset.month = formatYM(d);
+  state.popover.el.innerHTML = renderPopoverContent(state.popover.item, d);
+};
+
+function renderMiniGrid(monthDate, events) {
+  const y = monthDate.getFullYear(), m = monthDate.getMonth();
+  const first = new Date(y, m, 1);
+  const startDow = first.getDay();
+  const lastDay = new Date(y, m+1, 0).getDate();
+  const today = startOfDay(new Date());
+  const eventsByDay = {};
+  for (const e of events) {
+    if (e.date.getFullYear() === y && e.date.getMonth() === m) {
+      const d = e.date.getDate();
+      eventsByDay[d] = (eventsByDay[d] || 0) + 1;
+    }
+    if (e.endDate && e.date.getFullYear() <= y && e.endDate.getFullYear() >= y) {
+      // mark range cells
+      const s = (e.date.getFullYear() === y && e.date.getMonth() === m) ? e.date.getDate() : 1;
+      const eEnd = (e.endDate.getFullYear() === y && e.endDate.getMonth() === m) ? e.endDate.getDate() : lastDay;
+      for (let d = s; d <= eEnd; d++) {
+        eventsByDay[d] = eventsByDay[d] || -1; // -1 means range only
+      }
+    }
+  }
+  let cells = '';
+  for (const wd of WEEKDAYS) cells += `<div class="wd">${wd}</div>`;
+  for (let i = 0; i < startDow; i++) cells += `<div class="cal-cell other"></div>`;
+  for (let d = 1; d <= lastDay; d++) {
+    const dt = new Date(y, m, d);
+    const isToday = dt.getTime() === today.getTime();
+    const cnt = eventsByDay[d];
+    let cls = 'cal-cell';
+    if (isToday) cls += ' today';
+    if (cnt > 0) cls += ' has-event';
+    else if (cnt === -1) cls += ' in-range';
+    cells += `<div class="${cls}">${d}</div>`;
+  }
+  return `<div class="cal-grid">${cells}</div>`;
+}
+
+function renderEventsList(events, monthDate) {
+  const y = monthDate.getFullYear(), m = monthDate.getMonth();
+  const inMonth = events.filter(e => e.date.getFullYear() === y && e.date.getMonth() === m);
+  if (inMonth.length === 0) return `<div class="cal-events"><div class="card-body-empty">（本月無事件）</div></div>`;
+  return `<div class="cal-events">${inMonth.map(e => `
+    <div class="cal-event-row">
+      <span class="d">${fmtMD(e.date)}</span>
+      ${e.time ? `<span class="t">${escapeHtml(e.time)}</span>` : ''}
+      <span>${escapeHtml(e.text.slice(0, 80))}</span>
+    </div>`).join('')}</div>`;
+}
+
+// ——— Master calendar modal ———
+function getAllEvents() {
+  const all = [...state.projects, ...state.brand, ...state.groupBuy];
+  const out = [];
+  for (const it of all) {
+    for (const e of it.events) {
+      out.push(Object.assign({}, e, { project: it }));
+    }
+  }
+  return out;
+}
+
+window.openMasterCal = function() {
+  const modal = document.getElementById('masterModal');
+  state.masterMonth = state.masterMonth || new Date();
+  modal.innerHTML = renderMasterModal(state.masterMonth);
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+};
+
+window.closeMasterCal = function() {
+  const modal = document.getElementById('masterModal');
+  modal.classList.remove('open');
+  document.body.style.overflow = '';
+};
+
+window.masterMonth = function(delta) {
+  const d = new Date(state.masterMonth);
+  d.setMonth(d.getMonth() + delta);
+  state.masterMonth = d;
+  document.getElementById('masterModal').innerHTML = renderMasterModal(d);
+};
+
+function brandClass(item) {
+  if (item.kind === 'project') return '';
+  if (item.brandType === '業配') return 'brand-promo';
+  if (item.brandType === 'Reels') return 'brand-reels';
+  if (item.brandType === '團購') return 'brand-group';
+  return '';
+}
+
+function renderMasterModal(monthDate) {
+  const events = getAllEvents();
+  const y = monthDate.getFullYear(), m = monthDate.getMonth();
+  const first = new Date(y, m, 1);
+  const startDow = first.getDay();
+  const lastDay = new Date(y, m+1, 0).getDate();
+  const today = startOfDay(new Date());
+
+  // events by day
+  const byDay = {};
+  for (const e of events) {
+    const sameMonth = e.date.getFullYear() === y && e.date.getMonth() === m;
+    if (sameMonth) {
+      const d = e.date.getDate();
+      (byDay[d] = byDay[d] || []).push(e);
+    }
+    if (e.endDate) {
+      const inMonth = (dy, dm) => (dy === y && dm === m);
+      const sStart = inMonth(e.date.getFullYear(), e.date.getMonth()) ? e.date.getDate() : 1;
+      const eEnd = inMonth(e.endDate.getFullYear(), e.endDate.getMonth()) ? e.endDate.getDate() : lastDay;
+      const startBeforeMonth = (e.date < first);
+      const endAfterMonth = (e.endDate > new Date(y, m+1, 0));
+      if (startBeforeMonth || endAfterMonth || e.date.getMonth() === m) {
+        for (let d = sStart; d <= eEnd; d++) {
+          const exists = (byDay[d] || []).some(x => x === e);
+          if (!exists) (byDay[d] = byDay[d] || []).push(e);
+        }
+      }
+    }
+  }
+
+  // Build grid cells
+  let gridCells = '';
+  for (const wd of WEEKDAYS) gridCells += `<div class="wd">${wd}</div>`;
+  for (let i = 0; i < startDow; i++) gridCells += `<div class="mc-cell other"></div>`;
+  for (let d = 1; d <= lastDay; d++) {
+    const dt = new Date(y, m, d);
+    const isToday = dt.getTime() === today.getTime();
+    const evs = byDay[d] || [];
+    const visible = evs.slice(0, 3);
+    const more = evs.length - visible.length;
+    gridCells += `<div class="mc-cell ${isToday?'today':''}" onclick="masterPickDay(${y},${m},${d})">
+      <div class="day-num">${d}</div>
+      ${visible.map(e => {
+        const cls = brandClass(e.project);
+        const isRange = !!e.endDate;
+        const label = `${e.project.name} · ${e.text}`;
+        return `<div class="mc-event ${cls} ${isRange?'range':''}" title="${escapeHtml(label)}" onclick="event.stopPropagation(); jumpToCard('${escapeHtml(e.project.name)}')">${escapeHtml(e.project.name)}</div>`;
+      }).join('')}
+      ${more > 0 ? `<div class="mc-more">+${more} 更多</div>` : ''}
+    </div>`;
+  }
+
+  // Build right side list (default: all events in month)
+  const monthEvents = [];
+  for (const d of Object.keys(byDay).map(Number).sort((a,b)=>a-b)) {
+    for (const e of byDay[d]) monthEvents.push({ d, e });
+  }
+  const listHtml = monthEvents.length === 0
+    ? `<div class="card-body-empty">（本月無事件）</div>`
+    : monthEvents.map(({d, e}) => `
+        <div class="mc-list-row" onclick="closeMasterCal(); jumpToCard('${escapeHtml(e.project.name)}')">
+          <div class="when">${m+1}/${d}${e.time ? ' · ' + escapeHtml(e.time) : ''}</div>
+          <div class="what">${escapeHtml(e.text.slice(0, 100))}</div>
+          <div class="who">${escapeHtml(e.project.name)} · ${escapeHtml(e.project.chip)}</div>
+        </div>`).join('');
+
+  return `
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h2>${I.calendar}<span>總表月曆</span></h2>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button class="modal-close" onclick="masterMonth(-1)">‹</button>
+          <span style="font-weight:800;font-size:0.95em;min-width:120px;text-align:center;">${y} 年 ${m+1} 月</span>
+          <button class="modal-close" onclick="masterMonth(1)">›</button>
+          <button class="modal-close" onclick="closeMasterCal()" style="margin-left:6px;">✕</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="modal-cal-pane">
+          <div class="mc-grid">${gridCells}</div>
+        </div>
+        <div class="modal-side">
+          <h3>本月事件 (${monthEvents.length})</h3>
+          <div class="mc-list">${listHtml}</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+window.masterPickDay = function(y, m, d) {
+  // Re-render side list with only that day's events
+  const events = getAllEvents().filter(e => {
+    const inSingle = e.date.getFullYear() === y && e.date.getMonth() === m && e.date.getDate() === d;
+    const inRange = e.endDate && e.date <= new Date(y,m,d) && e.endDate >= new Date(y,m,d);
+    return inSingle || inRange;
+  });
+  const side = document.querySelector('#masterModal .modal-side');
+  if (!side) return;
+  side.innerHTML = `<h3>${y}/${m+1}/${d} 事件 (${events.length})</h3><div class="mc-list">${
+    events.length === 0
+      ? '<div class="card-body-empty">（這天沒事）</div>'
+      : events.map(e => `
+        <div class="mc-list-row" onclick="closeMasterCal(); jumpToCard('${escapeHtml(e.project.name)}')">
+          <div class="when">${m+1}/${d}${e.time ? ' · ' + escapeHtml(e.time) : ''}</div>
+          <div class="what">${escapeHtml(e.text.slice(0, 100))}</div>
+          <div class="who">${escapeHtml(e.project.name)} · ${escapeHtml(e.project.chip)}</div>
+        </div>`).join('')
+  }</div>`;
+};
+
+window.jumpToCard = function(projectName) {
+  // Find card by data; need to compare by item name → re-search rendered cards
+  const cards = document.querySelectorAll('.card');
+  for (const c of cards) {
+    const titleEl = c.querySelector('.card-title');
+    if (titleEl && titleEl.textContent.trim().startsWith(projectName)) {
+      c.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      c.classList.remove('flash');
+      void c.offsetWidth;
+      c.classList.add('flash');
+      setTimeout(() => c.classList.remove('flash'), 1800);
+      return;
+    }
+  }
+};
+
+// ——— Loaders ———
+async function loadProjects() {
+  try {
+    const files = await fetchPublic('Projects');
+    if (!Array.isArray(files)) return [];
+    const mdFiles = files.filter(f => f.name.endsWith('.md'));
+    const items = await Promise.all(mdFiles.map(async f => {
+      const data = await fetchPublic(`Projects/${encodeURIComponent(f.name)}`);
+      return parseProject(decodeMd(data));
+    }));
+    return items;
+  } catch (e) {
+    showToast(e.message, true);
+    return [];
+  }
+}
+
+async function loadBrand() {
+  const brandFiles = [
+    { path: 'Brand/%E5%BC%B7%E5%BC%B7%E6%BB%BE%E4%B8%80%E5%AE%B6-%E6%A5%AD%E9%85%8D.md', type: '業配' },
+    { path: 'Brand/%E5%BC%B7%E5%BC%B7%E6%BB%BE%E4%B8%80%E5%AE%B6-Reels.md', type: 'Reels' },
+  ];
+  const out = [];
+  for (const f of brandFiles) {
+    try {
+      const data = await fetchPublic(f.path);
+      out.push(...parseBrandCollab(decodeMd(data), f.type));
+    } catch {}
+  }
+  return out;
+}
+
+async function loadGroupBuy() {
+  try {
+    const data = await fetchPublic('Brand/%E5%BC%B7%E5%BC%B7%E6%BB%BE%E4%B8%80%E5%AE%B6-%E5%9C%98%E8%B3%BC.md');
+    return parseGroupBuy(decodeMd(data));
+  } catch { return []; }
+}
+
+async function loadAll() {
+  const cards = document.getElementById('cardsArea');
+  if (cards) cards.innerHTML = `<div class="card-body-empty" style="padding:48px;text-align:center;">載入中…</div>`;
+  const [projects, brand, groupBuy] = await Promise.all([loadProjects(), loadBrand(), loadGroupBuy()]);
+  state.projects = projects;
+  state.brand = brand;
+  state.groupBuy = groupBuy;
+  renderBody();
+  updateLoadTime();
+}
+
+function updateLoadTime() {
+  const now = new Date();
+  const ts = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  const el = document.getElementById('loadTime');
+  if (el) el.textContent = `讀取時間：${ts}`;
+}
+
+function renderShell() {
+  document.getElementById('app').innerHTML = `
+    <div class="hero">
+      <div class="hero-inner">
+        <div class="hero-eyebrow">ARCHUNG · DASHBOARD</div>
+        <div class="hero-title">阿忠戰情</div>
+        <div class="hero-subtitle">工作室專案 · 強強滾一家品牌合作 · 團購</div>
+        <div class="hero-time" id="loadTime"></div>
+      </div>
+    </div>
+    ${renderToolbar()}
+    <div class="main">
+      <div id="cardsArea"></div>
+    </div>
+  `;
+}
+
+window.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closePopover();
+    if (document.getElementById('masterModal').classList.contains('open')) closeMasterCal();
+  }
+});
+window.addEventListener('scroll', closePopover, { passive: true });
+window.addEventListener('resize', closePopover);
+
+renderShell();
+loadAll();
 </script>
 </body>
 </html>
