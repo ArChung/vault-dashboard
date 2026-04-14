@@ -831,7 +831,7 @@ const OWNER = 'ArChung';
 const REPO = 'vault-dashboard';
 const BRANCH = 'master';
 const MD_CACHE_KEY = 'archung-md-cache-v1';
-const PREFS_KEY = 'archung-prefs-v1';
+const PREFS_KEY = 'archung-prefs-v2';
 
 // ——— Icons ———
 const I = {
@@ -849,13 +849,13 @@ const state = {
   brand: [],
   groupBuy: [],
   prefs: loadPrefs(),
-  popover: null,
   masterMonth: null,
+  masterFilter: null,
 };
 
 function loadPrefs() {
-  try { return Object.assign({ groupBy:'status', sort:'updated', q:'', statuses:['active','waiting','hold'] }, JSON.parse(localStorage.getItem(PREFS_KEY) || '{}')); }
-  catch { return { groupBy:'status', sort:'updated', q:'', statuses:['active','waiting','hold'] }; }
+  try { return Object.assign({ groupBy:'kind', sort:'updated', statuses:['active','waiting','hold'] }, JSON.parse(localStorage.getItem(PREFS_KEY) || '{}')); }
+  catch { return { groupBy:'kind', sort:'updated', statuses:['active','waiting','hold'] }; }
 }
 function savePrefs() { localStorage.setItem(PREFS_KEY, JSON.stringify(state.prefs)); }
 
@@ -1139,21 +1139,16 @@ function statusBucket(status) {
 
 function renderCard(item, idx) {
   const bucket = statusBucket(item.status);
-  const cardClasses = ['card', 'has-footer'];
+  const cardClasses = ['card'];
   if (bucket === 'waiting') cardClasses.push('is-waiting');
   if (bucket === 'done') cardClasses.push('is-done');
 
-  const pauseIcon = bucket === 'waiting' ? `<span class="pause-icon">${I.pause}</span>` : '';
-  const chipHtml = `<span class="card-chip ${item.chipClass}">${escapeHtml(item.chip)}</span>`;
-  const contactHtml = item.contact ? `<span class="card-contact">${escapeHtml(item.contact)}</span>` : '';
+  // Tags row: status pill + contact pill（同級）
+  const statusPill = `<span class="pill pill-status is-${bucket}">${escapeHtml(item.status || '進行中')}</span>`;
+  const contactPill = item.contact ? `<span class="pill pill-contact">${escapeHtml(item.contact)}</span>` : '';
+  const tagsHtml = `<div class="card-tags">${statusPill}${contactPill}</div>`;
 
-  // Status row meta (start date · last update)
-  const metaPieces = [];
-  if (item.startDateRaw) metaPieces.push(`${item.startDateRaw} 開始`);
-  if (item.lastUpdate) metaPieces.push(`更新於 ${item.lastUpdate.getMonth()+1}/${item.lastUpdate.getDate()}`);
-  const metaText = metaPieces.length ? `<span class="card-meta-text">${metaPieces.join(' · ')}</span>` : '';
-
-  // Body: open todos > last log > bullets fallback
+  // Body: open todos > last log > fallback
   let bodyHtml = '';
   if (item.openTodos && item.openTodos.length > 0) {
     bodyHtml = item.openTodos.map(t => `
@@ -1167,50 +1162,49 @@ function renderCard(item, idx) {
     bodyHtml = `<div class="card-body-empty">（無待辦或紀錄）</div>`;
   }
 
-  // Footer: pricing / fee / splits
+  // Footer: money line + splits（不再渲染進度條 / 已收% / 尾款）
   const fmt = n => n.toLocaleString('zh-TW');
   let footerInner = '';
   if (item.kind === 'project') {
     const q = item.quoteRaw;
     if (q && q !== '未報價' && q !== '未成案' && item.quoteAmount > 0) {
-      const pct = Math.round((item.invoicedAmount / item.quoteAmount) * 100);
-      footerInner += `<div class="card-price-row">
-        <div><span class="card-price">${fmt(item.quoteAmount)}</span><span class="unit">未稅</span></div>
+      footerInner += `<div class="card-money">
+        <span class="card-price">${fmt(item.quoteAmount)}<span class="unit">未稅</span></span>
         ${item.invoicedAmount > 0 ? `<span class="card-invoiced">已開 ${fmt(item.invoicedAmount)}</span>` : ''}
       </div>`;
-      if (item.invoicedAmount > 0) {
-        footerInner += `<div class="progress-bar"><div style="width:${pct}%"></div></div>
-          <div class="progress-labels"><span>已收 ${pct}%</span><span>尾款 ${fmt(item.quoteAmount - item.invoicedAmount)}</span></div>`;
-      }
       if (item.splits.length > 0) {
-        footerInner += `<div class="splits-row">${item.splits.map(s=>`<span class="split-tag">${escapeHtml(s)}</span>`).join('')}</div>`;
+        footerInner += `<div class="card-splits">${item.splits.map(s=>`<span class="split-tag">${escapeHtml(s)}</span>`).join('')}</div>`;
       }
     } else if (q) {
-      footerInner += `<span class="card-price na">${escapeHtml(q)}</span>`;
+      footerInner += `<div class="card-money"><span class="card-price na">${escapeHtml(q)}</span></div>`;
     }
   } else if (item.kind === 'brand') {
     if (item.fee) {
-      footerInner += `<div class="fee-line">${escapeHtml(item.fee)}</div>`;
+      footerInner += `<div class="card-money"><span class="fee-line">${escapeHtml(item.fee)}</span></div>`;
     }
   }
   const footerHtml = footerInner ? `<div class="card-footer">${footerInner}</div>` : '';
 
-  // Calendar button (only if there are events)
+  // Bottom meta line：YYYY-MM-DD 開始 · 更新於 X/Y + 月曆 icon
+  const metaPieces = [];
+  if (item.startDateRaw) metaPieces.push(`${item.startDateRaw} 開始`);
+  if (item.lastUpdate) metaPieces.push(`更新於 ${item.lastUpdate.getMonth()+1}/${item.lastUpdate.getDate()}`);
+  const metaTextBottom = metaPieces.length ? metaPieces.join(' · ') : '';
   const calBtn = item.events.length > 0
-    ? `<button class="card-cal-btn" data-cardid="card-${idx}" title="${item.events.length} 個日期" onclick="openCardCal(event, ${idx})">${I.calendar}</button>`
+    ? `<button class="card-cal-btn" title="${item.events.length} 個日期" onclick="openCardCal(event, ${idx})">${I.calendar}</button>`
+    : '<span></span>';
+
+  const metaBottom = (metaTextBottom || calBtn)
+    ? `<div class="card-meta-bottom"><span class="meta-date">${metaTextBottom}</span>${calBtn}</div>`
     : '';
 
   return `<div class="${cardClasses.join(' ')}" id="card-${idx}" data-bucket="${bucket}" data-kind="${item.kind}-${item.brandType||''}">
-    <div class="card-meta">${chipHtml}${contactHtml}</div>
-    <div class="card-title">${escapeHtml(item.name)}${pauseIcon}</div>
-    <div class="card-status-row">
-      <span class="status-pill is-${bucket}">${escapeHtml(item.status || '進行中')}</span>
-      ${metaText}
-    </div>
+    <div class="card-title">${escapeHtml(item.name)}</div>
+    ${tagsHtml}
     <hr class="hairline">
     <div class="card-body">${bodyHtml}</div>
-    ${footerHtml ? '<hr class="hairline">' + footerHtml : ''}
-    ${calBtn}
+    ${footerHtml}
+    ${metaBottom}
   </div>`;
 }
 
@@ -1239,15 +1233,8 @@ function formatDates(text) {
 // ——— Filter / sort / group ———
 function getFilteredItems() {
   const all = [...state.projects, ...state.brand, ...state.groupBuy];
-  const q = state.prefs.q.trim().toLowerCase();
   const allowedBuckets = state.prefs.statuses;
-  return all.filter(it => {
-    const b = statusBucket(it.status);
-    if (!allowedBuckets.includes(b)) return false;
-    if (!q) return true;
-    const hay = [it.name, it.contact, it.client, it.lastLog, ...(it.openTodos||[]).map(t=>t.text), ...(it.bullets||[])].join(' ').toLowerCase();
-    return hay.includes(q);
-  });
+  return all.filter(it => allowedBuckets.includes(statusBucket(it.status)));
 }
 
 function sortItems(items) {
@@ -1351,7 +1338,7 @@ function renderToolbar() {
 window.setPref = function(key, val) {
   state.prefs[key] = val;
   savePrefs();
-  if (key === 'q' || key === 'sort' || key === 'groupBy') renderBody();
+  if (key === 'sort' || key === 'groupBy') renderBody();
   if (key === 'groupBy' || key === 'sort') {
     document.querySelectorAll('.toolbar .seg').forEach(seg => {
       seg.querySelectorAll('button').forEach(b => b.classList.remove('on'));
@@ -1379,141 +1366,73 @@ window.hardRefresh = function() {
   loadAll();
 };
 
-// ——— Card calendar popover ———
-window.openCardCal = function(ev, idx) {
-  ev.stopPropagation();
-  closePopover();
-  const card = document.getElementById(`card-${idx}`);
-  const all = [...state.projects, ...state.brand, ...state.groupBuy];
-  // find the item matching this card index by re-running grouping
-  const filtered = getFilteredItems();
-  const sorted = sortItems(filtered);
-  const groups = groupItems(sorted);
-  let cnt = 0, item = null;
-  for (const g of groups) for (const it of g.items) { if (cnt === idx) { item = it; break; } cnt++; if (item) break; }
-  if (!item) return;
-
-  const pop = document.createElement('div');
-  pop.className = 'cal-popover';
-  pop.dataset.month = formatYM(new Date());
-  pop.innerHTML = renderPopoverContent(item, new Date());
-  document.body.appendChild(pop);
-  positionPopover(pop, ev.currentTarget);
-  state.popover = { el: pop, item };
-  setTimeout(() => document.addEventListener('click', popoverOutsideClose, { once: true }), 0);
-};
-
-function popoverOutsideClose(ev) {
-  if (state.popover && !state.popover.el.contains(ev.target)) closePopover();
-}
-
-function closePopover() {
-  if (state.popover) {
-    state.popover.el.remove();
-    state.popover = null;
-  }
-}
-
-function positionPopover(pop, anchor) {
-  const isMobile = window.innerWidth < 640;
-  if (isMobile) return; // mobile uses fixed bottom-sheet via CSS
-  const r = anchor.getBoundingClientRect();
-  const popW = 320;
-  let left = r.right + window.scrollX - popW;
-  if (left < 12) left = 12;
-  let top = r.top + window.scrollY - 8 - 380;
-  if (top < window.scrollY + 70) top = r.bottom + window.scrollY + 8;
-  pop.style.left = left + 'px';
-  pop.style.top = top + 'px';
-}
+// ——— Calendar (unified: card click + toolbar click 都走 openMasterCal) ———
+const IMPORTANT_TYPES = new Set(['start', 'todo', 'campaign']);
 
 function formatYM(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; }
 
-function renderPopoverContent(item, monthDate) {
-  return `
-    <div class="cal-popover-title">${escapeHtml(item.name)}</div>
-    <div class="cal-nav">
-      <button onclick="popMonth(-1)">${I.arrowL}</button>
-      <span>${monthDate.getFullYear()} 年 ${monthDate.getMonth()+1} 月</span>
-      <button onclick="popMonth(1)">${I.arrowR}</button>
-    </div>
-    ${renderMiniGrid(monthDate, item.events)}
-    ${renderEventsList(item.events, monthDate)}
-  `;
+// 清掉事件文字裡的日期前綴，月曆格子只顯示語意
+function stripDate(t) {
+  if (!t) return '';
+  return String(t)
+    .replace(/\b\d{4}-\d{1,2}-\d{1,2}\b/g, '')
+    .replace(/\d{4}\s*年\s*\d{1,2}\s*月\s*\d{1,2}\s*日?/g, '')
+    .replace(/^\s*[、，,·\-—\s]+/, '')
+    .trim();
 }
 
-window.popMonth = function(delta) {
-  if (!state.popover) return;
-  const [y,m] = state.popover.el.dataset.month.split('-').map(Number);
-  const d = new Date(y, m - 1 + delta, 1);
-  state.popover.el.dataset.month = formatYM(d);
-  state.popover.el.innerHTML = renderPopoverContent(state.popover.item, d);
-};
+function truncate(s, n) {
+  s = String(s || '');
+  return s.length > n ? s.slice(0, n - 1) + '…' : s;
+}
 
-function renderMiniGrid(monthDate, events) {
-  const y = monthDate.getFullYear(), m = monthDate.getMonth();
-  const first = new Date(y, m, 1);
-  const startDow = first.getDay();
-  const lastDay = new Date(y, m+1, 0).getDate();
-  const today = startOfDay(new Date());
-  const eventsByDay = {};
-  for (const e of events) {
-    if (e.date.getFullYear() === y && e.date.getMonth() === m) {
-      const d = e.date.getDate();
-      eventsByDay[d] = (eventsByDay[d] || 0) + 1;
-    }
-    if (e.endDate && e.date.getFullYear() <= y && e.endDate.getFullYear() >= y) {
-      // mark range cells
-      const s = (e.date.getFullYear() === y && e.date.getMonth() === m) ? e.date.getDate() : 1;
-      const eEnd = (e.endDate.getFullYear() === y && e.endDate.getMonth() === m) ? e.endDate.getDate() : lastDay;
-      for (let d = s; d <= eEnd; d++) {
-        eventsByDay[d] = eventsByDay[d] || -1; // -1 means range only
-      }
-    }
+function getItemByCardIdx(idx) {
+  const filtered = getFilteredItems();
+  const sorted = sortItems(filtered);
+  const groups = groupItems(sorted);
+  let cnt = 0;
+  for (const g of groups) for (const it of g.items) {
+    if (cnt === idx) return it;
+    cnt++;
   }
-  let cells = '';
-  for (const wd of WEEKDAYS) cells += `<div class="wd">${wd}</div>`;
-  for (let i = 0; i < startDow; i++) cells += `<div class="cal-cell other"></div>`;
-  for (let d = 1; d <= lastDay; d++) {
-    const dt = new Date(y, m, d);
-    const isToday = dt.getTime() === today.getTime();
-    const cnt = eventsByDay[d];
-    let cls = 'cal-cell';
-    if (isToday) cls += ' today';
-    if (cnt > 0) cls += ' has-event';
-    else if (cnt === -1) cls += ' in-range';
-    cells += `<div class="${cls}">${d}</div>`;
-  }
-  return `<div class="cal-grid">${cells}</div>`;
+  return null;
 }
 
-function renderEventsList(events, monthDate) {
-  const y = monthDate.getFullYear(), m = monthDate.getMonth();
-  const inMonth = events.filter(e => e.date.getFullYear() === y && e.date.getMonth() === m);
-  if (inMonth.length === 0) return `<div class="cal-events"><div class="card-body-empty">（本月無事件）</div></div>`;
-  return `<div class="cal-events">${inMonth.map(e => `
-    <div class="cal-event-row">
-      <span class="d">${fmtMD(e.date)}</span>
-      ${e.time ? `<span class="t">${escapeHtml(e.time)}</span>` : ''}
-      <span>${escapeHtml(e.text.slice(0, 80))}</span>
-    </div>`).join('')}</div>`;
-}
-
-// ——— Master calendar modal ———
 function getAllEvents() {
   const all = [...state.projects, ...state.brand, ...state.groupBuy];
   const out = [];
   for (const it of all) {
+    if (state.masterFilter && it !== state.masterFilter) continue;
     for (const e of it.events) {
+      if (!IMPORTANT_TYPES.has(e.type)) continue;
       out.push(Object.assign({}, e, { project: it }));
     }
   }
   return out;
 }
 
-window.openMasterCal = function() {
+function brandClass(item) {
+  if (item.kind === 'project') return '';
+  if (item.brandType === '業配') return 'brand-promo';
+  if (item.brandType === 'Reels') return 'brand-reels';
+  if (item.brandType === '團購') return 'brand-group';
+  return '';
+}
+
+function pickInitialMonth() {
+  return new Date();
+}
+
+window.openCardCal = function(ev, idx) {
+  ev.stopPropagation();
+  const item = getItemByCardIdx(idx);
+  openMasterCal(item);
+};
+
+window.openMasterCal = function(projectFilter) {
+  state.masterFilter = projectFilter || null;
+  state.masterMonth = state.masterMonth || pickInitialMonth();
   const modal = document.getElementById('masterModal');
-  state.masterMonth = state.masterMonth || new Date();
   modal.innerHTML = renderMasterModal(state.masterMonth);
   modal.classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -1522,6 +1441,9 @@ window.openMasterCal = function() {
 window.closeMasterCal = function() {
   const modal = document.getElementById('masterModal');
   modal.classList.remove('open');
+  modal.innerHTML = '';
+  state.masterFilter = null;
+  closeDaySheet();
   document.body.style.overflow = '';
 };
 
@@ -1532,13 +1454,10 @@ window.masterMonth = function(delta) {
   document.getElementById('masterModal').innerHTML = renderMasterModal(d);
 };
 
-function brandClass(item) {
-  if (item.kind === 'project') return '';
-  if (item.brandType === '業配') return 'brand-promo';
-  if (item.brandType === 'Reels') return 'brand-reels';
-  if (item.brandType === '團購') return 'brand-group';
-  return '';
-}
+window.masterGoToday = function() {
+  state.masterMonth = new Date();
+  document.getElementById('masterModal').innerHTML = renderMasterModal(state.masterMonth);
+};
 
 function renderMasterModal(monthDate) {
   const events = getAllEvents();
@@ -1547,8 +1466,9 @@ function renderMasterModal(monthDate) {
   const startDow = first.getDay();
   const lastDay = new Date(y, m+1, 0).getDate();
   const today = startOfDay(new Date());
+  const monthEnd = new Date(y, m+1, 0);
 
-  // events by day
+  // events by day (含跨月份的 range)
   const byDay = {};
   for (const e of events) {
     const sameMonth = e.date.getFullYear() === y && e.date.getMonth() === m;
@@ -1557,99 +1477,119 @@ function renderMasterModal(monthDate) {
       (byDay[d] = byDay[d] || []).push(e);
     }
     if (e.endDate) {
-      const inMonth = (dy, dm) => (dy === y && dm === m);
-      const sStart = inMonth(e.date.getFullYear(), e.date.getMonth()) ? e.date.getDate() : 1;
-      const eEnd = inMonth(e.endDate.getFullYear(), e.endDate.getMonth()) ? e.endDate.getDate() : lastDay;
-      const startBeforeMonth = (e.date < first);
-      const endAfterMonth = (e.endDate > new Date(y, m+1, 0));
-      if (startBeforeMonth || endAfterMonth || e.date.getMonth() === m) {
+      const overlaps = e.date <= monthEnd && e.endDate >= first;
+      if (overlaps) {
+        const sStart = (e.date < first) ? 1 : e.date.getDate();
+        const eEnd = (e.endDate > monthEnd) ? lastDay : e.endDate.getDate();
         for (let d = sStart; d <= eEnd; d++) {
-          const exists = (byDay[d] || []).some(x => x === e);
-          if (!exists) (byDay[d] = byDay[d] || []).push(e);
+          const arr = byDay[d] = byDay[d] || [];
+          if (!arr.includes(e)) arr.push(e);
         }
       }
     }
   }
 
-  // Build grid cells
+  // Build grid：7 欄 weekday header + 6 週格子撐滿視窗
   let gridCells = '';
   for (const wd of WEEKDAYS) gridCells += `<div class="wd">${wd}</div>`;
-  for (let i = 0; i < startDow; i++) gridCells += `<div class="mc-cell other"></div>`;
+  // 前導空格
+  for (let i = 0; i < startDow; i++) {
+    const fillDow = i;
+    const isWeekend = fillDow === 0 || fillDow === 6;
+    gridCells += `<div class="mc-cell other ${isWeekend?'weekend':''}"></div>`;
+  }
   for (let d = 1; d <= lastDay; d++) {
     const dt = new Date(y, m, d);
+    const dow = dt.getDay();
     const isToday = dt.getTime() === today.getTime();
+    const isWeekend = dow === 0 || dow === 6;
     const evs = byDay[d] || [];
-    const visible = evs.slice(0, 3);
+    const visible = evs.slice(0, 4);
     const more = evs.length - visible.length;
-    gridCells += `<div class="mc-cell ${isToday?'today':''}" onclick="masterPickDay(${y},${m},${d})">
+    const classes = ['mc-cell'];
+    if (isToday) classes.push('today');
+    if (isWeekend) classes.push('weekend');
+    gridCells += `<div class="${classes.join(' ')}" onclick="openDaySheet(${y},${m},${d})">
       <div class="day-num">${d}</div>
       ${visible.map(e => {
         const cls = brandClass(e.project);
         const isRange = !!e.endDate;
-        const label = `${e.project.name} · ${e.text}`;
-        return `<div class="mc-event ${cls} ${isRange?'range':''}" title="${escapeHtml(label)}" onclick="event.stopPropagation(); jumpToCard('${escapeHtml(e.project.name)}')">${escapeHtml(e.project.name)}</div>`;
+        const fullLabel = `${e.project.name} · ${e.text}`;
+        const shortText = truncate(stripDate(e.text) || e.project.name, 22);
+        return `<div class="mc-event ${cls} ${isRange?'range':''}" title="${escapeHtml(fullLabel)}" onclick="event.stopPropagation(); closeMasterCal(); jumpToCard('${escapeHtml(e.project.name)}')">${escapeHtml(shortText)}</div>`;
       }).join('')}
       ${more > 0 ? `<div class="mc-more">+${more} 更多</div>` : ''}
     </div>`;
   }
-
-  // Build right side list (default: all events in month)
-  const monthEvents = [];
-  for (const d of Object.keys(byDay).map(Number).sort((a,b)=>a-b)) {
-    for (const e of byDay[d]) monthEvents.push({ d, e });
+  // 補滿 6 週（42 格）
+  const filled = startDow + lastDay;
+  const trailing = (7 - (filled % 7)) % 7;
+  for (let i = 0; i < trailing; i++) {
+    const dow = (startDow + lastDay + i) % 7;
+    const isWeekend = dow === 0 || dow === 6;
+    gridCells += `<div class="mc-cell other ${isWeekend?'weekend':''}"></div>`;
   }
-  const listHtml = monthEvents.length === 0
-    ? `<div class="card-body-empty">（本月無事件）</div>`
-    : monthEvents.map(({d, e}) => `
-        <div class="mc-list-row" onclick="closeMasterCal(); jumpToCard('${escapeHtml(e.project.name)}')">
-          <div class="when">${m+1}/${d}${e.time ? ' · ' + escapeHtml(e.time) : ''}</div>
-          <div class="what">${escapeHtml(e.text.slice(0, 100))}</div>
-          <div class="who">${escapeHtml(e.project.name)} · ${escapeHtml(e.project.chip)}</div>
-        </div>`).join('');
+
+  const filterLabel = state.masterFilter
+    ? `<span class="filter-label">${escapeHtml(state.masterFilter.name)}</span>`
+    : '<span class="filter-label">全部案件</span>';
 
   return `
     <div class="modal-card" onclick="event.stopPropagation()">
       <div class="modal-header">
-        <h2>${I.calendar}<span>總表月曆</span></h2>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <button class="modal-close" onclick="masterMonth(-1)">‹</button>
-          <span style="font-weight:800;font-size:0.95em;min-width:120px;text-align:center;">${y} 年 ${m+1} 月</span>
-          <button class="modal-close" onclick="masterMonth(1)">›</button>
-          <button class="modal-close" onclick="closeMasterCal()" style="margin-left:6px;">✕</button>
+        <div class="modal-header-left">
+          <h2>${I.calendar}<span>月曆</span></h2>
+          ${filterLabel}
+        </div>
+        <div class="modal-nav">
+          <button class="modal-nav-btn" onclick="masterMonth(-1)" title="上個月">${I.arrowL}</button>
+          <div class="modal-nav-ym">${y} 年 ${m+1} 月</div>
+          <button class="modal-nav-btn" onclick="masterMonth(1)" title="下個月">${I.arrowR}</button>
+          <button class="modal-today-btn" onclick="masterGoToday()">今天</button>
+          <button class="modal-close-x" onclick="closeMasterCal()" title="關閉">✕</button>
         </div>
       </div>
       <div class="modal-body">
-        <div class="modal-cal-pane">
-          <div class="mc-grid">${gridCells}</div>
-        </div>
-        <div class="modal-side">
-          <h3>本月事件 (${monthEvents.length})</h3>
-          <div class="mc-list">${listHtml}</div>
-        </div>
+        <div class="mc-grid">${gridCells}</div>
       </div>
+      <div class="day-sheet" id="daySheet"></div>
     </div>
   `;
 }
 
-window.masterPickDay = function(y, m, d) {
-  // Re-render side list with only that day's events
+window.openDaySheet = function(y, m, d) {
+  const sheet = document.getElementById('daySheet');
+  if (!sheet) return;
+  const target = new Date(y, m, d);
   const events = getAllEvents().filter(e => {
     const inSingle = e.date.getFullYear() === y && e.date.getMonth() === m && e.date.getDate() === d;
-    const inRange = e.endDate && e.date <= new Date(y,m,d) && e.endDate >= new Date(y,m,d);
+    const inRange = e.endDate && e.date <= target && e.endDate >= target;
     return inSingle || inRange;
   });
-  const side = document.querySelector('#masterModal .modal-side');
-  if (!side) return;
-  side.innerHTML = `<h3>${y}/${m+1}/${d} 事件 (${events.length})</h3><div class="mc-list">${
-    events.length === 0
-      ? '<div class="card-body-empty">（這天沒事）</div>'
-      : events.map(e => `
-        <div class="mc-list-row" onclick="closeMasterCal(); jumpToCard('${escapeHtml(e.project.name)}')">
-          <div class="when">${m+1}/${d}${e.time ? ' · ' + escapeHtml(e.time) : ''}</div>
-          <div class="what">${escapeHtml(e.text.slice(0, 100))}</div>
-          <div class="who">${escapeHtml(e.project.name)} · ${escapeHtml(e.project.chip)}</div>
-        </div>`).join('')
-  }</div>`;
+  const wd = WEEKDAYS[target.getDay()];
+  const header = `<div class="day-sheet-head">
+    <h3>${m+1}/${d}（${wd}）<span class="count">${events.length} 則</span></h3>
+    <button class="modal-close-x" onclick="closeDaySheet()">✕</button>
+  </div>`;
+  const body = events.length === 0
+    ? '<div class="card-body-empty">（這天沒事）</div>'
+    : `<div class="day-sheet-list">${events.map(e => {
+        const cls = brandClass(e.project);
+        return `<div class="ds-row ${cls}" onclick="closeMasterCal(); jumpToCard('${escapeHtml(e.project.name)}')">
+          <span class="ds-bar"></span>
+          <div class="ds-main">
+            <div class="ds-what">${escapeHtml(stripDate(e.text) || e.project.name)}</div>
+            <div class="ds-who">${escapeHtml(e.project.name)}${e.time ? ' · ' + escapeHtml(e.time) : ''}</div>
+          </div>
+        </div>`;
+      }).join('')}</div>`;
+  sheet.innerHTML = header + body;
+  sheet.classList.add('open');
+};
+
+window.closeDaySheet = function() {
+  const sheet = document.getElementById('daySheet');
+  if (sheet) sheet.classList.remove('open');
 };
 
 window.jumpToCard = function(projectName) {
@@ -1742,12 +1682,14 @@ function renderShell() {
 
 window.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
-    closePopover();
-    if (document.getElementById('masterModal').classList.contains('open')) closeMasterCal();
+    const modal = document.getElementById('masterModal');
+    if (modal && modal.classList.contains('open')) {
+      const sheet = document.getElementById('daySheet');
+      if (sheet && sheet.classList.contains('open')) closeDaySheet();
+      else closeMasterCal();
+    }
   }
 });
-window.addEventListener('scroll', closePopover, { passive: true });
-window.addEventListener('resize', closePopover);
 
 renderShell();
 loadAll();
