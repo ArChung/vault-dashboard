@@ -339,11 +339,11 @@
   .card-corner-tag.ct-done    { background: #f2f2ef; color: #a3a199; opacity: 0.9; }  /* soft gray = 已完成 */
 
   /* —— Card title —— */
-  /* 標題下壓一條淡淡的 hairline，上下各 8px 留白 */
+  /* 標題下壓一條淡淡的 hairline，上下各 14px 留白 */
   .card-head {
     display: block;
-    padding-bottom: 8px;
-    margin-bottom: 8px;
+    padding-bottom: 14px;
+    margin-bottom: 14px;
     padding-right: 76px; /* reserve space for corner text tag */
     border-bottom: 1px solid var(--thread-soft);
   }
@@ -372,7 +372,7 @@
   }
   .card-todo {
     font-family: 'Poppins', 'Noto Sans TC', sans-serif;
-    font-size: 0.95em;
+    font-size: 0.86em;
     line-height: 1.65;
     color: var(--ink-soft);
     font-weight: 400;
@@ -439,7 +439,7 @@
     font-family: 'Poppins', 'Noto Sans TC', sans-serif;
     font-weight: 600;
     color: var(--ink);
-    font-size: 1em;
+    font-size: 1.4em;
     letter-spacing: 0;
     line-height: 1.5;
     font-variant-numeric: tabular-nums;
@@ -487,8 +487,8 @@
   .card-footer-contact {
     margin-left: auto;
     font-size: 0.9em;
-    color: var(--ink-mute);
-    font-weight: 400;
+    color: #788c5d; /* Anthropic guideline green */
+    font-weight: 500;
   }
 
   /* —— Card bottom meta —— */
@@ -1567,7 +1567,7 @@ function renderCard(item, idx) {
     : '';
 
   return `<div class="card-wrap ${bucket === 'done' ? 'is-done' : ''} ${bucket === 'waiting' ? 'is-waiting' : ''}" id="card-${idx}" data-bucket="${bucket}" data-kind="${item.kind}-${item.brandType||''}">
-    <div class="${cardClasses.join(' ')}">
+    <div class="${cardClasses.join(' ')}" onclick="tapCardToggle(event, ${idx})">
       ${cornerTagHtml}
       ${headHtml}
       <div class="card-body">${bodyHtml}</div>
@@ -1578,6 +1578,18 @@ function renderCard(item, idx) {
 }
 
 window.toggleCardFoot = function(ev, idx) {
+  ev.stopPropagation();
+  const wrap = document.getElementById('card-' + idx);
+  if (!wrap) return;
+  wrap.classList.toggle('foot-open');
+};
+
+// 手機版（無 hover）：點擊主卡任一處也能 toggle 底板
+// 桌機有 hover 就靠 hover，檢測用 window.innerWidth（比 matchMedia hover: none 可靠）
+window.tapCardToggle = function(ev, idx) {
+  if (window.innerWidth >= 900) return;
+  // 忽略點到互動元素（例如日曆 icon button）
+  if (ev.target.closest('button, a')) return;
   ev.stopPropagation();
   const wrap = document.getElementById('card-' + idx);
   if (!wrap) return;
@@ -1913,7 +1925,8 @@ window.masterGoToday = function() {
 };
 
 function renderMasterModal(monthDate) {
-  const events = getAllEvents();
+  // 月曆只顯示單日事件；跨日範圍（campaign 等）不塞進日格，避免視覺混亂
+  const events = getAllEvents().filter(e => !e.endDate);
   const y = monthDate.getFullYear(), m = monthDate.getMonth();
   const first = new Date(y, m, 1);
   const startDow = first.getDay();
@@ -2018,11 +2031,10 @@ function renderMasterModal(monthDate) {
 window.openDaySheet = function(y, m, d) {
   const sheet = document.getElementById('daySheet');
   if (!sheet) return;
-  const target = new Date(y, m, d);
+  // 只顯示單日事件
   const events = getAllEvents().filter(e => {
-    const inSingle = e.date.getFullYear() === y && e.date.getMonth() === m && e.date.getDate() === d;
-    const inRange = e.endDate && e.date <= target && e.endDate >= target;
-    return inSingle || inRange;
+    if (e.endDate) return false;
+    return e.date.getFullYear() === y && e.date.getMonth() === m && e.date.getDate() === d;
   });
   const wd = WEEKDAYS[target.getDay()];
   const header = `<div class="day-sheet-head">
