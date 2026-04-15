@@ -1,43 +1,54 @@
 @echo off
-REM 阿忠戰情表 — 本機啟動器
-REM 雙點執行：開 python http.server 於 vault 目錄 + 用預設瀏覽器開 dashboard
-REM 好處：優先讀本地檔、避開 GitHub API 流量限制、未 push 的改動也看得到
-
-chcp 65001 > nul
+setlocal enabledelayedexpansion
+chcp 65001 >nul 2>&1
 cd /d "%~dp0"
 
-set PORT=3000
-set URL=http://localhost:%PORT%/index.html
+set "PORT=3000"
+set "URL=http://localhost:%PORT%/index.html"
 
-REM 先檢查 port 是否已經被佔用（之前開過沒關）
-netstat -ano | findstr ":%PORT% " | findstr "LISTENING" > nul
-if %errorlevel% equ 0 (
-    echo [i] Port %PORT% 已經有服務在跑，直接打開 dashboard
+echo ==========================================
+echo   阿忠戰情表 Dashboard
+echo ==========================================
+echo.
+
+REM --- 找 Python ---
+set "PY_CMD="
+where py >nul 2>&1 && set "PY_CMD=py -3"
+if not defined PY_CMD (
+    where python >nul 2>&1 && set "PY_CMD=python"
+)
+if not defined PY_CMD (
+    echo [X] 找不到 Python 3
+    echo.
+    echo     請安裝後重試：https://www.python.org/downloads/
+    echo.
+    pause
+    exit /b 1
+)
+
+echo [i] Python: !PY_CMD!
+echo.
+
+REM --- 若 port 已被佔用（之前開過沒關），直接打開瀏覽器 ---
+netstat -ano | findstr "LISTENING" | findstr ":%PORT% " >nul 2>&1
+if !errorlevel! equ 0 (
+    echo [i] Port %PORT% 已有 server，直接打開 dashboard
     start "" "%URL%"
+    timeout /t 2 /nobreak >nul
     exit /b 0
 )
 
-REM 嘗試用 python 啟動（py launcher > python）
-where py > nul 2>&1
-if %errorlevel% equ 0 (
-    set PY_CMD=py -3
-) else (
-    where python > nul 2>&1
-    if %errorlevel% equ 0 (
-        set PY_CMD=python
-    ) else (
-        echo [X] 找不到 python，請先安裝 Python 3
-        echo     下載：https://www.python.org/downloads/
-        pause
-        exit /b 1
-    )
-)
+echo [^>] 啟動 server: %URL%
+echo [^>] 請勿關閉此視窗；關閉即停止 server
+echo.
 
-echo [>] 啟動本機伺服器 on http://localhost:%PORT%
-echo [>] 關閉此視窗即可停止 server
+REM --- 用 PowerShell 排程 2 秒後開瀏覽器（避開 bat 嵌套引號地獄）---
+start "" /min powershell -NoProfile -WindowStyle Hidden -Command "Start-Sleep -Seconds 2; Start-Process '%URL%'"
 
-REM 2 秒後自動開瀏覽器（等 server 起來）
-start "" cmd /c "timeout /t 2 /nobreak > nul && start %URL%"
+REM --- 啟動 HTTP server（阻塞此視窗）---
+!PY_CMD! -m http.server %PORT%
 
-REM 啟動 server（此視窗會一直佔用）
-%PY_CMD% -m http.server %PORT%
+REM server 被 Ctrl+C 或關閉後會走到這
+echo.
+echo [i] Server 已停止
+pause
