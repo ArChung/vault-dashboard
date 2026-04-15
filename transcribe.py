@@ -42,7 +42,7 @@ def compress_to_mp3(src: Path, dst: Path) -> None:
         "-f", "mp3",
         str(dst),
     ]
-    result = subprocess.run(cmd, capture_output=True, text=True)
+    result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
     if result.returncode != 0:
         raise RuntimeError(f"ffmpeg 失敗：\n{result.stderr[-2000:]}")
 
@@ -82,7 +82,9 @@ def main() -> int:
             print("ffmpeg 不在 PATH，請先裝 ffmpeg", file=sys.stderr)
             return 1
 
-        tmp = Path(tempfile.mkstemp(suffix=".mp3", prefix="whisper_")[1])
+        _fd, _tmp_name = tempfile.mkstemp(suffix=".mp3", prefix="whisper_")
+        os.close(_fd)  # Windows 鎖檔：一定要關 fd，不然後面 unlink 會 PermissionError
+        tmp = Path(_tmp_name)
         print(f"→ ffmpeg 壓縮中：{path.name}", file=sys.stderr)
         try:
             compress_to_mp3(path, tmp)
