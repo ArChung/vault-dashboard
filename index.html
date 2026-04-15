@@ -1423,7 +1423,10 @@ function parseProject(md) {
       if (m) logs.push(m[1]);
     }
   }
-  const cardHighlights = highlights.slice(0, 4);
+  // 按 added 日期 desc 排（新到舊，沒日期視為最舊），取前 4 項（最新的 4 個），
+  // 然後反轉 → 顯示時最舊在上、最新在下
+  const sortedHighlights = [...highlights].sort((a, b) => (b.added || '').localeCompare(a.added || ''));
+  const cardHighlights = sortedHighlights.slice(0, 4).reverse();
   // 向下相容：openTodos 仍保留以免有其他地方用到
   const openTodos = highlights.filter(h => h.kind === 'open').map(h => ({ checked: false, text: h.text }));
   const lastLog = logs.length > 0 ? logs[logs.length - 1] : '';
@@ -1465,7 +1468,7 @@ function parseBrandCollab(md, type) {
     const contact = meta('窗口');
     const fee = meta('費用');
     const bullets = lines.filter(l => l.match(/^- /)).map(l => l.replace(/^- /, ''));
-    const highlights = bullets.map(b => {
+    const highlightsRaw = bullets.map(b => {
       // - [x] / - [ ] 形式
       const m = b.match(/^\[([ x])\] (.+)/i);
       if (m) {
@@ -1475,6 +1478,11 @@ function parseBrandCollab(md, type) {
       const { added, text } = extractAddedDate(b);
       return { kind: 'note', text, added };
     });
+    // 同專案的排序規則：新到舊取前 4，再反轉 → 舊在上、新在下
+    const highlights = [...highlightsRaw]
+      .sort((a, b) => (b.added || '').localeCompare(a.added || ''))
+      .slice(0, 4)
+      .reverse();
     const events = extractDates('## ' + sec, name);
     return {
       kind: 'brand',
@@ -1483,7 +1491,7 @@ function parseBrandCollab(md, type) {
       chipClass: type === '業配' ? 'is-brand-promo' : 'is-brand-reels',
       name, status, contact, fee,
       bullets,
-      highlights: highlights.slice(0, 4),
+      highlights,
       openTodos: bullets.slice(0, 2).map(b => ({ checked: false, text: b })),
       lastLog: bullets.length > 0 ? bullets[bullets.length - 1] : '',
       events,
@@ -1666,11 +1674,32 @@ function positionTip(el) {
   tip.style.left = left + 'px';
   tip.style.top = top + 'px';
 }
+// 兩週內 → 今天/明天/昨天/本週X/下週X/上週X；超過兩週 → 日期
+function formatAddedDate(dateStr) {
+  const m = dateStr.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  if (!m) return dateStr;
+  const target = startOfDay(new Date(+m[1], +m[2] - 1, +m[3]));
+  const today = startOfDay(new Date());
+  const diff = Math.round((target - today) / 86400000);
+  const wd = WEEKDAYS[target.getDay()];
+  if (diff === 0) return '今天';
+  if (diff === 1) return '明天';
+  if (diff === -1) return '昨天';
+  const thisWeekStart = mondayOfWeek(today);
+  const nextWeekStart = new Date(thisWeekStart); nextWeekStart.setDate(nextWeekStart.getDate() + 7);
+  const weekAfterNext = new Date(nextWeekStart); weekAfterNext.setDate(weekAfterNext.getDate() + 7);
+  const lastWeekStart = new Date(thisWeekStart); lastWeekStart.setDate(lastWeekStart.getDate() - 7);
+  if (target >= thisWeekStart && target < nextWeekStart) return `本週${wd}`;
+  if (target >= nextWeekStart && target < weekAfterNext) return `下週${wd}`;
+  if (target >= lastWeekStart && target < thisWeekStart) return `上週${wd}`;
+  return dateStr;
+}
+
 function showTipFor(el) {
   const added = el.getAttribute('data-added');
   if (!added) return;
   const tip = ensureTipEl();
-  tip.textContent = '新增於 ' + added;
+  tip.textContent = '新增於 ' + formatAddedDate(added);
   tip.classList.add('show');
   // 測量後再定位
   requestAnimationFrame(() => positionTip(el));
