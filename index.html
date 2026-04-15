@@ -1359,12 +1359,18 @@ function extractDates(md, projectName) {
     // The displayed source text for the event: strip checkbox markers
     let display = line.replace(/^- \[[ x]\]\s*/i, '').replace(/^- /, '');
 
-    // 重點 section 的前綴 YYYY-MM-DD 是「加入日期」不是事件日，抓事件時要跳過
-    // 同時把 display 裡的前綴 added date 拿掉，月曆顯示更乾淨
+    // 重點 section 的 added date 前綴處理：
+    // - [x] 里程碑：added date = 發生日，當成里程碑事件掛上月曆
+    // - [ ] 待辦 / 無框筆記：added date 只是「加入日」，不放上月曆
+    // 兩種情況 display 都要拿掉 added date 前綴，月曆顯示才乾淨
     let scanTarget = line;
     if (isHighlight) {
+      const addedMatch = display.match(/^(\d{4}-\d{1,2}-\d{1,2})\s+/);
       display = display.replace(/^(\d{4}-\d{1,2}-\d{1,2})\s+/, '');
       scanTarget = display;
+      if (type === 'done' && addedMatch) {
+        tryISO(addedMatch[1], 'done', section || '備註', display);
+      }
     }
     tryISO(scanTarget, type, section || '備註', display);
     tryCN(scanTarget, type, section || '備註', display);
@@ -2014,7 +2020,7 @@ window.hardRefresh = function() {
 };
 
 // ——— Calendar (unified: card click + toolbar click 都走 openMasterCal) ———
-const IMPORTANT_TYPES = new Set(['start', 'todo', 'campaign']);
+const IMPORTANT_TYPES = new Set(['start', 'todo', 'done', 'campaign']);
 
 function formatYM(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; }
 
