@@ -8,74 +8,76 @@
 <meta http-equiv="Expires" content="0">
 <title>阿忠 Dashboard</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,400&family=Noto+Serif+TC:wght@300;400;600;900&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;1,400&display=swap');
 
   :root {
-    /* —— Editorial Warm Palette —— */
-    --paper:        #F7F2E9;   /* warm cream base */
-    --paper-deep:   #EFE6D4;   /* darker cream */
-    --paper-card:   #FBF7EE;   /* card surface (slightly lifted from paper) */
-    --footer-bg:    #E8D9C0;   /* warm beige block for footer */
-    --ink:          #2B2420;   /* warm charcoal, not black */
-    --ink-soft:     #6B5D52;   /* warm taupe */
-    --ink-mute:     #9B8E82;   /* dusty taupe */
-    --thread:       #D4C4A8;   /* hairline if needed */
-    --thread-soft:  #E5D9BE;
+    /* —— Clean Studio Palette (brand guidelines) —— */
+    --paper:        #faf9f5;   /* light cream base */
+    --paper-deep:   #f0eee4;   /* slightly darker cream */
+    --paper-card:   #ffffff;   /* pure white card surface */
+    --ink:          #141413;   /* near-black */
+    --ink-soft:     #3a3937;   /* soft dark */
+    --ink-mute:     #b0aea5;   /* mid gray */
+    --thread:       #e8e6dc;   /* hairline border */
+    --thread-soft:  #efede3;
 
-    /* —— Single Accent + Soft Complement —— */
-    --accent:       #B94A2C;   /* burnt sienna, the only hot note */
-    --accent-dark:  #8F3420;
-    --accent-soft:  #DCA679;   /* soft caramel */
-    --accent-tint:  #F3E2D3;   /* bg tint of accent */
+    /* —— Accents —— */
+    --accent:       #d97757;   /* orange, primary accent */
+    --accent-dark:  #b85a3e;
+    --accent-soft:  #f0c9b5;
+    --accent-tint:  #fbefe8;   /* bg tint of accent */
+    --brand-blue:   #6a9bcc;
+    --brand-green:  #788c5d;
 
-    /* —— Status text colors (no pills) —— */
-    --st-active: var(--ink);
-    --st-wait:   var(--ink-soft);
-    --st-hold:   var(--ink-soft);
-    --st-done:   var(--ink-mute);
+    /* —— Status pills (bg + text) —— */
+    --pill-active-bg:   #e4eadb;   /* pale green */
+    --pill-active-text: #4a5d3a;
+    --pill-waiting-bg:  #f5ead0;   /* pale sand */
+    --pill-waiting-text:#8b7a3a;
+    --pill-hold-bg:     #f5dbd2;   /* pale salmon */
+    --pill-hold-text:   #a0432c;
+    --pill-done-bg:     #ededea;   /* pale gray */
+    --pill-done-text:   #7f7d76;
 
     /* —— Category (事件類型，月曆用) —— */
     --cat-project:    var(--ink);
     --cat-brand-promo:var(--accent);
-    --cat-brand-reels:var(--accent-soft);
-    --cat-brand-group:#B08968;
+    --cat-brand-reels:var(--brand-blue);
+    --cat-brand-group:var(--brand-green);
 
-    /* —— Shadows (barely-there, warm) —— */
-    --shadow-sm: 0 1px 2px rgba(43,36,32,0.04), 0 1px 1px rgba(43,36,32,0.05);
-    --shadow-md: 0 8px 24px -12px rgba(43,36,32,0.16), 0 2px 4px rgba(43,36,32,0.04);
-    --shadow-lg: 0 20px 44px -22px rgba(43,36,32,0.22);
+    /* —— Shadows (barely-there) —— */
+    --shadow-sm: 0 1px 2px rgba(20,20,19,0.03);
+    --shadow-md: 0 8px 24px -14px rgba(20,20,19,0.12);
+    --shadow-lg: 0 20px 44px -22px rgba(20,20,19,0.18);
 
-    /* —— Radius (softer, more editorial) —— */
+    /* —— Radius —— */
     --r-sm: 6px;
-    --r-md: 10px;
+    --r-md: 12px;
     --r-lg: 16px;
+    --r-pill: 999px;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { min-height: 100%; }
   body {
-    font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
-    background: var(--paper);
+    font-family: 'Poppins', 'Noto Sans TC', system-ui, -apple-system, sans-serif;
+    background-color: var(--paper);
+    background-image:
+      linear-gradient(to right, rgba(176,174,165,0.10) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(176,174,165,0.10) 1px, transparent 1px);
+    background-size: 36px 36px;
     color: var(--ink);
-    line-height: 1.65;
+    line-height: 1.55;
     font-weight: 400;
     -webkit-font-smoothing: antialiased;
-    font-feature-settings: "ss01", "ss02";
   }
 
-  /* —— Hero (cream paper, editorial masthead) —— */
+  /* —— Hero (clean, sans-serif) —— */
   .hero {
-    background: var(--paper);
+    background: transparent;
     color: var(--ink);
-    padding: 44px 32px 32px;
+    padding: 40px 32px 22px;
     position: relative;
-  }
-  .hero::after {
-    content: '';
-    position: absolute; left: 32px; right: 32px; bottom: 0;
-    height: 1px;
-    background: var(--thread);
-    opacity: 0.6;
   }
   .hero-inner {
     max-width: 1280px;
@@ -85,28 +87,25 @@
     align-items: baseline;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 18px;
+    gap: 16px;
   }
   .hero-title {
-    font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
-    font-weight: 600;
-    font-variation-settings: "opsz" 144, "SOFT" 30;
-    font-size: 3em;
-    letter-spacing: -0.02em;
+    font-family: 'Poppins', 'Noto Sans TC', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 2em;
+    letter-spacing: -0.01em;
     color: var(--ink);
-    line-height: 1;
+    line-height: 1.15;
   }
   .hero-title .serif-accent {
-    font-style: italic;
     color: var(--accent);
-    font-weight: 400;
+    font-weight: 700;
   }
   .hero-time {
-    font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
-    font-style: italic;
-    font-size: 0.9em;
-    color: var(--ink-soft);
-    letter-spacing: 0.02em;
+    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
+    font-size: 0.82em;
+    color: var(--ink-mute);
+    letter-spacing: 0.01em;
     font-weight: 400;
   }
 
@@ -115,14 +114,14 @@
     position: sticky;
     top: 0;
     z-index: 40;
-    background: rgba(247,242,233,0.88);
+    background: rgba(250,249,245,0.88);
     backdrop-filter: saturate(180%) blur(14px);
     -webkit-backdrop-filter: saturate(180%) blur(14px);
   }
   .toolbar-inner {
     max-width: 1280px;
     margin: 0 auto;
-    padding: 16px 32px;
+    padding: 14px 32px;
     display: flex;
     flex-wrap: wrap;
     gap: 14px;
@@ -242,63 +241,59 @@
   .group-section + .group-section { margin-top: 48px; }
   .group-header {
     display: flex;
-    align-items: baseline;
-    gap: 14px;
-    margin: 0 0 22px;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 18px;
     padding-bottom: 0;
   }
   .group-header h2 {
-    font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
-    font-weight: 400;
-    font-style: italic;
-    font-size: 1.1em;
-    color: var(--ink-soft);
-    letter-spacing: 0.01em;
+    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
+    font-weight: 700;
+    font-size: 1em;
+    color: var(--ink);
+    letter-spacing: 0;
+    white-space: nowrap;
+  }
+  .group-header .dash {
+    flex: 1;
+    height: 1px;
+    background: var(--ink-mute);
+    opacity: 0.35;
+    min-width: 20px;
+    max-width: 28px;
   }
   .group-header .count {
-    font-family: 'Fraunces', Georgia, serif;
-    font-weight: 400;
-    font-style: italic;
+    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
+    font-weight: 500;
     color: var(--ink-mute);
-    font-size: 0.92em;
+    font-size: 0.82em;
   }
 
   .cards-grid {
     display: grid;
-    gap: 22px;
+    gap: 20px;
   }
 
-  /* —— Card v5 (breathing cards) —— */
+  /* —— Card v6 (clean studio) —— */
   .card {
     position: relative;
     background: var(--paper-card);
-    border: 0;
+    border: 1px solid var(--thread);
     border-radius: var(--r-md);
-    padding: 36px 40px 22px;
+    padding: 22px 22px 0;
     box-shadow: var(--shadow-sm);
-    transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
     display: flex;
     flex-direction: column;
     overflow: hidden;
     min-height: 0;
   }
   .card:hover {
-    transform: translateY(-2px);
+    transform: translateY(-1px);
     box-shadow: var(--shadow-md);
+    border-color: #d9d6c8;
   }
-  .card.is-waiting { background: var(--paper-card); }
-  .card.is-done { opacity: 0.55; }
-  .card.has-today {
-    background: linear-gradient(135deg, #FAE9D0 0%, var(--paper-card) 55%);
-  }
-  .card.has-today::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; bottom: 0;
-    width: 3px;
-    background: var(--accent);
-    opacity: 0.85;
-  }
+  .card.is-done { opacity: 0.6; }
   .card.flash {
     animation: flash-card 1.8s ease;
   }
@@ -307,58 +302,64 @@
     25%, 65% { box-shadow: 0 0 0 3px var(--accent-tint), var(--shadow-md); }
   }
 
-  /* —— Card title with status-prefix symbol (v5) —— */
+  /* —— Corner status dot (top-right of card) —— */
+  .card-corner-dot {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px var(--paper-card);
+  }
+  .card-corner-dot.cd-active  { background: var(--pill-active-text); }
+  .card-corner-dot.cd-waiting { background: var(--pill-waiting-text); }
+  .card-corner-dot.cd-hold    { background: var(--pill-hold-text); }
+  .card-corner-dot.cd-done    { background: var(--pill-done-text); opacity: 0.6; }
+
+  /* —— Card title —— */
   .card-head {
     display: block;
-    margin-bottom: 20px;
+    margin-bottom: 14px;
+    padding-right: 22px; /* reserve space for corner dot */
   }
   .card-title {
-    font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
-    font-variation-settings: "opsz" 144, "SOFT" 30;
-    font-weight: 600;
-    font-size: 1.55em;
+    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
+    font-weight: 700;
+    font-size: 1.12em;
     color: var(--ink);
-    letter-spacing: -0.015em;
-    line-height: 1.25;
-    display: flex;
-    align-items: baseline;
-    gap: 12px;
+    letter-spacing: -0.005em;
+    line-height: 1.35;
   }
-  .card-title .status-glyph {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 0.85em;
-    flex-shrink: 0;
-    font-size: 0.75em;
-    line-height: 1;
-    transform: translateY(-0.08em);
-  }
-  .card-title .status-glyph.sg-active { color: var(--accent); }
-  .card-title .status-glyph.sg-waiting { color: var(--accent); opacity: 0.55; }
-  .card-title .status-glyph.sg-hold { color: var(--ink-mute); }
-  .card-title .status-glyph.sg-done { color: var(--ink-mute); opacity: 0.55; }
   .card.is-done .card-title { color: var(--ink-mute); }
 
-  /* —— Card body (todos / last log, no bullet markers) —— */
+  /* —— Card body (todos / last log, em-dash prefix) —— */
   .card-body {
     flex: 1 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    margin-bottom: 22px;
+    gap: 8px;
+    margin-bottom: 18px;
   }
   .card-body-empty {
     color: var(--ink-mute);
-    font-size: 0.9em;
-    font-style: italic;
-    font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
+    font-size: 0.88em;
+    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
   }
   .card-todo {
-    font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
-    font-size: 1.02em;
-    line-height: 1.7;
-    color: var(--ink);
+    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
+    font-size: 0.92em;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    font-weight: 400;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .card-todo::before {
+    content: '—';
+    color: var(--ink-mute);
+    flex-shrink: 0;
     font-weight: 400;
   }
   .card-todo.done {
@@ -367,28 +368,33 @@
     text-decoration-color: var(--ink-mute);
   }
   .card-last-log {
-    font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
-    font-size: 0.9em;
+    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
+    font-size: 0.88em;
     color: var(--ink-soft);
     line-height: 1.55;
-    font-style: italic;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .card-last-log::before {
+    content: '—';
+    color: var(--ink-mute);
+    flex-shrink: 0;
   }
   .card-last-log .label {
-    display: inline;
-    font-size: 0.85em;
-    font-weight: 400;
+    font-size: 0.78em;
+    font-weight: 500;
     color: var(--accent);
-    font-style: normal;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    margin-right: 8px;
+    margin-right: 6px;
   }
 
-  /* —— Card footer (v5: hairline + single line, no bg block) —— */
+  /* —— Card footer (v6: soft tinted bg) —— */
   .card-footer-warm {
-    margin: 0;
-    padding: 12px 0 0;
-    background: transparent;
+    margin: 0 -22px;
+    padding: 12px 22px;
+    background: var(--paper);
     border-top: 1px solid var(--thread-soft);
     display: flex;
     flex-wrap: wrap;
@@ -396,11 +402,11 @@
     gap: 4px 10px;
     border-radius: 0;
     position: relative;
-    font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
+    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
     font-size: 0.82em;
     color: var(--ink-soft);
     font-weight: 400;
-    letter-spacing: 0.01em;
+    letter-spacing: 0;
     line-height: 1.5;
   }
   .card-money {
@@ -410,8 +416,8 @@
     gap: 0 10px;
   }
   .card-price {
-    font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
-    font-weight: 500;
+    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
+    font-weight: 600;
     color: var(--ink);
     font-size: 1em;
     letter-spacing: 0;
@@ -419,26 +425,20 @@
     font-variant-numeric: tabular-nums;
   }
   .card-price .unit {
-    font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
-    font-style: italic;
     font-weight: 400;
-    font-size: 0.85em;
+    font-size: 0.82em;
     color: var(--ink-mute);
     margin-left: 4px;
-    letter-spacing: 0.02em;
+    letter-spacing: 0;
   }
   .card-price.na {
-    font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
     font-weight: 400;
-    font-style: italic;
     color: var(--ink-mute);
-    font-size: 1em;
+    font-size: 0.95em;
   }
   .card-invoiced {
-    font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
-    font-style: italic;
-    font-size: 1em;
-    color: var(--ink-soft);
+    font-size: 0.95em;
+    color: var(--ink-mute);
     font-weight: 400;
     font-variant-numeric: tabular-nums;
   }
@@ -449,17 +449,15 @@
     opacity: 0.55;
   }
   .card-splits-line {
-    font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
-    font-style: italic;
-    font-size: 1em;
+    font-size: 0.9em;
     color: var(--ink-mute);
-    letter-spacing: 0.01em;
+    letter-spacing: 0;
     font-weight: 400;
     line-height: 1.5;
     flex-basis: 100%;
   }
   .fee-line {
-    font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
+    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
     font-weight: 500;
     font-size: 1em;
     color: var(--ink);
@@ -468,69 +466,63 @@
   }
   .card-footer-contact {
     margin-left: auto;
-    font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
-    font-style: italic;
-    font-size: 1em;
+    font-size: 0.9em;
     color: var(--ink-mute);
     font-weight: 400;
   }
 
-  /* —— Card bottom meta: hover-only —— */
+  /* —— Card bottom meta: always visible (v6 ref style) —— */
   .card-meta-bottom {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 10px;
-    margin-top: 12px;
-    padding: 0 2px;
-    font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
-    font-style: italic;
-    font-size: 0.78em;
+    margin: 0 -22px;
+    padding: 10px 18px 10px 22px;
+    background: var(--paper);
+    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
+    font-size: 0.76em;
     color: var(--ink-mute);
     font-weight: 400;
-    letter-spacing: 0.01em;
-    opacity: 0;
-    transition: opacity 0.28s ease;
-    min-height: 22px;
+    letter-spacing: 0;
+    min-height: 20px;
+    border-top: 1px solid var(--thread-soft);
   }
-  .card:hover .card-meta-bottom { opacity: 1; }
-  .card-meta-bottom .meta-date { flex: 1; }
+  .card-meta-bottom .meta-date {
+    flex: 1;
+    font-variant-numeric: tabular-nums;
+  }
   .card-cal-btn {
-    width: 24px;
-    height: 24px;
-    border-radius: 999px;
+    width: 26px;
+    height: 26px;
+    border-radius: var(--r-sm);
     background: transparent;
     color: var(--ink-mute);
-    border: 0;
+    border: 1px solid var(--thread);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: color 0.15s ease;
+    transition: all 0.15s ease;
     flex-shrink: 0;
     padding: 0;
   }
-  .card-cal-btn:hover { color: var(--accent); }
+  .card-cal-btn:hover { color: var(--accent); border-color: var(--accent); }
   .card-cal-btn svg { width: 13px; height: 13px; }
-  /* On touch devices, always show the meta (no hover) */
-  @media (hover: none) {
-    .card-meta-bottom { opacity: 0.8; }
-  }
 
   /* —— Date tags (inline) —— */
   .date-tag {
     display: inline-block;
-    font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
+    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
     font-weight: 500;
     font-size: 0.98em;
     color: var(--accent);
     letter-spacing: 0;
   }
-  .date-tag.past { color: var(--ink-mute); font-weight: 400; font-style: italic; }
+  .date-tag.past { color: var(--ink-mute); font-weight: 400; }
   .date-tag.today {
     color: var(--accent-dark);
     font-weight: 600;
-    font-style: italic;
     border-bottom: 2px solid var(--accent);
     padding-bottom: 1px;
   }
@@ -538,40 +530,39 @@
     color: var(--accent);
     font-weight: 600;
   }
-  .annotation { color: var(--ink-mute); font-style: italic; font-size: 0.94em; }
+  .annotation { color: var(--ink-mute); font-size: 0.9em; }
 
   /* —— Ledger Lines (待剪想法) —— */
-  .ideas-group { margin-top: 56px; }
+  .ideas-group { margin-top: 48px; }
   .ideas-list {
     display: flex;
     flex-direction: column;
-    gap: 1px;
-    background: var(--thread-soft);
-    border-radius: var(--r-sm);
+    gap: 0;
+    background: var(--paper-card);
+    border-radius: var(--r-md);
     overflow: hidden;
-    border: 1px solid var(--thread-soft);
+    border: 1px solid var(--thread);
   }
   .ideas-row {
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 12px 18px 12px 14px;
+    gap: 12px;
+    padding: 11px 16px 11px 14px;
     background: var(--paper-card);
-    font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
-    font-size: 0.98em;
+    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
+    font-size: 0.9em;
     color: var(--ink);
     line-height: 1.45;
-    min-height: 46px;
+    min-height: 42px;
     transition: background 0.15s ease;
     position: relative;
+    border-bottom: 1px solid var(--thread-soft);
   }
-  .ideas-row:hover { background: var(--paper-deep); }
+  .ideas-row:last-child { border-bottom: 0; }
+  .ideas-row:hover { background: var(--paper); }
   .ideas-row::before {
-    content: '';
-    width: 4px;
-    align-self: stretch;
-    background: var(--accent);
-    border-radius: 2px;
+    content: '—';
+    color: var(--ink-mute);
     flex-shrink: 0;
   }
   .ideas-row.done {
@@ -579,22 +570,21 @@
     text-decoration: line-through;
     text-decoration-color: var(--ink-mute);
   }
-  .ideas-row.done::before { background: var(--ink-mute); opacity: 0.35; }
+  .ideas-row.done::before { opacity: 0.5; }
   .ideas-row-text { flex: 1; min-width: 0; }
   .ideas-empty {
-    padding: 18px 20px;
+    padding: 16px 18px;
     background: var(--paper-card);
     color: var(--ink-mute);
-    font-style: italic;
-    font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
-    font-size: 0.92em;
+    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
+    font-size: 0.88em;
   }
 
-  /* —— Toolbar Drawer (v5: one pill → expand) —— */
+  /* —— Toolbar Drawer (v6: single pill → expand, sans-serif) —— */
   .toolbar-pill-row {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     flex-wrap: wrap;
   }
   .toolbar-pill {
@@ -602,22 +592,21 @@
     align-items: center;
     gap: 8px;
     border: 1px solid var(--thread);
-    background: transparent;
+    background: var(--paper-card);
     color: var(--ink-soft);
-    font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
-    font-style: italic;
-    font-size: 0.88em;
-    font-weight: 400;
-    padding: 6px 16px;
-    border-radius: 999px;
+    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
+    font-size: 0.82em;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: var(--r-pill);
     cursor: pointer;
-    letter-spacing: 0.02em;
+    letter-spacing: 0;
     transition: all 0.18s ease;
   }
-  .toolbar-pill:hover { border-color: var(--accent); color: var(--accent); }
+  .toolbar-pill:hover { border-color: var(--ink-mute); color: var(--ink); }
   .toolbar-pill.open { border-color: var(--accent); color: var(--accent); background: var(--accent-tint); }
   .toolbar-pill .tp-chev {
-    font-size: 0.75em;
+    font-size: 0.72em;
     opacity: 0.6;
     transition: transform 0.2s ease;
   }
@@ -627,9 +616,9 @@
     display: none;
     max-width: 1280px;
     margin: 0 auto;
-    padding: 4px 32px 14px;
+    padding: 6px 32px 14px;
     flex-wrap: wrap;
-    gap: 18px 24px;
+    gap: 16px 24px;
     align-items: flex-start;
     border-top: 1px solid var(--thread-soft);
   }
@@ -640,38 +629,39 @@
     gap: 6px;
   }
   .td-label {
-    font-family: 'Fraunces', Georgia, serif;
-    font-style: italic;
-    font-size: 0.78em;
+    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
+    font-size: 0.72em;
     color: var(--ink-mute);
-    letter-spacing: 0.04em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
+    font-weight: 500;
   }
   .td-chips {
     display: inline-flex;
-    gap: 2px;
+    gap: 4px;
     flex-wrap: wrap;
   }
   .td-chips button {
-    border: 0;
-    background: transparent;
-    color: var(--ink-mute);
+    border: 1px solid var(--thread);
+    background: var(--paper-card);
+    color: var(--ink-soft);
     font-family: inherit;
-    font-size: 0.88em;
-    font-style: italic;
-    padding: 3px 10px;
+    font-size: 0.82em;
+    padding: 4px 12px;
     cursor: pointer;
-    letter-spacing: 0.01em;
-    border-radius: 999px;
-    transition: color 0.15s ease, background 0.15s ease;
+    letter-spacing: 0;
+    border-radius: var(--r-pill);
+    transition: all 0.15s ease;
+    font-weight: 500;
   }
-  .td-chips button:hover { color: var(--ink-soft); }
+  .td-chips button:hover { border-color: var(--ink-mute); color: var(--ink); }
   .td-chips button.on {
-    color: var(--accent);
-    font-style: normal;
-    font-weight: 600;
-    background: var(--accent-tint);
+    color: #fff;
+    background: var(--ink);
+    border-color: var(--ink);
+    font-weight: 500;
   }
+  .td-chips button.on .count { color: rgba(255,255,255,0.7); }
   .toolbar-spacer { flex: 1; }
 
   /* —— Fullscreen calendar modal —— */
@@ -706,7 +696,7 @@
     display: flex; align-items: center; gap: 14px;
   }
   .modal-header h2 {
-    font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
+    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
     font-weight: 600;
     font-size: 1.35em;
     color: var(--ink);
@@ -717,7 +707,7 @@
   }
   .modal-header h2 svg { width: 20px; height: 20px; color: var(--accent); }
   .modal-header .filter-label {
-    font-family: 'Fraunces', Georgia, serif;
+    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
     font-style: italic;
     font-size: 0.88em;
     font-weight: 400;
@@ -743,7 +733,7 @@
   }
   .modal-nav-btn:hover { background: var(--paper-deep); color: var(--accent); }
   .modal-nav-ym {
-    font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
+    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
     font-weight: 500;
     font-size: 1.05em;
     color: var(--ink);
@@ -752,7 +742,7 @@
     letter-spacing: 0;
   }
   .modal-today-btn {
-    font-family: 'Fraunces', Georgia, serif;
+    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
     font-style: italic;
     font-size: 0.88em;
     font-weight: 400;
@@ -801,7 +791,7 @@
   .mc-grid .wd {
     text-align: center;
     color: var(--ink-mute);
-    font-family: 'Fraunces', Georgia, serif;
+    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
     font-style: italic;
     font-weight: 400;
     padding: 9px 0;
@@ -826,7 +816,7 @@
   .mc-cell.other .day-num { color: var(--ink-mute); opacity: 0.5; }
   .mc-cell.weekend .day-num { color: var(--ink-mute); }
   .mc-cell .day-num {
-    font-family: 'Fraunces', Georgia, serif;
+    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
     font-weight: 500;
     font-size: 0.9em;
     color: var(--ink);
@@ -842,7 +832,7 @@
     font-weight: 600;
   }
   .mc-event {
-    font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
+    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
     font-size: 0.8em;
     font-weight: 500;
     padding: 2px 7px;
@@ -864,7 +854,7 @@
     background: linear-gradient(90deg, var(--accent-soft) 0%, var(--accent) 100%);
   }
   .mc-more {
-    font-family: 'Fraunces', Georgia, serif;
+    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
     font-style: italic;
     font-size: 0.78em;
     color: var(--ink-soft);
@@ -894,14 +884,14 @@
     margin-bottom: 18px;
   }
   .day-sheet-head h3 {
-    font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
+    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
     font-weight: 600;
     font-size: 1.25em;
     color: var(--ink);
     letter-spacing: -0.01em;
   }
   .day-sheet-head .count {
-    font-family: 'Fraunces', Georgia, serif;
+    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
     font-style: italic;
     font-weight: 400;
     color: var(--ink-mute);
@@ -936,14 +926,14 @@
   .ds-row.brand-group .ds-bar { background: #B08968; }
   .ds-row .ds-main { flex: 1; }
   .ds-row .ds-what {
-    font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
+    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
     font-size: 1em;
     color: var(--ink);
     line-height: 1.45;
     font-weight: 500;
   }
   .ds-row .ds-who {
-    font-family: 'Fraunces', Georgia, serif;
+    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
     font-style: italic;
     font-size: 0.85em;
     color: var(--ink-mute);
@@ -960,7 +950,7 @@
     color: var(--paper);
     padding: 12px 22px;
     border-radius: 999px;
-    font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
+    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
     font-weight: 500;
     display: none;
     z-index: 999;
@@ -1338,13 +1328,11 @@ function renderCard(item, idx) {
   if (bucket === 'done') cardClasses.push('is-done');
   if (hasTodayTodo(item)) cardClasses.push('has-today');
 
-  // Title with status-prefix glyph
+  // Title（無前綴符號；狀態用右上角的 corner dot 表示）
   const glyph = STATUS_GLYPH[bucket] || STATUS_GLYPH.active;
+  const cornerDotHtml = `<span class="card-corner-dot cd-${bucket}" title="${escapeHtml(item.status || glyph.label)}"></span>`;
   const headHtml = `<div class="card-head">
-    <h3 class="card-title">
-      <span class="status-glyph sg-${bucket}" title="${escapeHtml(item.status || glyph.label)}">${glyph.ch}</span>
-      <span>${escapeHtml(item.name)}</span>
-    </h3>
+    <h3 class="card-title">${escapeHtml(item.name)}</h3>
   </div>`;
 
   // Body：open todos / last log / empty；不用 bullet marker
@@ -1399,6 +1387,7 @@ function renderCard(item, idx) {
     : '';
 
   return `<div class="${cardClasses.join(' ')}" id="card-${idx}" data-bucket="${bucket}" data-kind="${item.kind}-${item.brandType||''}">
+    ${cornerDotHtml}
     ${headHtml}
     <div class="card-body">${bodyHtml}</div>
     ${footerHtml}
@@ -1451,7 +1440,12 @@ function sortItems(items) {
   } else if (s === 'name') {
     arr.sort((a,b) => a.name.localeCompare(b.name, 'zh-Hant'));
   }
-  return arr;
+  // 等待中的案子一律排到最後（穩定分區）
+  const front = [], back = [];
+  for (const it of arr) {
+    (statusBucket(it.status) === 'waiting' ? back : front).push(it);
+  }
+  return [...front, ...back];
 }
 
 function groupItems(items) {
