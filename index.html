@@ -377,11 +377,11 @@
     color: var(--ink-soft);
     font-weight: 400;
     display: block;
-    padding-left: 1.4em;
-    text-indent: -1.4em;
+    padding-left: 0.95em;
+    text-indent: -0.95em;
   }
   .card-todo::before {
-    content: '— ';
+    content: '– ';
     color: var(--ink-mute);
     font-weight: 400;
   }
@@ -544,19 +544,20 @@
   /* —— Footer: 第二張卡片 sitting under the main card ——
      rest: bottom: -10px 讓底卡的 bottom 邊緣比主卡片底部多露 10px（讓 peek 更明顯、有延續感）；
            其餘部分被主卡（z-index 2）擋住。
-     hover: translateY(calc(100% - 25px)) 把底卡往下滑，
-            底卡頂部比主卡（浮起 -3px 後）底部再高 12px —> 兩張卡重疊 12px，
-            因此底卡 padding-top 也加 12px 補回被蓋住的內容空間。 */
+     hover: translateY(calc(100% - 31px)) 把底卡往下滑，
+            底卡頂部比主卡（浮起 -3px 後）底部再高 18px —> 兩張卡重疊 18px，
+            因此底卡 padding-top 也加 18px 補回被蓋住的內容空間。
+     底卡左右各內縮 8px，比主卡窄一圈，視覺更輕。 */
   .card-foot-card {
     position: absolute;
     bottom: -10px;
-    left: 0;
-    right: 0;
+    left: 8px;
+    right: 8px;
     z-index: 1;
     background: #f7f3ea;
     border: 1px solid var(--thread);
     border-radius: var(--r-md);
-    padding: 24px 22px 12px;
+    padding: 30px 20px 14px;
     box-shadow: var(--shadow-sm);
     font-family: 'Poppins', 'Noto Sans TC', sans-serif;
     font-size: 0.82em;
@@ -568,13 +569,13 @@
   }
   @media (hover: hover) {
     .card-wrap:hover .card-foot-card {
-      transform: translateY(calc(100% - 25px));
+      transform: translateY(calc(100% - 31px));
       box-shadow: 0 14px 28px -14px rgba(20,20,19,0.18),
                   0 4px 10px -4px rgba(20,20,19,0.06);
     }
   }
   .card-wrap.foot-open .card-foot-card {
-    transform: translateY(calc(100% - 25px));
+    transform: translateY(calc(100% - 31px));
     box-shadow: 0 14px 28px -14px rgba(20,20,19,0.18),
                 0 4px 10px -4px rgba(20,20,19,0.06);
   }
@@ -586,7 +587,7 @@
   }
   .card-foot-card .card-meta-bottom {
     padding: 4px 0 0;
-    border-top: 1px solid rgba(200, 192, 170, 0.35);
+    border-top: 0; /* 移除 hairline，讓底卡更輕 */
   }
 
   /* —— Date tags (inline) —— */
@@ -1536,18 +1537,18 @@ function renderCard(item, idx) {
       footerInner += `<span class="card-money"><span class="fee-line">${escapeHtml(item.fee)}</span></span>`;
     }
   }
-  if (item.contact) {
-    footerInner += `<span class="card-footer-contact">${escapeHtml(item.contact)}</span>`;
-  }
   const footerHtml = footerInner ? `<div class="card-footer-warm">${footerInner}</div>` : '';
 
-  // Bottom meta：YYYY-MM-DD 開始 · 更新於 X/Y（不含 cal icon）
+  // Bottom meta：左側 date、右側 contact（窗口統一收在底卡右下角）
   const metaPieces = [];
   if (item.startDateRaw) metaPieces.push(`${item.startDateRaw} 開始`);
   if (item.lastUpdate) metaPieces.push(`更新於 ${item.lastUpdate.getMonth()+1}/${item.lastUpdate.getDate()}`);
   const metaTextBottom = metaPieces.length ? metaPieces.join(' · ') : '';
-  const metaBottom = metaTextBottom
-    ? `<div class="card-meta-bottom"><span class="meta-date">${metaTextBottom}</span></div>`
+  const contactHtml = item.contact
+    ? `<span class="card-footer-contact">${escapeHtml(item.contact)}</span>`
+    : '';
+  const metaBottom = (metaTextBottom || contactHtml)
+    ? `<div class="card-meta-bottom"><span class="meta-date">${metaTextBottom}</span>${contactHtml}</div>`
     : '';
 
   // Cal icon：只在有單日 event（非範圍）時顯示，位置在白底區的右下（footer 上方）
