@@ -268,26 +268,37 @@
     gap: 22px;
   }
 
-  /* —— Card v4 (editorial warm) —— */
+  /* —— Card v5 (breathing cards) —— */
   .card {
     position: relative;
     background: var(--paper-card);
     border: 0;
     border-radius: var(--r-md);
-    padding: 30px 30px 18px;
+    padding: 36px 40px 22px;
     box-shadow: var(--shadow-sm);
-    transition: transform 0.22s ease, box-shadow 0.22s ease;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    min-height: 280px;
+    min-height: 0;
   }
   .card:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
   }
   .card.is-waiting { background: var(--paper-card); }
-  .card.is-done { opacity: 0.6; }
+  .card.is-done { opacity: 0.55; }
+  .card.has-today {
+    background: linear-gradient(135deg, #FAE9D0 0%, var(--paper-card) 55%);
+  }
+  .card.has-today::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    width: 3px;
+    background: var(--accent);
+    opacity: 0.85;
+  }
   .card.flash {
     animation: flash-card 1.8s ease;
   }
@@ -296,66 +307,46 @@
     25%, 65% { box-shadow: 0 0 0 3px var(--accent-tint), var(--shadow-md); }
   }
 
-  /* —— Card title & top-right meta —— */
+  /* —— Card title with status-prefix symbol (v5) —— */
   .card-head {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 14px;
-    margin-bottom: 18px;
+    display: block;
+    margin-bottom: 20px;
   }
   .card-title {
     font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
     font-variation-settings: "opsz" 144, "SOFT" 30;
     font-weight: 600;
-    font-size: 1.4em;
+    font-size: 1.55em;
     color: var(--ink);
     letter-spacing: -0.015em;
-    line-height: 1.2;
-    flex: 1;
-    min-width: 0;
+    line-height: 1.25;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
   }
-  .card-title .pause-icon {
-    color: var(--ink-mute);
-    margin-right: 6px;
+  .card-title .status-glyph {
     display: inline-flex;
     align-items: center;
-    transform: translateY(-2px);
-  }
-  .card-title .pause-icon svg { width: 13px; height: 13px; display: block; }
-  .card-meta-tr {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    justify-content: center;
+    width: 0.85em;
     flex-shrink: 0;
-    font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
-    font-style: italic;
-    font-size: 0.8em;
-    color: var(--ink-soft);
-    font-weight: 400;
-    letter-spacing: 0.01em;
-    padding-top: 6px;
-    white-space: nowrap;
+    font-size: 0.75em;
+    line-height: 1;
+    transform: translateY(-0.08em);
   }
-  .card-meta-tr .mt-contact { color: var(--ink-soft); }
-  .card-meta-tr .mt-sep {
-    color: var(--ink-mute);
-    opacity: 0.5;
-    font-style: normal;
-  }
-  .card-meta-tr .mt-status { color: var(--ink-soft); }
-  .card-meta-tr .mt-status.mt-active { color: var(--accent); font-style: normal; font-weight: 600; }
-  .card-meta-tr .mt-status.mt-waiting { color: var(--ink-soft); }
-  .card-meta-tr .mt-status.mt-hold { color: var(--ink-mute); }
-  .card-meta-tr .mt-status.mt-done { color: var(--ink-mute); text-decoration: line-through; }
+  .card-title .status-glyph.sg-active { color: var(--accent); }
+  .card-title .status-glyph.sg-waiting { color: var(--accent); opacity: 0.55; }
+  .card-title .status-glyph.sg-hold { color: var(--ink-mute); }
+  .card-title .status-glyph.sg-done { color: var(--ink-mute); opacity: 0.55; }
+  .card.is-done .card-title { color: var(--ink-mute); }
 
   /* —— Card body (todos / last log, no bullet markers) —— */
   .card-body {
     flex: 1 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 12px;
+    margin-bottom: 22px;
   }
   .card-body-empty {
     color: var(--ink-mute);
@@ -365,8 +356,8 @@
   }
   .card-todo {
     font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
-    font-size: 0.98em;
-    line-height: 1.55;
+    font-size: 1.02em;
+    line-height: 1.7;
     color: var(--ink);
     font-weight: 400;
   }
@@ -393,73 +384,95 @@
     margin-right: 8px;
   }
 
-  /* —— Card footer (warm color block) —— */
+  /* —— Card footer (v5: hairline + single line, no bg block) —— */
   .card-footer-warm {
-    margin: 0 -30px;
-    padding: 16px 30px 14px;
-    background: var(--footer-bg);
+    margin: 0;
+    padding: 12px 0 0;
+    background: transparent;
+    border-top: 1px solid var(--thread-soft);
     display: flex;
-    flex-direction: column;
-    gap: 6px;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 10px;
     border-radius: 0;
     position: relative;
+    font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
+    font-size: 0.82em;
+    color: var(--ink-soft);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    line-height: 1.5;
   }
   .card-money {
-    display: flex;
+    display: inline-flex;
     align-items: baseline;
     flex-wrap: wrap;
-    gap: 16px;
+    gap: 0 10px;
   }
   .card-price {
     font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
-    font-variation-settings: "opsz" 144;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--ink);
-    font-size: 1.5em;
-    letter-spacing: -0.01em;
-    line-height: 1;
+    font-size: 1em;
+    letter-spacing: 0;
+    line-height: 1.5;
+    font-variant-numeric: tabular-nums;
   }
   .card-price .unit {
     font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
     font-style: italic;
     font-weight: 400;
-    font-size: 0.5em;
-    color: var(--ink-soft);
-    margin-left: 8px;
+    font-size: 0.85em;
+    color: var(--ink-mute);
+    margin-left: 4px;
     letter-spacing: 0.02em;
-    text-transform: none;
   }
   .card-price.na {
     font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
     font-weight: 400;
     font-style: italic;
-    color: var(--ink-soft);
-    font-size: 0.95em;
+    color: var(--ink-mute);
+    font-size: 1em;
   }
   .card-invoiced {
     font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
     font-style: italic;
-    font-size: 0.88em;
+    font-size: 1em;
     color: var(--ink-soft);
     font-weight: 400;
-    letter-spacing: 0.01em;
+    font-variant-numeric: tabular-nums;
+  }
+  .card-invoiced::before {
+    content: '·';
+    margin-right: 10px;
+    color: var(--ink-mute);
+    opacity: 0.55;
   }
   .card-splits-line {
     font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
     font-style: italic;
-    font-size: 0.82em;
-    color: var(--ink-soft);
+    font-size: 1em;
+    color: var(--ink-mute);
     letter-spacing: 0.01em;
     font-weight: 400;
-    line-height: 1.4;
+    line-height: 1.5;
+    flex-basis: 100%;
   }
   .fee-line {
     font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
-    font-weight: 600;
-    font-size: 1.05em;
+    font-weight: 500;
+    font-size: 1em;
     color: var(--ink);
-    letter-spacing: -0.005em;
+    letter-spacing: 0;
     line-height: 1.5;
+  }
+  .card-footer-contact {
+    margin-left: auto;
+    font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
+    font-style: italic;
+    font-size: 1em;
+    color: var(--ink-mute);
+    font-weight: 400;
   }
 
   /* —— Card bottom meta: hover-only —— */
@@ -526,6 +539,140 @@
     font-weight: 600;
   }
   .annotation { color: var(--ink-mute); font-style: italic; font-size: 0.94em; }
+
+  /* —— Ledger Lines (待剪想法) —— */
+  .ideas-group { margin-top: 56px; }
+  .ideas-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--thread-soft);
+    border-radius: var(--r-sm);
+    overflow: hidden;
+    border: 1px solid var(--thread-soft);
+  }
+  .ideas-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 18px 12px 14px;
+    background: var(--paper-card);
+    font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
+    font-size: 0.98em;
+    color: var(--ink);
+    line-height: 1.45;
+    min-height: 46px;
+    transition: background 0.15s ease;
+    position: relative;
+  }
+  .ideas-row:hover { background: var(--paper-deep); }
+  .ideas-row::before {
+    content: '';
+    width: 4px;
+    align-self: stretch;
+    background: var(--accent);
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .ideas-row.done {
+    color: var(--ink-mute);
+    text-decoration: line-through;
+    text-decoration-color: var(--ink-mute);
+  }
+  .ideas-row.done::before { background: var(--ink-mute); opacity: 0.35; }
+  .ideas-row-text { flex: 1; min-width: 0; }
+  .ideas-empty {
+    padding: 18px 20px;
+    background: var(--paper-card);
+    color: var(--ink-mute);
+    font-style: italic;
+    font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
+    font-size: 0.92em;
+  }
+
+  /* —— Toolbar Drawer (v5: one pill → expand) —— */
+  .toolbar-pill-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .toolbar-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--thread);
+    background: transparent;
+    color: var(--ink-soft);
+    font-family: 'Fraunces', 'Noto Serif TC', Georgia, serif;
+    font-style: italic;
+    font-size: 0.88em;
+    font-weight: 400;
+    padding: 6px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    transition: all 0.18s ease;
+  }
+  .toolbar-pill:hover { border-color: var(--accent); color: var(--accent); }
+  .toolbar-pill.open { border-color: var(--accent); color: var(--accent); background: var(--accent-tint); }
+  .toolbar-pill .tp-chev {
+    font-size: 0.75em;
+    opacity: 0.6;
+    transition: transform 0.2s ease;
+  }
+  .toolbar-pill.open .tp-chev { transform: rotate(180deg); }
+
+  .toolbar-drawer {
+    display: none;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 4px 32px 14px;
+    flex-wrap: wrap;
+    gap: 18px 24px;
+    align-items: flex-start;
+    border-top: 1px solid var(--thread-soft);
+  }
+  .toolbar-drawer.open { display: flex; }
+  .td-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .td-label {
+    font-family: 'Fraunces', Georgia, serif;
+    font-style: italic;
+    font-size: 0.78em;
+    color: var(--ink-mute);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .td-chips {
+    display: inline-flex;
+    gap: 2px;
+    flex-wrap: wrap;
+  }
+  .td-chips button {
+    border: 0;
+    background: transparent;
+    color: var(--ink-mute);
+    font-family: inherit;
+    font-size: 0.88em;
+    font-style: italic;
+    padding: 3px 10px;
+    cursor: pointer;
+    letter-spacing: 0.01em;
+    border-radius: 999px;
+    transition: color 0.15s ease, background 0.15s ease;
+  }
+  .td-chips button:hover { color: var(--ink-soft); }
+  .td-chips button.on {
+    color: var(--accent);
+    font-style: normal;
+    font-weight: 600;
+    background: var(--accent-tint);
+  }
+  .toolbar-spacer { flex: 1; }
 
   /* —— Fullscreen calendar modal —— */
   .modal-backdrop {
@@ -834,12 +981,13 @@
     .seg button { padding: 4px 8px; font-size: 0.82em; }
     .sort-select { font-size: 0.82em; }
     .main { padding: 24px 20px 60px; }
-    .card { padding: 24px 22px 16px; min-height: 240px; }
-    .card-title { font-size: 1.2em; }
-    .card-footer-warm { margin: 0 -22px; padding: 14px 22px 12px; }
-    .card-meta-tr { font-size: 0.76em; }
+    .card { padding: 28px 24px 18px; }
+    .card-title { font-size: 1.3em; }
+    .card-footer-warm { margin: 0; padding: 10px 0 0; }
     /* on mobile, always show bottom meta at low opacity */
     .card-meta-bottom { opacity: 0.75; }
+    .toolbar-drawer { padding: 4px 20px 12px; gap: 14px 18px; }
+    .ideas-row { padding: 11px 14px 11px 12px; font-size: 0.94em; }
     .modal-header { padding: 14px 18px; }
     .modal-header h2 { font-size: 1.1em; }
     .mc-grid { gap: 1px; }
@@ -1167,23 +1315,36 @@ function statusBucket(status) {
   return 'active';
 }
 
+const STATUS_GLYPH = {
+  active:  { ch: '●', label: '進行中' },
+  waiting: { ch: '○', label: '等待' },
+  hold:    { ch: '·', label: '考慮' },
+  done:    { ch: '✓', label: '完成' },
+};
+
+function hasTodayTodo(item) {
+  const today = startOfDay(new Date());
+  if (!item.events) return false;
+  return item.events.some(e =>
+    e.type === 'todo' &&
+    startOfDay(e.date).getTime() === today.getTime()
+  );
+}
+
 function renderCard(item, idx) {
   const bucket = statusBucket(item.status);
   const cardClasses = ['card'];
   if (bucket === 'waiting') cardClasses.push('is-waiting');
   if (bucket === 'done') cardClasses.push('is-done');
+  if (hasTodayTodo(item)) cardClasses.push('has-today');
 
-  // Top-right meta：窗口 ｜ 狀態（文字 + 分隔符，不用 pill）
-  const statusLabel = item.status || '進行中';
-  const metaParts = [];
-  if (item.contact) metaParts.push(`<span class="mt-contact">${escapeHtml(item.contact)}</span>`);
-  metaParts.push(`<span class="mt-status mt-${bucket}">${escapeHtml(statusLabel)}</span>`);
-  const metaTrHtml = `<div class="card-meta-tr">${metaParts.join('<span class="mt-sep">｜</span>')}</div>`;
-
-  // Head：title + top-right meta
+  // Title with status-prefix glyph
+  const glyph = STATUS_GLYPH[bucket] || STATUS_GLYPH.active;
   const headHtml = `<div class="card-head">
-    <h3 class="card-title">${escapeHtml(item.name)}</h3>
-    ${metaTrHtml}
+    <h3 class="card-title">
+      <span class="status-glyph sg-${bucket}" title="${escapeHtml(item.status || glyph.label)}">${glyph.ch}</span>
+      <span>${escapeHtml(item.name)}</span>
+    </h3>
   </div>`;
 
   // Body：open todos / last log / empty；不用 bullet marker
@@ -1198,26 +1359,29 @@ function renderCard(item, idx) {
     bodyHtml = `<div class="card-body-empty">（尚無待辦或紀錄）</div>`;
   }
 
-  // Footer warm block：報價 + 已開 + 分潤（一行整合）
+  // Footer: one-line, no warm bg, includes contact at the end
   const fmt = n => n.toLocaleString('zh-TW');
   let footerInner = '';
   if (item.kind === 'project') {
     const q = item.quoteRaw;
     if (q && q !== '未報價' && q !== '未成案' && item.quoteAmount > 0) {
-      footerInner += `<div class="card-money">
+      footerInner += `<span class="card-money">
         <span class="card-price">${fmt(item.quoteAmount)}<span class="unit">未稅</span></span>
         ${item.invoicedAmount > 0 ? `<span class="card-invoiced">已開 ${fmt(item.invoicedAmount)}</span>` : ''}
-      </div>`;
+      </span>`;
       if (item.splits.length > 0) {
-        footerInner += `<div class="card-splits-line">${item.splits.map(s=>escapeHtml(s)).join(' · ')}</div>`;
+        footerInner += `<span class="card-splits-line">${item.splits.map(s=>escapeHtml(s)).join(' · ')}</span>`;
       }
     } else if (q) {
-      footerInner += `<div class="card-money"><span class="card-price na">${escapeHtml(q)}</span></div>`;
+      footerInner += `<span class="card-money"><span class="card-price na">${escapeHtml(q)}</span></span>`;
     }
   } else if (item.kind === 'brand') {
     if (item.fee) {
-      footerInner += `<div class="card-money"><span class="fee-line">${escapeHtml(item.fee)}</span></div>`;
+      footerInner += `<span class="card-money"><span class="fee-line">${escapeHtml(item.fee)}</span></span>`;
     }
+  }
+  if (item.contact) {
+    footerInner += `<span class="card-footer-contact">${escapeHtml(item.contact)}</span>`;
   }
   const footerHtml = footerInner ? `<div class="card-footer-warm">${footerInner}</div>` : '';
 
@@ -1311,6 +1475,29 @@ function groupItems(items) {
   return [{ key: '全部', items }];
 }
 
+// ——— Ideas (待剪想法) rendering ———
+function renderIdeasSection() {
+  const ideas = state.ideas || [];
+  const open = ideas.filter(i => !i.done);
+  const done = ideas.filter(i => i.done);
+  const rows = [...open, ...done];
+  const listHtml = rows.length === 0
+    ? `<div class="ideas-empty">（還沒有想法）</div>`
+    : `<div class="ideas-list">${rows.map(i => `
+        <div class="ideas-row ${i.done?'done':''}">
+          <span class="ideas-row-text">${escapeHtml(i.text)}</span>
+        </div>
+      `).join('')}</div>`;
+
+  return `<div class="group-section ideas-group">
+    <div class="group-header">
+      <h2>強強滾一家 · IG 待剪想法</h2>
+      <span class="count">${open.length}</span>
+    </div>
+    ${listHtml}
+  </div>`;
+}
+
 // ——— Render dashboard body ———
 function renderBody() {
   const filtered = getFilteredItems();
@@ -1319,71 +1506,119 @@ function renderBody() {
   const container = document.getElementById('cardsArea');
   if (!container) return;
 
-  if (groups.length === 0) {
-    container.innerHTML = `<div class="card-body-empty" style="padding:48px;text-align:center;">（沒有符合條件的項目）</div>`;
-    return;
-  }
-
   let html = '';
-  let idx = 0;
-  for (const g of groups) {
-    html += `<div class="group-section">
-      <div class="group-header"><h2>${escapeHtml(g.key)}</h2><span class="count">${g.items.length}</span></div>
-      <div class="cards-grid">${g.items.map(it => renderCard(it, idx++)).join('')}</div>
-    </div>`;
+  if (groups.length === 0) {
+    html = `<div class="card-body-empty" style="padding:48px;text-align:center;">（沒有符合條件的項目）</div>`;
+  } else {
+    let idx = 0;
+    for (const g of groups) {
+      html += `<div class="group-section">
+        <div class="group-header"><h2>${escapeHtml(g.key)}</h2><span class="count">${g.items.length}</span></div>
+        <div class="cards-grid">${g.items.map(it => renderCard(it, idx++)).join('')}</div>
+      </div>`;
+    }
   }
+  // Ideas ledger — always rendered at bottom
+  html += renderIdeasSection();
+
   container.innerHTML = html;
 
-  // Update chip counts
+  // Update status chip counts in drawer
   const counts = { active:0, waiting:0, done:0, hold:0 };
   for (const it of [...state.projects, ...state.brand, ...state.groupBuy]) {
     counts[statusBucket(it.status)]++;
   }
   for (const k of Object.keys(counts)) {
-    const el = document.querySelector(`.chip-toggle[data-status="${k}"] .count`);
-    if (el) el.textContent = counts[k];
+    const el = document.querySelector(`#filterDrawer [data-status="${k}"] .count`);
+    if (el) el.textContent = ' ' + counts[k];
   }
 }
 
-// ——— Toolbar wiring ———
+// ——— Toolbar (v5: single pill + collapsible drawer) ———
+const STATUS_LABEL = { active:'進行中', waiting:'等待', hold:'考慮', done:'完成' };
+const GROUP_LABEL  = { status:'依狀態', kind:'依類型', none:'不分組' };
+
+function getPillSummary() {
+  const p = state.prefs;
+  const statusSummary = p.statuses.length === 0
+    ? '無狀態'
+    : (p.statuses.length === 4 ? '全部狀態' : p.statuses.map(s => STATUS_LABEL[s]).join('·'));
+  return `${statusSummary} — ${GROUP_LABEL[p.groupBy] || '依類型'}`;
+}
+
 function renderToolbar() {
   const p = state.prefs;
-  const groupOpts = [['status','依狀態'],['kind','依類型'],['none','不分組']];
-  const sortOpts = [['updated','最近更新'],['start','開始日期'],['amount','金額大→小'],['name','名稱排序']];
   const statusList = [['active','進行中'],['waiting','等待'],['hold','考慮'],['done','完成']];
+  const groupOpts  = [['status','依狀態'],['kind','依類型'],['none','不分組']];
+  const sortOpts   = [['updated','最近更新'],['start','開始日期'],['amount','金額'],['name','名稱']];
+
   return `<div class="toolbar">
     <div class="toolbar-inner">
-      <div class="seg" role="tablist" aria-label="分組">
-        ${groupOpts.map(([k,l]) => `<button class="${p.groupBy===k?'on':''}" onclick="setPref('groupBy','${k}')">${l}</button>`).join('')}
+      <div class="toolbar-pill-row">
+        <button class="toolbar-pill" id="filterPill" onclick="toggleFilterDrawer()">
+          <span id="filterPillSummary">${escapeHtml(getPillSummary())}</span>
+          <span class="tp-chev">▾</span>
+        </button>
+        <div class="toolbar-spacer"></div>
+        <button class="icon-btn" onclick="openMasterCal()" title="總表月曆">${I.calendar}</button>
+        <button class="icon-btn ghost" onclick="hardRefresh()" title="重新整理">${I.refresh}</button>
       </div>
-      <div class="toolbar-spacer"></div>
-      <select class="sort-select" onchange="setPref('sort', this.value)">
-        ${sortOpts.map(([k,l]) => `<option value="${k}" ${p.sort===k?'selected':''}>${l}</option>`).join('')}
-      </select>
-      <button class="icon-btn" onclick="openMasterCal()" title="總表月曆">${I.calendar}</button>
-      <button class="icon-btn ghost" onclick="hardRefresh()" title="重新整理">${I.refresh}</button>
-      <div class="chips-row">
-        ${statusList.map(([k,l]) => `<button class="chip-toggle ${p.statuses.includes(k)?'on':''}" data-status="${k}" onclick="toggleStatus('${k}')"><span class="dot"></span>${l}<span class="count">0</span></button>`).join('')}
+    </div>
+    <div class="toolbar-drawer" id="filterDrawer">
+      <div class="td-group">
+        <span class="td-label">狀態</span>
+        <div class="td-chips">
+          ${statusList.map(([k,l]) => `<button class="${p.statuses.includes(k)?'on':''}" data-status="${k}" onclick="toggleStatus('${k}')">${l}<span class="count"> 0</span></button>`).join('')}
+        </div>
+      </div>
+      <div class="td-group">
+        <span class="td-label">分組</span>
+        <div class="td-chips">
+          ${groupOpts.map(([k,l]) => `<button class="${p.groupBy===k?'on':''}" data-group="${k}" onclick="setPref('groupBy','${k}')">${l}</button>`).join('')}
+        </div>
+      </div>
+      <div class="td-group">
+        <span class="td-label">排序</span>
+        <div class="td-chips">
+          ${sortOpts.map(([k,l]) => `<button class="${p.sort===k?'on':''}" data-sort="${k}" onclick="setPref('sort','${k}')">${l}</button>`).join('')}
+        </div>
       </div>
     </div>
   </div>`;
 }
 
+function updatePillSummary() {
+  const el = document.getElementById('filterPillSummary');
+  if (el) el.textContent = getPillSummary();
+}
+
+function syncDrawerActiveStates() {
+  const p = state.prefs;
+  document.querySelectorAll('#filterDrawer [data-group]').forEach(b => {
+    b.classList.toggle('on', b.dataset.group === p.groupBy);
+  });
+  document.querySelectorAll('#filterDrawer [data-sort]').forEach(b => {
+    b.classList.toggle('on', b.dataset.sort === p.sort);
+  });
+  document.querySelectorAll('#filterDrawer [data-status]').forEach(b => {
+    b.classList.toggle('on', p.statuses.includes(b.dataset.status));
+  });
+}
+
+window.toggleFilterDrawer = function() {
+  const drawer = document.getElementById('filterDrawer');
+  const pill = document.getElementById('filterPill');
+  if (!drawer || !pill) return;
+  const open = drawer.classList.toggle('open');
+  pill.classList.toggle('open', open);
+};
+
 window.setPref = function(key, val) {
   state.prefs[key] = val;
   savePrefs();
-  if (key === 'sort' || key === 'groupBy') renderBody();
-  if (key === 'groupBy' || key === 'sort') {
-    document.querySelectorAll('.toolbar .seg').forEach(seg => {
-      seg.querySelectorAll('button').forEach(b => b.classList.remove('on'));
-    });
-    document.querySelectorAll('.toolbar .seg button').forEach(b => {
-      const txt = b.textContent.trim();
-      if (state.prefs.groupBy === 'status' && txt === '依狀態') b.classList.add('on');
-      if (state.prefs.groupBy === 'kind' && txt === '依類型') b.classList.add('on');
-      if (state.prefs.groupBy === 'none' && txt === '不分組') b.classList.add('on');
-    });
-  }
+  renderBody();
+  syncDrawerActiveStates();
+  updatePillSummary();
 };
 
 window.toggleStatus = function(k) {
@@ -1391,8 +1626,9 @@ window.toggleStatus = function(k) {
   const idx = arr.indexOf(k);
   if (idx >= 0) arr.splice(idx, 1); else arr.push(k);
   savePrefs();
-  document.querySelector(`.chip-toggle[data-status="${k}"]`).classList.toggle('on');
   renderBody();
+  syncDrawerActiveStates();
+  updatePillSummary();
 };
 
 window.hardRefresh = function() {
@@ -1681,13 +1917,43 @@ async function loadGroupBuy() {
   } catch { return []; }
 }
 
+function parseIdeas(md) {
+  // Sections: 待剪 (open) and 已剪 (done). Each bullet line is one idea.
+  const lines = md.split('\n');
+  const out = [];
+  let section = '';
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+    if (line.startsWith('## ')) { section = line.replace(/^##+\s*/, ''); continue; }
+    if (line.startsWith('# ')) continue;
+    if (line.startsWith('>')) continue;
+    const m = line.match(/^- \[([ x])\] (.+)/i) || line.match(/^- (.+)/);
+    if (!m) continue;
+    const text = (m[2] || m[1] || '').trim();
+    if (!text) continue;
+    // skip the placeholder example entry
+    if (text.startsWith('（') && text.endsWith('）')) continue;
+    const done = section.includes('已剪') || section.includes('完成') || (line.match(/^- \[x\]/i) !== null);
+    out.push({ text, done });
+  }
+  return out;
+}
+
+async function loadIdeas() {
+  try {
+    const data = await fetchPublic('Brand/%E5%BC%B7%E5%BC%B7%E6%BB%BE%E4%B8%80%E5%AE%B6-%E5%BE%85%E5%89%AA%E6%83%B3%E6%B3%95.md');
+    return parseIdeas(decodeMd(data));
+  } catch { return []; }
+}
+
 async function loadAll() {
   const cards = document.getElementById('cardsArea');
   if (cards) cards.innerHTML = `<div class="card-body-empty" style="padding:48px;text-align:center;">載入中…</div>`;
-  const [projects, brand, groupBuy] = await Promise.all([loadProjects(), loadBrand(), loadGroupBuy()]);
+  const [projects, brand, groupBuy, ideas] = await Promise.all([loadProjects(), loadBrand(), loadGroupBuy(), loadIdeas()]);
   state.projects = projects;
   state.brand = brand;
   state.groupBuy = groupBuy;
+  state.ideas = ideas;
   renderBody();
   updateLoadTime();
 }
