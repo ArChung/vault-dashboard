@@ -63,9 +63,9 @@
     font-family: 'Poppins', 'Noto Sans TC', system-ui, -apple-system, sans-serif;
     background-color: var(--paper);
     background-image:
-      linear-gradient(to right, rgba(176,174,165,0.10) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(176,174,165,0.10) 1px, transparent 1px);
-    background-size: 36px 36px;
+      linear-gradient(to right, rgba(120,118,108,0.16) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(120,118,108,0.16) 1px, transparent 1px);
+    background-size: 24px 24px;
     color: var(--ink);
     line-height: 1.55;
     font-weight: 400;
@@ -302,26 +302,31 @@
     25%, 65% { box-shadow: 0 0 0 3px var(--accent-tint), var(--shadow-md); }
   }
 
-  /* —— Corner status dot (top-right of card) —— */
-  .card-corner-dot {
+  /* —— Corner status tag (top-right of card) —— */
+  .card-corner-tag {
     position: absolute;
     top: 12px;
     right: 12px;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    box-shadow: 0 0 0 3px var(--paper-card);
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
+    font-size: 0.72em;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    line-height: 1.4;
+    white-space: nowrap;
+    z-index: 1;
   }
-  .card-corner-dot.cd-active  { background: var(--pill-active-text); }
-  .card-corner-dot.cd-waiting { background: var(--pill-waiting-text); }
-  .card-corner-dot.cd-hold    { background: var(--pill-hold-text); }
-  .card-corner-dot.cd-done    { background: var(--pill-done-text); opacity: 0.6; }
+  .card-corner-tag.ct-active  { background: var(--pill-active-bg);  color: var(--pill-active-text); }
+  .card-corner-tag.ct-waiting { background: var(--pill-waiting-bg); color: var(--pill-waiting-text); }
+  .card-corner-tag.ct-hold    { background: var(--pill-hold-bg);    color: var(--pill-hold-text); }
+  .card-corner-tag.ct-done    { background: var(--pill-done-bg);    color: var(--pill-done-text); opacity: 0.8; }
 
   /* —— Card title —— */
   .card-head {
     display: block;
     margin-bottom: 14px;
-    padding-right: 22px; /* reserve space for corner dot */
+    padding-right: 76px; /* reserve space for corner text tag */
   }
   .card-title {
     font-family: 'Poppins', 'Noto Sans TC', sans-serif;
@@ -352,14 +357,13 @@
     line-height: 1.6;
     color: var(--ink-soft);
     font-weight: 400;
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
+    display: block;
+    padding-left: 1.4em;
+    text-indent: -1.4em;
   }
   .card-todo::before {
-    content: '—';
+    content: '— ';
     color: var(--ink-mute);
-    flex-shrink: 0;
     font-weight: 400;
   }
   .card-todo.done {
@@ -372,14 +376,13 @@
     font-size: 0.88em;
     color: var(--ink-soft);
     line-height: 1.55;
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
+    display: block;
+    padding-left: 1.4em;
+    text-indent: -1.4em;
   }
   .card-last-log::before {
-    content: '—';
+    content: '— ';
     color: var(--ink-mute);
-    flex-shrink: 0;
   }
   .card-last-log .label {
     font-size: 0.78em;
@@ -392,10 +395,8 @@
 
   /* —— Card footer (v6: soft tinted bg) —— */
   .card-footer-warm {
-    margin: 0 -22px;
     padding: 12px 22px;
     background: var(--paper);
-    border-top: 1px solid var(--thread-soft);
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
@@ -471,14 +472,13 @@
     font-weight: 400;
   }
 
-  /* —— Card bottom meta: always visible (v6 ref style) —— */
+  /* —— Card bottom meta —— */
   .card-meta-bottom {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 10px;
-    margin: 0 -22px;
-    padding: 10px 18px 10px 22px;
+    padding: 10px 22px;
     background: var(--paper);
     font-family: 'Poppins', 'Noto Sans TC', sans-serif;
     font-size: 0.76em;
@@ -492,9 +492,17 @@
     flex: 1;
     font-variant-numeric: tabular-nums;
   }
+
+  /* —— Cal icon row (above footer, in white area, right-bottom) —— */
+  .card-cal-row {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 0 10px;
+    margin-top: -4px;
+  }
   .card-cal-btn {
-    width: 26px;
-    height: 26px;
+    width: 28px;
+    height: 28px;
     border-radius: var(--r-sm);
     background: transparent;
     color: var(--ink-mute);
@@ -503,21 +511,72 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: all 0.18s ease;
     flex-shrink: 0;
     padding: 0;
   }
-  .card-cal-btn:hover { color: var(--accent); border-color: var(--accent); }
-  .card-cal-btn svg { width: 13px; height: 13px; }
+  .card-cal-btn:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: var(--accent-tint);
+  }
+  .card-cal-btn svg { width: 14px; height: 14px; }
+
+  /* —— Footer collapse wrap —— */
+  .card-foot-wrap {
+    margin: 0 -22px;
+    border-top: 1px solid var(--thread-soft);
+    background: var(--paper);
+    overflow: hidden;
+  }
+  .card-foot-peek {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 7px 22px;
+    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
+    font-size: 0.72em;
+    font-weight: 500;
+    color: var(--ink-mute);
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.18s ease, background 0.18s ease;
+  }
+  .card-foot-peek:hover { color: var(--accent); }
+  .card-foot-peek .foot-peek-chevron {
+    display: inline-flex;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .card-foot-peek .foot-peek-chevron svg { width: 12px; height: 12px; }
+  .card-foot-body {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.24s ease;
+  }
+  /* Desktop: hover the card expands footer */
+  @media (hover: hover) {
+    .card:hover .card-foot-body { max-height: 260px; opacity: 1; }
+    .card:hover .card-foot-peek .foot-peek-chevron { transform: rotate(180deg); }
+    .card:hover .card-foot-peek { background: var(--thread-soft); }
+  }
+  /* Mobile / tap: .foot-open class toggled by JS */
+  .card.foot-open .card-foot-body { max-height: 260px; opacity: 1; }
+  .card.foot-open .card-foot-peek .foot-peek-chevron { transform: rotate(180deg); }
+  .card.foot-open .card-foot-peek { background: var(--thread-soft); }
 
   /* —— Date tags (inline) —— */
   .date-tag {
-    display: inline-block;
+    display: inline;
     font-family: 'Poppins', 'Noto Sans TC', sans-serif;
     font-weight: 500;
     font-size: 0.98em;
     color: var(--accent);
     letter-spacing: 0;
+    white-space: nowrap;
   }
   .date-tag.past { color: var(--ink-mute); font-weight: 400; }
   .date-tag.today {
@@ -971,11 +1030,12 @@
     .seg button { padding: 4px 8px; font-size: 0.82em; }
     .sort-select { font-size: 0.82em; }
     .main { padding: 24px 20px 60px; }
-    .card { padding: 28px 24px 18px; }
+    .card { padding: 28px 24px 0; }
     .card-title { font-size: 1.3em; }
-    .card-footer-warm { margin: 0; padding: 10px 0 0; }
-    /* on mobile, always show bottom meta at low opacity */
-    .card-meta-bottom { opacity: 0.75; }
+    .card-foot-wrap { margin: 0 -24px; }
+    .card-footer-warm { padding: 12px 24px; }
+    .card-meta-bottom { padding: 10px 24px; }
+    .card-cal-row { padding: 0 0 14px; }
     .toolbar-drawer { padding: 4px 20px 12px; gap: 14px 18px; }
     .ideas-row { padding: 11px 14px 11px 12px; font-size: 0.94em; }
     .modal-header { padding: 14px 18px; }
@@ -1009,6 +1069,7 @@ const I = {
   pause:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9 9.5v5M15 9.5v5"/></svg>',
   arrowL:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 6l-6 6 6 6"/></svg>',
   arrowR:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 6l6 6-6 6"/></svg>',
+  chevronDown: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>',
 };
 
 // ——— State ———
@@ -1307,9 +1368,9 @@ function statusBucket(status) {
 
 const STATUS_GLYPH = {
   active:  { ch: '●', label: '進行中' },
-  waiting: { ch: '○', label: '等待' },
-  hold:    { ch: '·', label: '考慮' },
-  done:    { ch: '✓', label: '完成' },
+  waiting: { ch: '○', label: '等待中' },
+  hold:    { ch: '·', label: '考慮中' },
+  done:    { ch: '✓', label: '已完成' },
 };
 
 function hasTodayTodo(item) {
@@ -1328,9 +1389,9 @@ function renderCard(item, idx) {
   if (bucket === 'done') cardClasses.push('is-done');
   if (hasTodayTodo(item)) cardClasses.push('has-today');
 
-  // Title（無前綴符號；狀態用右上角的 corner dot 表示）
+  // Title（無前綴符號；狀態用右上角的文字 tag 表示）
   const glyph = STATUS_GLYPH[bucket] || STATUS_GLYPH.active;
-  const cornerDotHtml = `<span class="card-corner-dot cd-${bucket}" title="${escapeHtml(item.status || glyph.label)}"></span>`;
+  const cornerTagHtml = `<span class="card-corner-tag ct-${bucket}" title="${escapeHtml(item.status || glyph.label)}">${escapeHtml(glyph.label)}</span>`;
   const headHtml = `<div class="card-head">
     <h3 class="card-title">${escapeHtml(item.name)}</h3>
   </div>`;
@@ -1373,27 +1434,50 @@ function renderCard(item, idx) {
   }
   const footerHtml = footerInner ? `<div class="card-footer-warm">${footerInner}</div>` : '';
 
-  // Bottom meta：YYYY-MM-DD 開始 · 更新於 X/Y + 月曆 icon（hover 才顯示）
+  // Bottom meta：YYYY-MM-DD 開始 · 更新於 X/Y（不含 cal icon）
   const metaPieces = [];
   if (item.startDateRaw) metaPieces.push(`${item.startDateRaw} 開始`);
   if (item.lastUpdate) metaPieces.push(`更新於 ${item.lastUpdate.getMonth()+1}/${item.lastUpdate.getDate()}`);
   const metaTextBottom = metaPieces.length ? metaPieces.join(' · ') : '';
-  const calBtn = item.events.length > 0
-    ? `<button class="card-cal-btn" title="${item.events.length} 個日期" onclick="openCardCal(event, ${idx})">${I.calendar}</button>`
+  const metaBottom = metaTextBottom
+    ? `<div class="card-meta-bottom"><span class="meta-date">${metaTextBottom}</span></div>`
     : '';
 
-  const metaBottom = (metaTextBottom || calBtn)
-    ? `<div class="card-meta-bottom"><span class="meta-date">${metaTextBottom}</span>${calBtn}</div>`
+  // Cal icon：只在有單日 event（非範圍）時顯示，位置在白底區的右下（footer 上方）
+  const hasSingleDayEvent = item.events.some(e => !e.endDate);
+  const calRow = hasSingleDayEvent
+    ? `<div class="card-cal-row"><button class="card-cal-btn" title="${item.events.filter(e=>!e.endDate).length} 個日期" onclick="openCardCal(event, ${idx})">${I.calendar}</button></div>`
+    : '';
+
+  // Footer 收合包裹：hover（桌面）或 tap（手機）才展開
+  const foldHtml = (footerHtml || metaBottom)
+    ? `<div class="card-foot-wrap">
+        <div class="card-foot-peek" onclick="toggleCardFoot(event, ${idx})">
+          <span class="foot-peek-label">詳情</span>
+          <span class="foot-peek-chevron">${I.chevronDown}</span>
+        </div>
+        <div class="card-foot-body">
+          ${footerHtml}
+          ${metaBottom}
+        </div>
+      </div>`
     : '';
 
   return `<div class="${cardClasses.join(' ')}" id="card-${idx}" data-bucket="${bucket}" data-kind="${item.kind}-${item.brandType||''}">
-    ${cornerDotHtml}
+    ${cornerTagHtml}
     ${headHtml}
     <div class="card-body">${bodyHtml}</div>
-    ${footerHtml}
-    ${metaBottom}
+    ${calRow}
+    ${foldHtml}
   </div>`;
 }
+
+window.toggleCardFoot = function(ev, idx) {
+  ev.stopPropagation();
+  const card = document.getElementById('card-' + idx);
+  if (!card) return;
+  card.classList.toggle('foot-open');
+};
 
 // ——— Format dates inline ———
 function formatDates(text) {
@@ -1778,8 +1862,13 @@ function renderMasterModal(monthDate) {
       ${visible.map(e => {
         const cls = brandClass(e.project);
         const isRange = !!e.endDate;
+        const isMaster = !state.masterFilter;
         const fullLabel = `${e.project.name} · ${e.text}`;
-        const shortText = truncate(stripDate(e.text) || e.project.name, 22);
+        const rawText = stripDate(e.text) || '';
+        const label = isMaster
+          ? (rawText ? `${e.project.name}｜${rawText}` : e.project.name)
+          : (rawText || e.project.name);
+        const shortText = truncate(label, 22);
         return `<div class="mc-event ${cls} ${isRange?'range':''}" title="${escapeHtml(fullLabel)}" onclick="event.stopPropagation(); closeMasterCal(); jumpToCard('${escapeHtml(e.project.name)}')">${escapeHtml(shortText)}</div>`;
       }).join('')}
       ${more > 0 ? `<div class="mc-more">+${more} 更多</div>` : ''}
@@ -1835,15 +1924,20 @@ window.openDaySheet = function(y, m, d) {
     <h3>${m+1}/${d}（${wd}）<span class="count">${events.length} 則</span></h3>
     <button class="modal-close-x" onclick="closeDaySheet()">✕</button>
   </div>`;
+  const isMaster = !state.masterFilter;
   const body = events.length === 0
     ? '<div class="card-body-empty">（這天沒事）</div>'
     : `<div class="day-sheet-list">${events.map(e => {
         const cls = brandClass(e.project);
+        const whatText = stripDate(e.text) || e.project.name;
+        const whoText = isMaster
+          ? (e.project.name + (e.time ? ' · ' + e.time : ''))
+          : (e.time || '');
         return `<div class="ds-row ${cls}" onclick="closeMasterCal(); jumpToCard('${escapeHtml(e.project.name)}')">
           <span class="ds-bar"></span>
           <div class="ds-main">
-            <div class="ds-what">${escapeHtml(stripDate(e.text) || e.project.name)}</div>
-            <div class="ds-who">${escapeHtml(e.project.name)}${e.time ? ' · ' + escapeHtml(e.time) : ''}</div>
+            <div class="ds-what">${escapeHtml(whatText)}</div>
+            ${whoText ? `<div class="ds-who">${escapeHtml(whoText)}</div>` : ''}
           </div>
         </div>`;
       }).join('')}</div>`;
