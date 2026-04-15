@@ -297,7 +297,14 @@
   .card-wrap > .card { flex: 1; }  /* main card fills wrap, 才能把底卡擋在身後 */
   .card-wrap:hover { z-index: 10; }
   .card-wrap:hover .card {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
+    box-shadow: 0 18px 40px -18px rgba(20,20,19,0.22),
+                0 6px 14px -6px rgba(20,20,19,0.08);
+    border-color: #d9d6c8;
+  }
+  .card-wrap.foot-open { z-index: 10; }
+  .card-wrap.foot-open .card {
+    transform: translateY(-3px);
     box-shadow: 0 18px 40px -18px rgba(20,20,19,0.22),
                 0 6px 14px -6px rgba(20,20,19,0.08);
     border-color: #d9d6c8;
@@ -311,21 +318,25 @@
     25%, 65% { box-shadow: 0 0 0 3px var(--accent-tint), var(--shadow-md); }
   }
 
-  /* —— Corner status dot (top-right of card) —— */
-  .card-corner-dot {
+  /* —— Corner status tag (top-right of card) —— */
+  .card-corner-tag {
     position: absolute;
-    top: 11px;
-    right: 11px;
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    z-index: 3;
-    cursor: help;
+    top: 12px;
+    right: 12px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
+    font-size: 0.62em;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    line-height: 1.4;
+    white-space: nowrap;
+    z-index: 2;
   }
-  .card-corner-dot.ct-active  { background: var(--brand-green); }   /* 進行中 */
-  .card-corner-dot.ct-waiting { background: var(--accent); }        /* 等待中 */
-  .card-corner-dot.ct-hold    { background: var(--brand-blue); }    /* 考慮中 */
-  .card-corner-dot.ct-done    { background: var(--ink-mute); opacity: 0.55; }  /* 已完成 */
+  .card-corner-tag.ct-active  { background: #eef2e6; color: #7a8d68; }   /* soft green = 進行中 */
+  .card-corner-tag.ct-waiting { background: #fbf3e1; color: #b09657; }   /* soft amber = 等待中 */
+  .card-corner-tag.ct-hold    { background: #fae6dd; color: #c28672; }   /* soft salmon = 考慮中 */
+  .card-corner-tag.ct-done    { background: #f2f2ef; color: #a3a199; opacity: 0.9; }  /* soft gray = 已完成 */
 
   /* —— Card title —— */
   /* 標題下壓一條淡淡的 hairline，上下各 14px 留白 */
@@ -333,7 +344,7 @@
     display: block;
     padding-bottom: 14px;
     margin-bottom: 14px;
-    padding-right: 24px; /* reserve space for corner dot */
+    padding-right: 76px; /* reserve space for corner text tag */
     border-bottom: 1px solid var(--thread-soft);
   }
   .card-title {
@@ -428,18 +439,10 @@
     margin-right: 6px;
   }
 
-  /* —— Card footer (inside card, subtle tint) —— */
-  .card-footer {
-    margin: 18px -22px -22px;     /* escape .card padding to span full width */
-    padding: 0;
-    background: #f7f3ea;          /* subtle cream tint */
-    border-top: 1px solid var(--thread-soft);
-    border-radius: 0 0 var(--r-md) var(--r-md);
-  }
-  .card-body { margin-bottom: 0; }  /* footer wrapper provides the spacing now */
+  /* —— Card footer (v6: soft tinted bg) —— */
   .card-footer-warm {
-    padding: 12px 22px 6px;
-    background: transparent;
+    padding: 12px 22px;
+    background: transparent; /* inherits from .card-foot-wrap */
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
@@ -521,31 +524,31 @@
     justify-content: space-between;
     align-items: center;
     gap: 10px;
-    padding: 6px 22px 10px;
-    background: transparent;
+    padding: 10px 22px;
+    background: transparent; /* inherits warm tint from .card-foot-wrap */
     font-family: 'Poppins', 'Noto Sans TC', sans-serif;
     font-size: 0.76em;
     color: var(--ink-mute);
     font-weight: 400;
     letter-spacing: 0;
     min-height: 20px;
-    border-top: 0;
+    border-top: 1px solid rgba(200, 192, 170, 0.35);
   }
   .card-meta-bottom .meta-date {
     flex: 1;
     font-variant-numeric: tabular-nums;
   }
 
-  /* —— Cal icon — inline at footer's right side —— */
-  .card-meta-right {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    flex-shrink: 0;
+  /* —— Cal icon row (right-bottom of main card) —— */
+  .card-cal-row {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0;
+    margin-top: 4px;
   }
   .card-cal-btn {
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
     border-radius: var(--r-sm);
     background: transparent;
     color: var(--ink-mute);
@@ -563,9 +566,56 @@
     border-color: var(--accent);
     background: var(--accent-tint);
   }
-  .card-cal-btn svg { width: 12px; height: 12px; }
+  .card-cal-btn svg { width: 14px; height: 14px; }
 
-  /* （已廢除 .card-foot-card slide-out 機制；footer 改為直接掛在主卡內，加淡淡底色） */
+  /* —— Footer: 第二張卡片 sitting under the main card ——
+     rest: bottom: -10px 讓底卡的 bottom 邊緣比主卡片底部多露 10px（讓 peek 更明顯、有延續感）；
+           其餘部分被主卡（z-index 2）擋住。
+     hover: translateY(calc(100% - 31px)) 把底卡往下滑，
+            底卡頂部比主卡（浮起 -3px 後）底部再高 18px —> 兩張卡重疊 18px，
+            因此底卡 padding-top 也加 18px 補回被蓋住的內容空間。
+     底卡左右各內縮 8px，比主卡窄一圈，視覺更輕。 */
+  .card-foot-card {
+    position: absolute;
+    bottom: -10px;
+    left: 8px;
+    right: 8px;
+    z-index: 1;
+    background: #f7f3ea;
+    border: 1px solid var(--thread);
+    border-radius: var(--r-md);
+    padding: 30px 20px 14px;
+    box-shadow: var(--shadow-sm);
+    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
+    font-size: 0.82em;
+    color: var(--ink-soft);
+    transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.32s ease;
+    cursor: pointer;
+    will-change: transform;
+  }
+  @media (hover: hover) {
+    .card-wrap:hover .card-foot-card {
+      transform: translateY(calc(100% - 31px));
+      box-shadow: 0 14px 28px -14px rgba(20,20,19,0.18),
+                  0 4px 10px -4px rgba(20,20,19,0.06);
+    }
+  }
+  .card-wrap.foot-open .card-foot-card {
+    transform: translateY(calc(100% - 31px));
+    box-shadow: 0 14px 28px -14px rgba(20,20,19,0.18),
+                0 4px 10px -4px rgba(20,20,19,0.06);
+  }
+
+  /* inner layout: reuse existing footer-warm / meta-bottom */
+  .card-foot-card .card-footer-warm {
+    padding: 0 0 4px;
+    border: 0;
+  }
+  .card-foot-card .card-meta-bottom {
+    padding: 4px 0 0;
+    border-top: 0; /* 移除 hairline，讓底卡更輕 */
+  }
 
   /* —— Date tags (inline) —— */
   .date-tag {
@@ -1029,11 +1079,12 @@
     .seg button { padding: 4px 8px; font-size: 0.82em; }
     .sort-select { font-size: 0.82em; }
     .main { padding: 24px 20px 60px; }
-    .card { padding: 24px 22px; }
+    .card { padding: 28px 24px 0; }
     .card-title { font-size: 1.3em; }
-    .card-footer { margin: 16px -22px -24px; }
-    .card-footer-warm { padding: 12px 22px 6px; }
-    .card-meta-bottom { padding: 6px 22px 12px; }
+    .card-foot-wrap { margin: 0 -24px; }
+    .card-footer-warm { padding: 12px 24px; }
+    .card-meta-bottom { padding: 10px 24px; }
+    .card-cal-row { padding: 0 0 14px; }
     .toolbar-drawer { padding: 4px 20px 12px; gap: 14px 18px; }
     .ideas-row { padding: 11px 14px 11px 12px; font-size: 0.94em; }
     .modal-header { padding: 14px 18px; }
@@ -1536,9 +1587,9 @@ function renderCard(item, idx) {
   if (bucket === 'done') cardClasses.push('is-done');
   if (hasTodayTodo(item)) cardClasses.push('has-today');
 
-  // 狀態：右上角小點點（無標題前綴）
+  // Title（無前綴符號；狀態用右上角的中文 tag 表示）
   const glyph = STATUS_GLYPH[bucket] || STATUS_GLYPH.active;
-  const cornerDotHtml = `<span class="card-corner-dot ct-${bucket}" title="${escapeHtml(item.status || glyph.label)}"></span>`;
+  const cornerTagHtml = `<span class="card-corner-tag ct-${bucket}" title="${escapeHtml(item.status || glyph.label)}">${escapeHtml(glyph.label)}</span>`;
   const headHtml = `<div class="card-head">
     <h3 class="card-title">${escapeHtml(item.name)}</h3>
   </div>`;
@@ -1579,14 +1630,7 @@ function renderCard(item, idx) {
   }
   const footerHtml = footerInner ? `<div class="card-footer-warm">${footerInner}</div>` : '';
 
-  // Cal icon：只在有「會出現在月曆上」的事件時才顯示
-  // 月曆只放 IMPORTANT_TYPES 的單日事件
-  const calEligible = item.events.filter(e => IMPORTANT_TYPES.has(e.type) && !e.endDate);
-  const calBtn = calEligible.length > 0
-    ? `<button class="card-cal-btn" title="${calEligible.length} 個日期" onclick="openCardCal(event, ${idx})">${I.calendar}</button>`
-    : '';
-
-  // Bottom meta：左側 date、右側 cal icon + contact
+  // Bottom meta：左側 date、右側 contact（窗口統一收在底卡右下角）
   const metaPieces = [];
   if (item.startDateRaw) metaPieces.push(`${item.startDateRaw} 開始`);
   if (item.lastUpdate) metaPieces.push(`更新於 ${item.lastUpdate.getMonth()+1}/${item.lastUpdate.getDate()}`);
@@ -1594,28 +1638,34 @@ function renderCard(item, idx) {
   const contactHtml = item.contact
     ? `<span class="card-footer-contact">${escapeHtml(item.contact)}</span>`
     : '';
-  const metaRightHtml = (calBtn || contactHtml)
-    ? `<div class="card-meta-right">${calBtn}${contactHtml}</div>`
-    : '';
-  const metaBottom = (metaTextBottom || metaRightHtml)
-    ? `<div class="card-meta-bottom"><span class="meta-date">${metaTextBottom}</span>${metaRightHtml}</div>`
+  const metaBottom = (metaTextBottom || contactHtml)
+    ? `<div class="card-meta-bottom"><span class="meta-date">${metaTextBottom}</span>${contactHtml}</div>`
     : '';
 
-  // Footer：直接掛在主卡內，淡淡的底色 + hairline 分隔
-  const footerBlock = (footerHtml || metaBottom)
-    ? `<div class="card-footer">
+  // Cal icon：只在有「會出現在月曆上」的單日事件時才顯示
+  // 月曆只放 IMPORTANT_TYPES 的事件
+  const calEligible = item.events.filter(e => IMPORTANT_TYPES.has(e.type) && !e.endDate);
+  const calRow = calEligible.length > 0
+    ? `<div class="card-cal-row"><button class="card-cal-btn" title="${calEligible.length} 個日期" onclick="openCardCal(event, ${idx})">${I.calendar}</button></div>`
+    : '';
+
+  // Footer：獨立一張「底卡」，絕對定位掛在主卡片下方。
+  // 靜止時只露 5px 色條；hover 時主卡上浮、底卡往下滑分開。
+  const footCardHtml = (footerHtml || metaBottom)
+    ? `<div class="card-foot-card" onclick="toggleCardFoot(event, ${idx})">
         ${footerHtml}
         ${metaBottom}
       </div>`
     : '';
 
   return `<div class="card-wrap ${bucket === 'done' ? 'is-done' : ''} ${bucket === 'waiting' ? 'is-waiting' : ''}" id="card-${idx}" data-bucket="${bucket}" data-kind="${item.kind}-${item.brandType||''}">
-    <div class="${cardClasses.join(' ')}">
-      ${cornerDotHtml}
+    <div class="${cardClasses.join(' ')}" onclick="tapCardToggle(event, ${idx})">
+      ${cornerTagHtml}
       ${headHtml}
       <div class="card-body">${bodyHtml}</div>
-      ${footerBlock}
+      ${calRow}
     </div>
+    ${footCardHtml}
   </div>`;
 }
 
@@ -1690,6 +1740,25 @@ document.addEventListener('click', (e) => {
   if (e.target.closest('.card-todo[data-added]')) return;
   hideTip();
 });
+
+window.toggleCardFoot = function(ev, idx) {
+  ev.stopPropagation();
+  const wrap = document.getElementById('card-' + idx);
+  if (!wrap) return;
+  wrap.classList.toggle('foot-open');
+};
+
+// 手機版（無 hover）：點擊主卡任一處也能 toggle 底板
+// 桌機有 hover 就靠 hover，檢測用 window.innerWidth（比 matchMedia hover: none 可靠）
+window.tapCardToggle = function(ev, idx) {
+  if (window.innerWidth >= 900) return;
+  // 忽略點到互動元素（例如日曆 icon button）
+  if (ev.target.closest('button, a')) return;
+  ev.stopPropagation();
+  const wrap = document.getElementById('card-' + idx);
+  if (!wrap) return;
+  wrap.classList.toggle('foot-open');
+};
 
 // ——— Format dates inline ———
 // 週以週一為起點：本週=今天所在的週一至週日；下週=往後一個週一至週日
