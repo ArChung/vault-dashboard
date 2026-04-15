@@ -379,17 +379,44 @@
     display: block;
     padding-left: 0.95em;
     text-indent: -0.95em;
+    position: relative;
+    cursor: default;
   }
+  .card-todo[data-added] { cursor: help; }
   .card-todo::before {
     content: '– ';
     color: var(--ink-mute);
     font-weight: 400;
   }
+  /* hl-open = 待辦 [ ]：保留 '– ' 前綴 */
+  /* hl-done = 里程碑 [x]：勾勾前綴 + 灰色 */
+  .card-todo.hl-done { color: var(--ink-mute); }
+  .card-todo.hl-done::before { content: '✓ '; color: var(--accent); }
+  /* hl-note = 中性筆記（無 checkbox）：· 前綴 */
+  .card-todo.hl-note::before { content: '· '; color: var(--ink-mute); }
+  /* 相容舊 .done class */
   .card-todo.done {
     color: var(--ink-mute);
     text-decoration: line-through;
     text-decoration-color: var(--ink-mute);
   }
+  /* 日期浮動提示：hover 桌機 / tap 手機（統一用 JS tooltip） */
+  .card-todo-tip {
+    position: fixed;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
+    font-size: 0.72em;
+    padding: 4px 10px;
+    border-radius: 4px;
+    pointer-events: none;
+    z-index: 10000;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.15s;
+    letter-spacing: 0.02em;
+  }
+  .card-todo-tip.show { opacity: 0.92; }
   .card-last-log {
     font-family: 'Poppins', 'Noto Sans TC', sans-serif;
     font-size: 0.88em;
@@ -1363,23 +1390,42 @@ function parseProject(md) {
   const invoicedAmount = parseAmount(invoicedRaw);
   const splits = splitRaw ? splitRaw.split('、').map(s => s.trim()).filter(Boolean) : [];
 
-  // Todos & last log
-  let inTodo = false, inLog = false;
-  const todos = [], logs = [];
+  // 重點（或舊格式的「待辦」）& 進度紀錄
+  // 重點 item 有三種：[x] 里程碑、[ ] 待辦、無 checkbox 中性筆記
+  // 每項可選前綴日期 YYYY-MM-DD，代表加入的時間
+  let inHighlight = false, inLog = false;
+  const highlights = [], logs = [];
+  const extractAddedDate = (text) => {
+    const m = text.match(/^(\d{4}-\d{2}-\d{2})\s+(.+)$/);
+    if (m) return { added: m[1], text: m[2] };
+    return { added: '', text };
+  };
   for (const line of lines) {
-    if (line.startsWith('## 待辦')) { inTodo = true; inLog = false; continue; }
-    if (line.startsWith('## 進度')) { inTodo = false; inLog = true; continue; }
-    if (line.startsWith('## ')) { inTodo = false; inLog = false; continue; }
-    if (inTodo) {
-      const m = line.match(/^- \[([ x])\] (.+)/i);
-      if (m) todos.push({ checked: m[1].toLowerCase() === 'x', text: m[2] });
+    if (line.startsWith('## 重點') || line.startsWith('## 待辦')) { inHighlight = true; inLog = false; continue; }
+    if (line.startsWith('## 進度')) { inHighlight = false; inLog = true; continue; }
+    if (line.startsWith('## ')) { inHighlight = false; inLog = false; continue; }
+    if (inHighlight) {
+      // - [x] ... 或 - [ ] ... 或 - ...
+      let m = line.match(/^- \[([ x])\] (.+)/i);
+      if (m) {
+        const { added, text } = extractAddedDate(m[2]);
+        highlights.push({ kind: m[1].toLowerCase() === 'x' ? 'done' : 'open', text, added });
+        continue;
+      }
+      m = line.match(/^- (.+)/);
+      if (m) {
+        const { added, text } = extractAddedDate(m[1]);
+        highlights.push({ kind: 'note', text, added });
+      }
     }
     if (inLog) {
       const m = line.match(/^- (.+)/);
       if (m) logs.push(m[1]);
     }
   }
-  const openTodos = todos.filter(t => !t.checked).slice(0, 2);
+  const cardHighlights = highlights.slice(0, 4);
+  // 向下相容：openTodos 仍保留以免有其他地方用到
+  const openTodos = highlights.filter(h => h.kind === 'open').map(h => ({ checked: false, text: h.text }));
   const lastLog = logs.length > 0 ? logs[logs.length - 1] : '';
   const events = extractDates(md, name);
   // Last meaningful update = max log date or start date
@@ -1393,7 +1439,8 @@ function parseProject(md) {
     name, status, contact, client,
     quoteRaw, quoteAmount, invoicedAmount, splits,
     startDateRaw,
-    openTodos, allTodos: todos, lastLog,
+    highlights: cardHighlights,
+    openTodos, allTodos: highlights, lastLog,
     events,
     lastUpdate,
   };
@@ -1401,6 +1448,11 @@ function parseProject(md) {
 
 function parseBrandCollab(md, type) {
   const sections = md.split(/^## /m).slice(1);
+  const extractAddedDate = (text) => {
+    const m = text.match(/^(\d{4}-\d{2}-\d{2})\s+(.+)$/);
+    if (m) return { added: m[1], text: m[2] };
+    return { added: '', text };
+  };
   return sections.map(sec => {
     const lines = sec.split('\n');
     const name = lines[0].trim();
@@ -1413,6 +1465,16 @@ function parseBrandCollab(md, type) {
     const contact = meta('窗口');
     const fee = meta('費用');
     const bullets = lines.filter(l => l.match(/^- /)).map(l => l.replace(/^- /, ''));
+    const highlights = bullets.map(b => {
+      // - [x] / - [ ] 形式
+      const m = b.match(/^\[([ x])\] (.+)/i);
+      if (m) {
+        const { added, text } = extractAddedDate(m[2]);
+        return { kind: m[1].toLowerCase() === 'x' ? 'done' : 'open', text, added };
+      }
+      const { added, text } = extractAddedDate(b);
+      return { kind: 'note', text, added };
+    });
     const events = extractDates('## ' + sec, name);
     return {
       kind: 'brand',
@@ -1421,6 +1483,7 @@ function parseBrandCollab(md, type) {
       chipClass: type === '業配' ? 'is-brand-promo' : 'is-brand-reels',
       name, status, contact, fee,
       bullets,
+      highlights: highlights.slice(0, 4),
       openTodos: bullets.slice(0, 2).map(b => ({ checked: false, text: b })),
       lastLog: bullets.length > 0 ? bullets[bullets.length - 1] : '',
       events,
@@ -1454,6 +1517,7 @@ function parseGroupBuy(md) {
           contact: '',
           fee: '',
           bullets: itemDesc ? [itemDesc] : [],
+          highlights: itemDesc ? [{ kind: 'note', text: itemDesc, added: '' }] : [],
           openTodos: itemDesc ? [{ checked: false, text: itemDesc }] : [],
           lastLog: itemDesc,
           events: extractDates('## ' + sec, itemName).filter(e => e.text.includes(itemName) || e.text.includes(itemDesc.slice(0,8))),
@@ -1504,16 +1568,17 @@ function renderCard(item, idx) {
     <h3 class="card-title">${escapeHtml(item.name)}</h3>
   </div>`;
 
-  // Body：open todos / last log / empty；不用 bullet marker
+  // Body：顯示重點（混合里程碑/待辦/筆記）/ last log / empty
   let bodyHtml = '';
-  if (item.openTodos && item.openTodos.length > 0) {
-    bodyHtml = item.openTodos.map(t => `
-      <div class="card-todo ${t.checked?'done':''}">${formatDates(escapeHtml(t.text))}</div>
-    `).join('');
+  if (item.highlights && item.highlights.length > 0) {
+    bodyHtml = item.highlights.map(h => {
+      const addedAttr = h.added ? ` data-added="${h.added}"` : '';
+      return `<div class="card-todo hl-${h.kind}"${addedAttr} onclick="showAddedTip(event, this)">${formatDates(escapeHtml(h.text))}</div>`;
+    }).join('');
   } else if (item.lastLog) {
     bodyHtml = `<div class="card-last-log"><span class="label">最後</span>${formatDates(escapeHtml(item.lastLog))}</div>`;
   } else {
-    bodyHtml = `<div class="card-body-empty">（尚無待辦或紀錄）</div>`;
+    bodyHtml = `<div class="card-body-empty">（尚無重點或紀錄）</div>`;
   }
 
   // Footer: one-line, no warm bg, includes contact at the end
@@ -1576,6 +1641,70 @@ function renderCard(item, idx) {
     ${footCardHtml}
   </div>`;
 }
+
+// 重點 item 的日期提示：桌機 hover / 手機 tap 都用這個 JS tooltip（可靠定位）
+let _addedTipEl = null;
+let _addedTipTimer = null;
+function ensureTipEl() {
+  if (!_addedTipEl) {
+    _addedTipEl = document.createElement('div');
+    _addedTipEl.className = 'card-todo-tip';
+    document.body.appendChild(_addedTipEl);
+  }
+  return _addedTipEl;
+}
+function positionTip(el) {
+  const tip = _addedTipEl;
+  if (!tip) return;
+  const rect = el.getBoundingClientRect();
+  const tipRect = tip.getBoundingClientRect();
+  // 預設擺在 item 上方置中；若超出就往下擺
+  let left = rect.left + rect.width / 2 - tipRect.width / 2;
+  let top = rect.top - tipRect.height - 6;
+  left = Math.max(8, Math.min(left, window.innerWidth - tipRect.width - 8));
+  if (top < 8) top = rect.bottom + 6;
+  tip.style.left = left + 'px';
+  tip.style.top = top + 'px';
+}
+function showTipFor(el) {
+  const added = el.getAttribute('data-added');
+  if (!added) return;
+  const tip = ensureTipEl();
+  tip.textContent = '新增於 ' + added;
+  tip.classList.add('show');
+  // 測量後再定位
+  requestAnimationFrame(() => positionTip(el));
+}
+function hideTip() {
+  if (_addedTipEl) _addedTipEl.classList.remove('show');
+}
+
+// 手機 tap：stopPropagation，顯示 1.8s 自動消失
+window.showAddedTip = function(ev, el) {
+  if (!el.getAttribute('data-added')) return;
+  // 桌機（有 hover）由 mouseenter 處理，這裡只管手機 tap
+  if (window.matchMedia('(hover: hover)').matches) return;
+  ev.stopPropagation();
+  showTipFor(el);
+  clearTimeout(_addedTipTimer);
+  _addedTipTimer = setTimeout(hideTip, 1800);
+};
+
+// 桌機 hover：用事件委派綁在 document 上（避免卡片重繪失效）
+document.addEventListener('mouseover', (e) => {
+  if (!window.matchMedia('(hover: hover)').matches) return;
+  const el = e.target.closest('.card-todo[data-added]');
+  if (!el) return;
+  showTipFor(el);
+});
+document.addEventListener('mouseout', (e) => {
+  if (!window.matchMedia('(hover: hover)').matches) return;
+  const el = e.target.closest('.card-todo[data-added]');
+  if (!el) return;
+  // 離開元素（不包含移到子元素）
+  if (e.relatedTarget && el.contains(e.relatedTarget)) return;
+  hideTip();
+});
 
 window.toggleCardFoot = function(ev, idx) {
   ev.stopPropagation();
