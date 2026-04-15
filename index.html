@@ -323,10 +323,10 @@
     position: absolute;
     top: 12px;
     right: 12px;
-    padding: 3px 10px;
+    padding: 2px 8px;
     border-radius: 999px;
     font-family: 'Poppins', 'Noto Sans TC', sans-serif;
-    font-size: 0.72em;
+    font-size: 0.62em;
     font-weight: 500;
     letter-spacing: 0.02em;
     line-height: 1.4;
@@ -339,15 +339,12 @@
   .card-corner-tag.ct-done    { background: #f2f2ef; color: #a3a199; opacity: 0.9; }  /* soft gray = 已完成 */
 
   /* —— Card title —— */
+  /* 標題下壓一條淡淡的 hairline，上下各 8px 留白 */
   .card-head {
     display: block;
-    margin-bottom: 16px;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
     padding-right: 76px; /* reserve space for corner text tag */
-  }
-  /* waiting state: hairline 分隔標題與待辦 */
-  .card-wrap.is-waiting .card-head {
-    padding-bottom: 14px;
-    margin-bottom: 14px;
     border-bottom: 1px solid var(--thread-soft);
   }
   .card-title {
@@ -547,8 +544,9 @@
   /* —— Footer: 第二張卡片 sitting under the main card ——
      rest: bottom: -10px 讓底卡的 bottom 邊緣比主卡片底部多露 10px（讓 peek 更明顯、有延續感）；
            其餘部分被主卡（z-index 2）擋住。
-     hover: translateY(calc(100% - 13px)) 把底卡往下滑，
-            其「頂部」剛好貼在主卡（浮起 -3px 後）的底部 —> 感覺兩張卡相連。 */
+     hover: translateY(calc(100% - 25px)) 把底卡往下滑，
+            底卡頂部比主卡（浮起 -3px 後）底部再高 12px —> 兩張卡重疊 12px，
+            因此底卡 padding-top 也加 12px 補回被蓋住的內容空間。 */
   .card-foot-card {
     position: absolute;
     bottom: -10px;
@@ -558,7 +556,7 @@
     background: #f7f3ea;
     border: 1px solid var(--thread);
     border-radius: var(--r-md);
-    padding: 12px 22px;
+    padding: 24px 22px 12px;
     box-shadow: var(--shadow-sm);
     font-family: 'Poppins', 'Noto Sans TC', sans-serif;
     font-size: 0.82em;
@@ -570,13 +568,13 @@
   }
   @media (hover: hover) {
     .card-wrap:hover .card-foot-card {
-      transform: translateY(calc(100% - 13px));
+      transform: translateY(calc(100% - 25px));
       box-shadow: 0 14px 28px -14px rgba(20,20,19,0.18),
                   0 4px 10px -4px rgba(20,20,19,0.06);
     }
   }
   .card-wrap.foot-open .card-foot-card {
-    transform: translateY(calc(100% - 13px));
+    transform: translateY(calc(100% - 25px));
     box-shadow: 0 14px 28px -14px rgba(20,20,19,0.18),
                 0 4px 10px -4px rgba(20,20,19,0.06);
   }
