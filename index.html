@@ -1345,9 +1345,11 @@ function extractDates(md, projectName) {
     }
 
     let type = 'note';
-    if (section.includes('待辦')) {
+    const isHighlight = section.includes('重點') || section.includes('待辦');
+    if (isHighlight) {
       const checked = /^- \[x\]/i.test(line);
-      type = checked ? 'done' : 'todo';
+      const hasBox = /^- \[[ x]\]/i.test(line);
+      type = hasBox ? (checked ? 'done' : 'todo') : 'note';
     } else if (section.includes('進度')) {
       type = 'log';
     } else if (section.includes('最新') || section.includes('備註') || section === '') {
@@ -1355,11 +1357,18 @@ function extractDates(md, projectName) {
     }
 
     // The displayed source text for the event: strip checkbox markers
-    const display = line.replace(/^- \[[ x]\]\s*/i, '').replace(/^- /, '');
+    let display = line.replace(/^- \[[ x]\]\s*/i, '').replace(/^- /, '');
 
-    tryISO(line, type, section || '備註', display);
-    tryCN(line, type, section || '備註', display);
-    tryRange(line, section || '備註', display);
+    // 重點 section 的前綴 YYYY-MM-DD 是「加入日期」不是事件日，抓事件時要跳過
+    // 同時把 display 裡的前綴 added date 拿掉，月曆顯示更乾淨
+    let scanTarget = line;
+    if (isHighlight) {
+      display = display.replace(/^(\d{4}-\d{1,2}-\d{1,2})\s+/, '');
+      scanTarget = display;
+    }
+    tryISO(scanTarget, type, section || '備註', display);
+    tryCN(scanTarget, type, section || '備註', display);
+    tryRange(scanTarget, section || '備註', display);
   }
 
   // Filter: drop way-out-of-range dates (extra safety)
@@ -2209,7 +2218,7 @@ window.openDaySheet = function(y, m, d) {
     if (e.endDate) return false;
     return e.date.getFullYear() === y && e.date.getMonth() === m && e.date.getDate() === d;
   });
-  const wd = WEEKDAYS[target.getDay()];
+  const wd = WEEKDAYS[new Date(y, m, d).getDay()];
   const header = `<div class="day-sheet-head">
     <h3>${m+1}/${d}（${wd}）<span class="count">${events.length} 則</span></h3>
     <button class="modal-close-x" onclick="closeDaySheet()">✕</button>
