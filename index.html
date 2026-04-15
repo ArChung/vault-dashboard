@@ -1719,12 +1719,14 @@ window.showAddedTip = function(ev, el) {
   _addedTipTimer = setTimeout(hideTip, 1800);
 };
 
-// 桌機 hover：用事件委派綁在 document 上（避免卡片重繪失效）
+// 桌機 hover：事件委派 + 2 秒延遲顯示，避免滑鼠掃過時一直彈出
+let _hoverDelayTimer = null;
 document.addEventListener('mouseover', (e) => {
   if (!window.matchMedia('(hover: hover)').matches) return;
   const el = e.target.closest('.card-todo[data-added]');
   if (!el) return;
-  showTipFor(el);
+  clearTimeout(_hoverDelayTimer);
+  _hoverDelayTimer = setTimeout(() => showTipFor(el), 2000);
 });
 document.addEventListener('mouseout', (e) => {
   if (!window.matchMedia('(hover: hover)').matches) return;
@@ -1732,6 +1734,7 @@ document.addEventListener('mouseout', (e) => {
   if (!el) return;
   // 離開元素（不包含移到子元素）
   if (e.relatedTarget && el.contains(e.relatedTarget)) return;
+  clearTimeout(_hoverDelayTimer);
   hideTip();
 });
 
