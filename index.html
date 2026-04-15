@@ -2198,6 +2198,11 @@ window.addEventListener('keydown', e => {
 
 renderShell();
 loadAll();
+
+// Heartbeat：告訴 serve.pyw「還有人在看」，避免它 idle shutdown
+// 404（GitHub Pages 沒有這個端點）也是正常，server 端才在乎
+setInterval(() => { fetch('/__ping__').catch(() => {}); }, 10000);
+fetch('/__ping__').catch(() => {}); // 立刻先打一次
 </script>
 </body>
 </html>

@@ -13,12 +13,20 @@ import os
 import re
 import shutil
 import subprocess
+import threading
+import time
 from datetime import datetime
 from pathlib import Path
 
 import frontmatter
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
+
+# ---- Heartbeat / idle shutdown 設定 ----
+IDLE_TIMEOUT = 60      # 秒，超過這麼久沒 ping 就退出
+CHECK_INTERVAL = 10    # 秒，watchdog 檢查頻率
+_last_ping = time.monotonic()
+_ping_lock = threading.Lock()
 
 ROOT = Path(__file__).resolve().parent
 DRAFTS_DIR = ROOT / "Brand" / "podcast-drafts"
@@ -93,6 +101,15 @@ def _summarize(path: Path, post: frontmatter.Post) -> dict:
 @app.get("/")
 def index():
     return send_from_directory(str(ROOT), "podcast-review.html")
+
+
+@app.get("/__ping__")
+def ping():
+    """前端 heartbeat，更新最後活動時間；配合 watchdog 自動收掉 idle server。"""
+    global _last_ping
+    with _ping_lock:
+        _last_ping = time.monotonic()
+    return ("", 204)
 
 
 @app.get("/drafts")
@@ -197,5 +214,18 @@ def approve(slug: str):
     })
 
 
+def _idle_watchdog():
+    """60 秒沒 ping 就退出；搭配 podcast.vbs 無視窗啟動使用。"""
+    while True:
+        time.sleep(CHECK_INTERVAL)
+        with _ping_lock:
+            idle = time.monotonic() - _last_ping
+        if idle > IDLE_TIMEOUT:
+            os._exit(0)
+
+
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=3001, debug=True)
+    threading.Thread(target=_idle_watchdog, daemon=True).start()
+    # debug=False：pythonw 沒 stdout，且 debug 模式的 auto-reload 會另開 process
+    # 讓 watchdog 狀態亂掉
+    app.run(host="127.0.0.1", port=3001, debug=False)

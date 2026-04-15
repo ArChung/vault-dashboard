@@ -395,6 +395,10 @@ async function refresh() {
 
 document.getElementById('refresh-btn').addEventListener('click', refresh);
 refresh();
+
+// Heartbeat：告訴 podcast-server「還有人在用」，避免它 idle shutdown
+setInterval(() => { fetch('/__ping__').catch(() => {}); }, 10000);
+fetch('/__ping__').catch(() => {});
 </script>
 
 </body>
