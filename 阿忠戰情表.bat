@@ -1,26 +1,26 @@
 @echo off
 setlocal enabledelayedexpansion
-chcp 65001 >nul 2>&1
 cd /d "%~dp0"
 
 set "PORT=3000"
 set "URL=http://localhost:%PORT%/index.html"
 
 echo ==========================================
-echo   阿忠戰情表 Dashboard
+echo   ArChung Dashboard Launcher
 echo ==========================================
 echo.
 
-REM --- 找 Python ---
+REM --- Find Python ---
 set "PY_CMD="
 where py >nul 2>&1 && set "PY_CMD=py -3"
 if not defined PY_CMD (
     where python >nul 2>&1 && set "PY_CMD=python"
 )
 if not defined PY_CMD (
-    echo [X] 找不到 Python 3
+    echo [X] Python 3 not found.
     echo.
-    echo     請安裝後重試：https://www.python.org/downloads/
+    echo     Please install Python 3 first:
+    echo     https://www.python.org/downloads/
     echo.
     pause
     exit /b 1
@@ -29,26 +29,25 @@ if not defined PY_CMD (
 echo [i] Python: !PY_CMD!
 echo.
 
-REM --- 若 port 已被佔用（之前開過沒關），直接打開瀏覽器 ---
+REM --- Port already in use? Just open the browser. ---
 netstat -ano | findstr "LISTENING" | findstr ":%PORT% " >nul 2>&1
 if !errorlevel! equ 0 (
-    echo [i] Port %PORT% 已有 server，直接打開 dashboard
+    echo [i] Port %PORT% is already in use. Opening dashboard...
     start "" "%URL%"
     timeout /t 2 /nobreak >nul
     exit /b 0
 )
 
-echo [^>] 啟動 server: %URL%
-echo [^>] 請勿關閉此視窗；關閉即停止 server
+echo [^>] Starting server at %URL%
+echo [^>] Keep this window open; closing it stops the server.
 echo.
 
-REM --- 用 PowerShell 排程 2 秒後開瀏覽器（避開 bat 嵌套引號地獄）---
+REM --- Schedule browser open 2s later via PowerShell ---
 start "" /min powershell -NoProfile -WindowStyle Hidden -Command "Start-Sleep -Seconds 2; Start-Process '%URL%'"
 
-REM --- 啟動 HTTP server（阻塞此視窗）---
+REM --- Start HTTP server (blocks this window) ---
 !PY_CMD! -m http.server %PORT%
 
-REM server 被 Ctrl+C 或關閉後會走到這
 echo.
-echo [i] Server 已停止
+echo [i] Server stopped.
 pause
