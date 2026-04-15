@@ -1096,7 +1096,34 @@ function showToast(msg, isError) {
   setTimeout(() => t.style.display = 'none', 2500);
 }
 
-// ——— Fetch with sessionStorage cache ———
+// ——— Fetch with sessionStorage cache + 本地 fallback ———
+const IS_LOCAL = location.hostname === 'localhost'
+              || location.hostname === '127.0.0.1'
+              || location.protocol === 'file:';
+
+// 本地 fetch：同源相對路徑抓檔案或目錄列表
+async function fetchLocal(path) {
+  // 目錄列表：從 python http.server 的 HTML index 解析出 .md 檔名
+  if (!path.endsWith('.md')) {
+    const res = await fetch(path + '/', { cache: 'no-store' });
+    if (!res.ok) throw new Error(`本地目錄讀取失敗 ${path} (${res.status})`);
+    const html = await res.text();
+    const files = [];
+    const re = /<a\s+href="([^"?#/]+\.md)"/gi;
+    let m;
+    while ((m = re.exec(html))) {
+      files.push({ name: decodeURIComponent(m[1]) });
+    }
+    return files;
+  }
+  // 單檔：讀 text，包成 GitHub API 的形狀（base64 的 content），讓 decodeMd 通吃
+  const res = await fetch(path, { cache: 'no-store' });
+  if (!res.ok) throw new Error(`本地檔案讀取失敗 ${path} (${res.status})`);
+  const text = await res.text();
+  const base64 = btoa(unescape(encodeURIComponent(text)));
+  return { content: base64 };
+}
+
 async function fetchPublic(path, useCache = true) {
   if (useCache) {
     try {
@@ -1104,13 +1131,58 @@ async function fetchPublic(path, useCache = true) {
       if (cache[path]) return cache[path];
     } catch {}
   }
-  const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}?ref=${BRANCH}`, {
-    headers: { 'Accept': 'application/vnd.github.v3+json' }
-  });
-  if (res.status === 403) {
-    const reset = res.headers.get('x-ratelimit-reset');
-    const wait = reset ? Math.ceil((parseInt(reset) * 1000 - Date.now()) / 60000) : '?';
-    throw new Error(`API 流量限制，請約 ${wait} 分鐘後重試`);
+
+  // 本地開啟：先走本地檔案系統；抓失敗再去 GitHub API
+  if (IS_LOCAL) {
+    try {
+      const data = await fetchLocal(path);
+      if (useCache) {
+        try {
+          const cache = JSON.parse(sessionStorage.getItem(MD_CACHE_KEY) || '{}');
+          cache[path] = data;
+          sessionStorage.setItem(MD_CACHE_KEY, JSON.stringify(cache));
+        } catch {}
+      }
+      return data;
+    } catch (e) {
+      // 本地找不到就讓它 fall through 去試 API
+    }
+  }
+
+  // GitHub API
+  let res, apiErr;
+  try {
+    res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}?ref=${BRANCH}`, {
+      headers: { 'Accept': 'application/vnd.github.v3+json' }
+    });
+  } catch (e) { apiErr = e; }
+
+  // API 失敗（網路錯誤 / 403 流量限制）→ 若 IS_LOCAL 其實上面已試過；若不是，再試一次本地（防使用者本機開但 hostname 誤判）
+  const rateLimited = res && res.status === 403;
+  if (apiErr || rateLimited) {
+    if (!IS_LOCAL) {
+      const fallback = await fetchLocal(path).catch(() => null);
+      if (fallback) {
+        if (!sessionStorage.getItem('archung-local-fallback-warned')) {
+          showToast('API 流量上限，已改讀本地檔案');
+          sessionStorage.setItem('archung-local-fallback-warned', '1');
+        }
+        if (useCache) {
+          try {
+            const cache = JSON.parse(sessionStorage.getItem(MD_CACHE_KEY) || '{}');
+            cache[path] = fallback;
+            sessionStorage.setItem(MD_CACHE_KEY, JSON.stringify(cache));
+          } catch {}
+        }
+        return fallback;
+      }
+    }
+    if (rateLimited) {
+      const reset = res.headers.get('x-ratelimit-reset');
+      const wait = reset ? Math.ceil((parseInt(reset) * 1000 - Date.now()) / 60000) : '?';
+      throw new Error(`API 流量限制，請約 ${wait} 分鐘後重試`);
+    }
+    throw apiErr || new Error('GitHub API 連線失敗');
   }
   if (!res.ok) throw new Error(`GitHub API 錯誤 (${res.status})`);
   const data = await res.json();

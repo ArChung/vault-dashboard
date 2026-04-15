@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Podcast 文案審核｜夏日只想躺在家</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --paper:        #faf9f5;
+    --paper-deep:   #f0eee4;
+    --paper-card:   #ffffff;
+    --ink:          #141413;
+    --ink-soft:     #3a3937;
+    --ink-mute:     #b0aea5;
+    --thread:       #e8e6dc;
+    --accent:       #d97757;
+    --accent-dark:  #b85a3e;
+    --accent-tint:  #fbefe8;
+    --pill-active-bg:   #e4eadb;
+    --pill-active-text: #4a5d3a;
+    --pill-waiting-bg:  #f5ead0;
+    --pill-waiting-text:#8b7a3a;
+    --pill-done-bg:     #ededea;
+    --pill-done-text:   #7f7d76;
+    --r-sm: 6px;
+    --r-md: 12px;
+    --r-pill: 999px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { min-height: 100%; }
+  body {
+    font-family: 'Poppins', 'Noto Sans TC', system-ui, sans-serif;
+    background-color: var(--paper);
+    background-image:
+      linear-gradient(to right, rgba(120,118,108,0.16) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(120,118,108,0.16) 1px, transparent 1px);
+    background-size: 24px 24px;
+    color: var(--ink);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .hero { padding: 32px 32px 18px; max-width: 1320px; margin: 0 auto; }
+  .hero h1 { font-size: 1.75em; font-weight: 700; letter-spacing: -0.01em; }
+  .hero h1 .accent { color: var(--accent); }
+  .hero .sub { color: var(--ink-mute); font-size: 0.88em; margin-top: 4px; }
+
+  .layout {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 0 32px 40px;
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 24px;
+  }
+  @media (max-width: 860px) { .layout { grid-template-columns: 1fr; } }
+
+  /* —— left list —— */
+  .list {
+    background: var(--paper-card);
+    border: 1px solid var(--thread);
+    border-radius: var(--r-md);
+    overflow: hidden;
+    align-self: start;
+    position: sticky; top: 16px;
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+  }
+  .list-header {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--thread);
+    font-weight: 600;
+    font-size: 0.85em;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .list-header button {
+    font-family: inherit;
+    font-size: 0.82em;
+    background: transparent;
+    border: 1px solid var(--thread);
+    border-radius: var(--r-pill);
+    padding: 3px 10px;
+    cursor: pointer;
+    color: var(--ink-soft);
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .list-header button:hover { border-color: var(--ink-soft); }
+  .list-item {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--thread);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .list-item:last-child { border-bottom: none; }
+  .list-item:hover { background: var(--accent-tint); }
+  .list-item.active { background: var(--accent-tint); border-left: 3px solid var(--accent); padding-left: 15px; }
+  .list-item .title { font-weight: 600; font-size: 0.95em; word-break: break-all; }
+  .list-item .preview { color: var(--ink-mute); font-size: 0.82em; line-height: 1.4; }
+  .list-item .meta { display: flex; gap: 8px; align-items: center; font-size: 0.78em; color: var(--ink-mute); }
+
+  .pill {
+    display: inline-block;
+    border-radius: var(--r-pill);
+    padding: 2px 10px;
+    font-size: 0.72em;
+    font-weight: 600;
+  }
+  .pill.pending  { background: var(--pill-waiting-bg); color: var(--pill-waiting-text); }
+  .pill.approved { background: var(--pill-active-bg);  color: var(--pill-active-text); }
+  .pill.deleted  { background: var(--pill-done-bg);    color: var(--pill-done-text); }
+
+  /* —— right detail —— */
+  .detail {
+    background: var(--paper-card);
+    border: 1px solid var(--thread);
+    border-radius: var(--r-md);
+    padding: 28px 32px 32px;
+  }
+  .detail .file-meta { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 18px; color: var(--ink-mute); font-size: 0.85em; }
+  .detail .file-meta strong { color: var(--ink); font-weight: 600; }
+  .detail h2 { font-size: 1.3em; margin-bottom: 6px; font-weight: 700; }
+
+  .section-label {
+    font-size: 0.78em;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-top: 22px;
+    margin-bottom: 10px;
+  }
+
+  textarea.caption {
+    width: 100%;
+    min-height: 260px;
+    border: 1px solid var(--thread);
+    border-radius: var(--r-sm);
+    padding: 14px 16px;
+    font-family: 'Noto Sans TC', 'Poppins', sans-serif;
+    font-size: 0.98em;
+    line-height: 1.7;
+    color: var(--ink);
+    background: var(--paper);
+    resize: vertical;
+  }
+  textarea.caption:focus { outline: none; border-color: var(--accent); background: #fff; }
+
+  details.transcript {
+    border: 1px solid var(--thread);
+    border-radius: var(--r-sm);
+    padding: 0;
+    background: var(--paper);
+  }
+  details.transcript summary {
+    padding: 10px 14px;
+    cursor: pointer;
+    font-size: 0.88em;
+    color: var(--ink-soft);
+    user-select: none;
+  }
+  details.transcript[open] summary { border-bottom: 1px solid var(--thread); }
+  details.transcript .transcript-body {
+    padding: 14px 16px;
+    font-size: 0.88em;
+    color: var(--ink-soft);
+    white-space: pre-wrap;
+    line-height: 1.7;
+    max-height: 320px;
+    overflow-y: auto;
+  }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 22px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    font-family: inherit;
+    font-size: 0.92em;
+    font-weight: 600;
+    padding: 10px 18px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--ink);
+    background: var(--paper-card);
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn:hover { background: var(--ink); color: var(--paper-card); }
+  .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .btn.primary:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+  .btn.approve { background: var(--pill-active-text); color: #fff; border-color: var(--pill-active-text); }
+  .btn.approve:hover { opacity: 0.9; }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .status-line {
+    margin-left: auto;
+    font-size: 0.82em;
+    color: var(--ink-mute);
+  }
+  .status-line.saved { color: var(--pill-active-text); }
+
+  .empty {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--ink-mute);
+  }
+  .empty h3 { font-weight: 600; margin-bottom: 8px; color: var(--ink-soft); }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>Podcast 文案審核 <span class="accent">｜ 夏日只想躺在家</span></h1>
+  <div class="sub">左側選一支 → 右側改文案 → 一鍵複製 → 打勾就刪 Drive 原檔</div>
+</div>
+
+<div class="layout">
+  <aside class="list">
+    <div class="list-header">
+      <span>Drafts</span>
+      <button id="refresh-btn" title="重新整理清單">↻</button>
+    </div>
+    <div id="list-body"></div>
+  </aside>
+
+  <main class="detail" id="detail">
+    <div class="empty">
+      <h3>選一支 draft 開始</h3>
+      <p>左邊清單挑一個 pending 的來審</p>
+    </div>
+  </main>
+</div>
+
+<script>
+const API = '';  // 同源
+let currentSlug = null;
+let saveTimer = null;
+
+async function fetchDrafts() {
+  const res = await fetch(API + '/drafts');
+  return res.json();
+}
+
+async function fetchDraft(slug) {
+  const res = await fetch(API + '/drafts/' + encodeURIComponent(slug));
+  return res.json();
+}
+
+function renderList(items) {
+  const body = document.getElementById('list-body');
+  if (!items.length) {
+    body.innerHTML = '<div class="empty" style="padding:40px 20px;"><p>還沒有 draft</p></div>';
+    return;
+  }
+  body.innerHTML = items.map(it => `
+    <div class="list-item ${it.slug === currentSlug ? 'active' : ''}" data-slug="${encodeURIComponent(it.slug)}">
+      <div class="title">${escape(it.slug)}</div>
+      <div class="preview">${escape(it.caption_preview || '(還沒有文案)')}</div>
+      <div class="meta">
+        <span class="pill ${it.status}">${it.status}</span>
+        <span>${formatDate(it.created_at)}</span>
+      </div>
+    </div>
+  `).join('');
+  body.querySelectorAll('.list-item').forEach(el => {
+    el.addEventListener('click', () => selectDraft(decodeURIComponent(el.dataset.slug)));
+  });
+}
+
+async function selectDraft(slug) {
+  currentSlug = slug;
+  const d = await fetchDraft(slug);
+  renderDetail(d);
+  document.querySelectorAll('.list-item').forEach(el => {
+    el.classList.toggle('active', decodeURIComponent(el.dataset.slug) === slug);
+  });
+}
+
+function renderDetail(d) {
+  if (d.error) {
+    document.getElementById('detail').innerHTML = '<div class="empty"><h3>找不到</h3></div>';
+    return;
+  }
+  document.getElementById('detail').innerHTML = `
+    <h2>${escape(d.slug)}</h2>
+    <div class="file-meta">
+      <span><strong>原始檔：</strong>${escape(d.source_file || '—')}</span>
+      <span class="pill ${d.status}">${d.status}</span>
+    </div>
+
+    <div class="section-label">IG 文案</div>
+    <textarea id="caption" class="caption" placeholder="文案還沒產生…">${escape(d.caption || '')}</textarea>
+
+    <div class="actions">
+      <button class="btn primary" id="copy-btn">📋 一鍵複製</button>
+      <button class="btn approve" id="approve-btn" ${d.status !== 'pending' ? 'disabled' : ''}>✓ 確認並刪除原檔</button>
+      <span class="status-line" id="save-status"></span>
+    </div>
+
+    <div class="section-label">逐字稿</div>
+    <details class="transcript">
+      <summary>展開逐字稿</summary>
+      <div class="transcript-body">${escape(d.transcript || '(無)')}</div>
+    </details>
+  `;
+
+  const ta = document.getElementById('caption');
+  ta.addEventListener('input', () => scheduleSave(d.slug, ta.value));
+  document.getElementById('copy-btn').addEventListener('click', () => copyCaption(ta.value));
+  document.getElementById('approve-btn').addEventListener('click', () => approve(d.slug));
+}
+
+function scheduleSave(slug, caption) {
+  clearTimeout(saveTimer);
+  setStatus('編輯中…');
+  saveTimer = setTimeout(() => saveCaption(slug, caption), 800);
+}
+
+async function saveCaption(slug, caption) {
+  setStatus('儲存中…');
+  const res = await fetch(API + '/drafts/' + encodeURIComponent(slug), {
+    method: 'PATCH',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({caption}),
+  });
+  if (res.ok) setStatus('已儲存 ✓', true);
+  else setStatus('儲存失敗');
+}
+
+async function copyCaption(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    setStatus('已複製到剪貼簿 ✓', true);
+  } catch (e) {
+    setStatus('複製失敗：' + e.message);
+  }
+}
+
+async function approve(slug) {
+  if (!confirm('確認後會刪除 Drive 上的原檔，且無法復原。要繼續嗎？')) return;
+  const res = await fetch(API + '/approve/' + encodeURIComponent(slug), {method: 'POST'});
+  const data = await res.json();
+  if (res.ok) {
+    alert('完成 ✓\n' + slug + ' 已歸檔，原檔已刪除');
+    currentSlug = null;
+    await refresh();
+    document.getElementById('detail').innerHTML = '<div class="empty"><h3>完成</h3><p>選下一支繼續</p></div>';
+  } else {
+    alert('失敗：' + (data.error || 'unknown'));
+  }
+}
+
+function setStatus(msg, ok = false) {
+  const el = document.getElementById('save-status');
+  if (el) { el.textContent = msg; el.classList.toggle('saved', ok); }
+}
+
+function escape(s) {
+  if (s == null) return '';
+  return String(s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function formatDate(iso) {
+  if (!iso) return '';
+  try { return new Date(iso).toLocaleString('zh-TW', {month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}); }
+  catch (e) { return iso; }
+}
+
+async function refresh() {
+  const items = await fetchDrafts();
+  renderList(items);
+}
+
+document.getElementById('refresh-btn').addEventListener('click', refresh);
+refresh();
+</script>
+
+</body>
+</html>
