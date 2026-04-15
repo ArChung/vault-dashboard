@@ -355,7 +355,13 @@ async function approve(slug) {
   const res = await fetch(API + '/approve/' + encodeURIComponent(slug), {method: 'POST'});
   const data = await res.json();
   if (res.ok) {
-    alert('完成 ✓\n' + slug + ' 已歸檔，原檔已刪除');
+    let msg = '完成 ✓\n' + slug + ' 已歸檔';
+    if (data.warnings && data.warnings.length) {
+      msg += '\n\n⚠️ 但有警告：\n' + data.warnings.join('\n');
+    } else {
+      msg += '，原檔已刪除';
+    }
+    alert(msg);
     currentSlug = null;
     await refresh();
     document.getElementById('detail').innerHTML = '<div class="empty"><h3>完成</h3><p>選下一支繼續</p></div>';

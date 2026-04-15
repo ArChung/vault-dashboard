@@ -1,6 +1,6 @@
 ---
 name: podcast-ingest
-description: 處理「夏日只想躺在家」Podcast 短影音的 ingest pipeline。掃描 _PodcastInbox/ 找新檔 → Whisper 產逐字稿 → 套 podcast-copywriting skill 產 IG 文案 → 寫 draft 到 Brand/podcast-drafts/ → commit + push。當使用者說「跑 podcast-ingest」、「處理新的 podcast 短影音」、「看看有沒有新檔要產文案」時觸發。每日排程會自動呼叫。
+description: 處理「夏日只想躺在家」Podcast 短影音的 ingest pipeline。掃描 I:\.shortcut-targets-by-id\17Jr3DtGAN59oLGep2Cdsp1WhGsaYVZqN\夏日只想躺在家(完稿)\ 找新檔 → Whisper 產逐字稿 → 套 podcast-copywriting skill 產 IG 文案 → 寫 draft 到 Brand/podcast-drafts/ → commit + push。當使用者說「跑 podcast-ingest」、「處理新的 podcast 短影音」、「看看有沒有新檔要產文案」時觸發。每日排程會自動呼叫。
 ---
 
 # Podcast Ingest Pipeline
@@ -13,10 +13,18 @@ description: 處理「夏日只想躺在家」Podcast 短影音的 ingest pipeli
 - `.claude/skills/podcast-copywriting/SKILL.md` 存在（tone 由它管）
 - `Brand/podcast-drafts/` 目錄存在
 
+## 路徑變數
+
+為了讓 skill 好讀，下面用 `<DRIVE>` 代表：
+```
+I:\.shortcut-targets-by-id\17Jr3DtGAN59oLGep2Cdsp1WhGsaYVZqN\夏日只想躺在家(完稿)
+```
+這是 Google Drive 「與我共用」加捷徑後的本機串流路徑（不是本機實體資料夾）。
+
 ## 流程
 
 ### Step 1：找新檔
-掃 `_PodcastInbox/`（相對 vault 根），列出副檔名是 `.mp4 .mov .m4a .mp3 .wav` 的檔案。
+掃 `<DRIVE>\` 列出副檔名是 `.mp4 .mov .m4a .mp3 .wav` 的檔案。
 
 比對 `Brand/podcast-drafts/*.md` 跟 `Brand/podcast-drafts/archive/*.md` 的 frontmatter `source_file` 欄位，過濾掉「已處理過」的檔名。
 
@@ -30,13 +38,13 @@ description: 處理「夏日只想躺在家」Podcast 短影音的 ingest pipeli
 
 執行：
 ```bash
-whisper "_PodcastInbox/F.mp4" \
+whisper "<DRIVE>\F.mp4" \
   --language zh \
   --model medium \
   --output_format txt \
-  --output_dir _PodcastInbox/.whisper-tmp
+  --output_dir .whisper-tmp
 ```
-讀出產生的 `F.txt` 內容作為逐字稿。
+`--output_dir .whisper-tmp` 是 **vault 根底下的本機資料夾**（不是 Drive，避免雲端寫入延遲 / 權限問題）。讀出產生的 `F.txt` 內容作為逐字稿。
 
 **2b. 產生 slug 與 draft 檔名**
 
@@ -58,7 +66,7 @@ whisper "_PodcastInbox/F.mp4" \
 寫入檔案：
 ```markdown
 ---
-source_file: _PodcastInbox/<原始檔名>
+source_file: I:\.shortcut-targets-by-id\17Jr3DtGAN59oLGep2Cdsp1WhGsaYVZqN\夏日只想躺在家(完稿)\<原始檔名>
 slug: <slug>
 created_at: <ISO 8601 帶時區>
 status: pending
@@ -76,7 +84,7 @@ status: pending
 ```
 
 **2e. 清 whisper 暫存**
-刪 `_PodcastInbox/.whisper-tmp/F.txt`。
+刪 `.whisper-tmp/F.txt`（vault 根底下）。
 
 ### Step 3：Commit + Push
 
@@ -100,6 +108,6 @@ git push
 - Git push 失敗：警告但不擋流程，draft 已寫到本地
 
 ## 不要做
-- ❌ 直接刪 `_PodcastInbox/` 的原檔（刪檔只在審核介面打勾後發生）
+- ❌ 直接刪 `I:\.shortcut-targets-by-id\17Jr3DtGAN59oLGep2Cdsp1WhGsaYVZqN\夏日只想躺在家(完稿)\` 的原檔（刪檔只在審核介面打勾後發生）
 - ❌ 跳過 podcast-copywriting skill 自己編文案 tone
 - ❌ 一次處理超過 5 個檔（超過就分批，避免 context 爆）

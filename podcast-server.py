@@ -23,7 +23,8 @@ from flask_cors import CORS
 ROOT = Path(__file__).resolve().parent
 DRAFTS_DIR = ROOT / "Brand" / "podcast-drafts"
 ARCHIVE_DIR = DRAFTS_DIR / "archive"
-INBOX_DIR = ROOT / "_PodcastInbox"
+# Google Drive「與我共用」加捷徑後的本機串流路徑
+INBOX_DIR = Path(r"I:\.shortcut-targets-by-id\17Jr3DtGAN59oLGep2Cdsp1WhGsaYVZqN\夏日只想躺在家(完稿)")
 
 CAPTION_HEADING = "## IG 文案"
 TRANSCRIPT_HEADING = "## 逐字稿"
@@ -155,12 +156,20 @@ def approve(slug: str):
     if not caption:
         return jsonify({"error": "caption is empty, refuse to delete"}), 400
 
-    # 刪原檔
+    # 刪 Drive 原檔（權限不足時警告但不擋流程）
+    warnings = []
     source = post.get("source_file")
     if source:
-        src_path = (ROOT / source).resolve()
-        if INBOX_DIR in src_path.parents and src_path.exists():
-            src_path.unlink()
+        src_path = Path(source)
+        if not src_path.is_absolute():
+            src_path = (ROOT / source).resolve()
+        try:
+            if src_path.exists():
+                src_path.unlink()
+        except PermissionError:
+            warnings.append(f"沒有刪除權限（檢視者？）：{src_path}")
+        except OSError as e:
+            warnings.append(f"刪檔失敗：{e}")
 
     # 搬 MD 到 archive/
     post["status"] = "deleted"
@@ -181,7 +190,11 @@ def approve(slug: str):
     except subprocess.CalledProcessError:
         pass  # 沒變動或 push 失敗不擋流程
 
-    return jsonify({"ok": True, "archived_to": str(archive_path.relative_to(ROOT))})
+    return jsonify({
+        "ok": True,
+        "archived_to": str(archive_path.relative_to(ROOT)),
+        "warnings": warnings,
+    })
 
 
 if __name__ == "__main__":

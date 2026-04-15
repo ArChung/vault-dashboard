@@ -1,5 +1,4 @@
 .obsidian/
 .claude/*
 !.claude/skills/
-_PodcastInbox/*
-!_PodcastInbox/.gitkeep
+.whisper-tmp/
