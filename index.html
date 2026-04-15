@@ -1597,8 +1597,20 @@ window.tapCardToggle = function(ev, idx) {
 };
 
 // ——— Format dates inline ———
+// 週以週一為起點：本週=今天所在的週一至週日；下週=往後一個週一至週日
+function mondayOfWeek(d) {
+  const m = new Date(d);
+  // getDay: 0=Sun, 1=Mon...6=Sat → 退回到本週週一
+  const back = (m.getDay() + 6) % 7;
+  m.setDate(m.getDate() - back);
+  return startOfDay(m);
+}
+
 function formatDates(text) {
   const today = startOfDay(new Date());
+  const thisWeekStart = mondayOfWeek(today);
+  const nextWeekStart = new Date(thisWeekStart); nextWeekStart.setDate(nextWeekStart.getDate() + 7);
+  const weekAfterNext = new Date(nextWeekStart); weekAfterNext.setDate(weekAfterNext.getDate() + 7);
   let result = text.replace(/(\d{4})-(\d{1,2})-(\d{1,2})/g, (match, y, m, d) => {
     const target = startOfDay(new Date(+y, +m - 1, +d));
     const diff = Math.round((target - today) / 86400000);
@@ -1609,8 +1621,8 @@ function formatDates(text) {
     else if (diff === 1) { label = `${short}(${wd}) 明天`; cls = 'tomorrow'; }
     else if (diff === -1) { label = `${short}(${wd}) 昨天`; cls = 'past'; }
     else if (diff < 0) { label = `${short}(${wd})`; cls = 'past'; }
-    else if (diff < 7) { label = `${short} 本週${wd}`; cls = ''; }
-    else if (diff < 14) { label = `${short} 下週${wd}`; cls = ''; }
+    else if (target < nextWeekStart) { label = `${short} 本週${wd}`; cls = ''; }
+    else if (target < weekAfterNext) { label = `${short} 下週${wd}`; cls = ''; }
     else { label = `${short}(${wd})`; cls = ''; }
     return `<span class="date-tag ${cls}">${label}</span>`;
   });
