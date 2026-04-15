@@ -302,39 +302,35 @@
     25%, 65% { box-shadow: 0 0 0 3px var(--accent-tint), var(--shadow-md); }
   }
 
-  /* —— Corner status tag (top-right of card) —— */
-  .card-corner-tag {
+  /* —— Corner status dot (top-right of card) —— */
+  .card-corner-dot {
     position: absolute;
-    top: 12px;
-    right: 12px;
-    padding: 3px 10px;
+    top: 14px;
+    right: 14px;
+    width: 9px;
+    height: 9px;
     border-radius: 999px;
-    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
-    font-size: 0.72em;
-    font-weight: 500;
-    letter-spacing: 0.02em;
-    line-height: 1.4;
-    white-space: nowrap;
     z-index: 1;
+    box-shadow: 0 0 0 3px var(--paper-card);
   }
-  .card-corner-tag.ct-active  { background: var(--pill-active-bg);  color: var(--pill-active-text); }
-  .card-corner-tag.ct-waiting { background: var(--pill-waiting-bg); color: var(--pill-waiting-text); }
-  .card-corner-tag.ct-hold    { background: var(--pill-hold-bg);    color: var(--pill-hold-text); }
-  .card-corner-tag.ct-done    { background: var(--pill-done-bg);    color: var(--pill-done-text); opacity: 0.8; }
+  .card-corner-dot.cd-active  { background: #7fa06a; }  /* green = 進行中 */
+  .card-corner-dot.cd-waiting { background: #d4b35e; }  /* amber = 等待中 */
+  .card-corner-dot.cd-hold    { background: #c77a5e; }  /* salmon = 考慮中 */
+  .card-corner-dot.cd-done    { background: #b0aea5; opacity: 0.7; }  /* gray = 已完成 */
 
   /* —— Card title —— */
   .card-head {
     display: block;
-    margin-bottom: 14px;
-    padding-right: 76px; /* reserve space for corner text tag */
+    margin-bottom: 16px;
+    padding-right: 24px; /* reserve space for corner dot */
   }
   .card-title {
     font-family: 'Poppins', 'Noto Sans TC', sans-serif;
     font-weight: 700;
-    font-size: 1.12em;
+    font-size: 1.25em;
     color: var(--ink);
-    letter-spacing: -0.005em;
-    line-height: 1.35;
+    letter-spacing: -0.008em;
+    line-height: 1.3;
   }
   .card.is-done .card-title { color: var(--ink-mute); }
 
@@ -353,8 +349,8 @@
   }
   .card-todo {
     font-family: 'Poppins', 'Noto Sans TC', sans-serif;
-    font-size: 0.92em;
-    line-height: 1.6;
+    font-size: 0.95em;
+    line-height: 1.65;
     color: var(--ink-soft);
     font-weight: 400;
     display: block;
@@ -396,7 +392,7 @@
   /* —— Card footer (v6: soft tinted bg) —— */
   .card-footer-warm {
     padding: 12px 22px;
-    background: var(--paper);
+    background: transparent; /* inherits from .card-foot-wrap */
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
@@ -479,14 +475,14 @@
     align-items: center;
     gap: 10px;
     padding: 10px 22px;
-    background: var(--paper);
+    background: transparent; /* inherits warm tint from .card-foot-wrap */
     font-family: 'Poppins', 'Noto Sans TC', sans-serif;
     font-size: 0.76em;
     color: var(--ink-mute);
     font-weight: 400;
     letter-spacing: 0;
     min-height: 20px;
-    border-top: 1px solid var(--thread-soft);
+    border-top: 1px solid rgba(200, 192, 170, 0.35);
   }
   .card-meta-bottom .meta-date {
     flex: 1;
@@ -522,11 +518,11 @@
   }
   .card-cal-btn svg { width: 14px; height: 14px; }
 
-  /* —— Footer collapse wrap —— */
+  /* —— Footer collapse wrap (subtle warm tint) —— */
   .card-foot-wrap {
     margin: 0 -22px;
     border-top: 1px solid var(--thread-soft);
-    background: var(--paper);
+    background: #f7f3ea; /* slightly warmer than paper, visible against white card */
     overflow: hidden;
   }
   .card-foot-peek {
@@ -534,9 +530,9 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
-    padding: 7px 22px;
+    padding: 8px 22px;
     font-family: 'Poppins', 'Noto Sans TC', sans-serif;
-    font-size: 0.72em;
+    font-size: 0.74em;
     font-weight: 500;
     color: var(--ink-mute);
     letter-spacing: 0.04em;
@@ -561,12 +557,12 @@
   @media (hover: hover) {
     .card:hover .card-foot-body { max-height: 260px; opacity: 1; }
     .card:hover .card-foot-peek .foot-peek-chevron { transform: rotate(180deg); }
-    .card:hover .card-foot-peek { background: var(--thread-soft); }
+    .card:hover .card-foot-peek { background: #efe8d6; }
   }
   /* Mobile / tap: .foot-open class toggled by JS */
   .card.foot-open .card-foot-body { max-height: 260px; opacity: 1; }
   .card.foot-open .card-foot-peek .foot-peek-chevron { transform: rotate(180deg); }
-  .card.foot-open .card-foot-peek { background: var(--thread-soft); }
+  .card.foot-open .card-foot-peek { background: #efe8d6; }
 
   /* —— Date tags (inline) —— */
   .date-tag {
@@ -1475,9 +1471,9 @@ function renderCard(item, idx) {
   if (bucket === 'done') cardClasses.push('is-done');
   if (hasTodayTodo(item)) cardClasses.push('has-today');
 
-  // Title（無前綴符號；狀態用右上角的文字 tag 表示）
+  // Title（無前綴符號；狀態用右上角的小圓點表示）
   const glyph = STATUS_GLYPH[bucket] || STATUS_GLYPH.active;
-  const cornerTagHtml = `<span class="card-corner-tag ct-${bucket}" title="${escapeHtml(item.status || glyph.label)}">${escapeHtml(glyph.label)}</span>`;
+  const cornerTagHtml = `<span class="card-corner-dot cd-${bucket}" title="${escapeHtml(item.status || glyph.label)}"></span>`;
   const headHtml = `<div class="card-head">
     <h3 class="card-title">${escapeHtml(item.name)}</h3>
   </div>`;
