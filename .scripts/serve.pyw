@@ -22,7 +22,7 @@ PORT = 3000
 IDLE_TIMEOUT = 60       # 秒，60 秒沒 ping 就退出
 CHECK_INTERVAL = 10     # 秒，watchdog 檢查頻率
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parent.parent  # vault 根（index.html 在這）
 os.chdir(ROOT)
 
 _last_ping = time.monotonic()

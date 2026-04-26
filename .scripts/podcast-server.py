@@ -28,8 +28,9 @@ CHECK_INTERVAL = 10    # 秒，watchdog 檢查頻率
 _last_ping = time.monotonic()
 _ping_lock = threading.Lock()
 
-ROOT = Path(__file__).resolve().parent
-DRAFTS_DIR = ROOT / "Brand" / "podcast-drafts"
+SCRIPT_DIR = Path(__file__).resolve().parent           # .scripts/
+VAULT_ROOT = SCRIPT_DIR.parent                          # vault 根（Brand/ 在這裡）
+DRAFTS_DIR = VAULT_ROOT / "Brand" / "podcast-drafts"
 ARCHIVE_DIR = DRAFTS_DIR / "archive"
 # Google Drive「與我共用」加捷徑後的本機串流路徑
 INBOX_DIR = Path(r"I:\.shortcut-targets-by-id\17Jr3DtGAN59oLGep2Cdsp1WhGsaYVZqN\夏日只想躺在家(完稿)")
@@ -37,7 +38,8 @@ INBOX_DIR = Path(r"I:\.shortcut-targets-by-id\17Jr3DtGAN59oLGep2Cdsp1WhGsaYVZqN\
 CAPTION_HEADING = "## IG 文案"
 TRANSCRIPT_HEADING = "## 逐字稿"
 
-app = Flask(__name__, static_folder=str(ROOT), static_url_path="")
+# 靜態檔（podcast-review.html）放在 .scripts/，git 操作則對 vault 根
+app = Flask(__name__, static_folder=str(SCRIPT_DIR), static_url_path="")
 CORS(app)
 
 
@@ -100,7 +102,7 @@ def _summarize(path: Path, post: frontmatter.Post) -> dict:
 
 @app.get("/")
 def index():
-    return send_from_directory(str(ROOT), "podcast-review.html")
+    return send_from_directory(str(SCRIPT_DIR), "podcast-review.html")
 
 
 @app.get("/__ping__")
@@ -179,7 +181,7 @@ def approve(slug: str):
     if source:
         src_path = Path(source)
         if not src_path.is_absolute():
-            src_path = (ROOT / source).resolve()
+            src_path = (VAULT_ROOT / source).resolve()
         try:
             if src_path.exists():
                 src_path.unlink()
@@ -198,18 +200,18 @@ def approve(slug: str):
 
     # commit + push（符合 vault auto-push 規則）
     try:
-        subprocess.run(["git", "add", "-A"], cwd=ROOT, check=True, capture_output=True)
+        subprocess.run(["git", "add", "-A"], cwd=VAULT_ROOT, check=True, capture_output=True)
         subprocess.run(
             ["git", "commit", "-m", f"podcast: approve + archive {slug}"],
-            cwd=ROOT, check=True, capture_output=True,
+            cwd=VAULT_ROOT, check=True, capture_output=True,
         )
-        subprocess.run(["git", "push"], cwd=ROOT, check=False, capture_output=True)
+        subprocess.run(["git", "push"], cwd=VAULT_ROOT, check=False, capture_output=True)
     except subprocess.CalledProcessError:
         pass  # 沒變動或 push 失敗不擋流程
 
     return jsonify({
         "ok": True,
-        "archived_to": str(archive_path.relative_to(ROOT)),
+        "archived_to": str(archive_path.relative_to(VAULT_ROOT)),
         "warnings": warnings,
     })
 
