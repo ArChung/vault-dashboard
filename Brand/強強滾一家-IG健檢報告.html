@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>強強滾一家 IG 健檢報告 · 2026-04-29</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #f7f1e8;
+    --bg-card: #fffaf2;
+    --bg-soft: #f0e6d6;
+    --ink: #3a2c20;
+    --ink-soft: #6b5945;
+    --ink-mute: #9a8775;
+    --accent: #c8845a;
+    --accent-deep: #a05d36;
+    --accent-soft: #efd9c2;
+    --good: #6b8e57;
+    --warn: #c89b4a;
+    --line: #e6d8c3;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Noto Sans TC", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    line-height: 1.85;
+    font-size: 16px;
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 64px 32px 96px;
+  }
+  /* Header */
+  header.hero {
+    text-align: center;
+    padding: 32px 0 56px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 56px;
+  }
+  .hero .kicker {
+    display: inline-block;
+    font-size: 12px;
+    letter-spacing: 0.32em;
+    color: var(--accent-deep);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    padding: 6px 16px;
+    border: 1px solid var(--accent-soft);
+    border-radius: 999px;
+    background: var(--bg-card);
+  }
+  .hero h1 {
+    font-family: "Noto Serif TC", serif;
+    font-weight: 600;
+    font-size: 38px;
+    margin: 0 0 16px;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+  }
+  .hero .meta {
+    color: var(--ink-soft);
+    font-size: 14px;
+    line-height: 1.9;
+  }
+  .hero .meta a {
+    color: var(--accent-deep);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--accent);
+  }
+  /* TLDR */
+  .tldr {
+    background: var(--bg-card);
+    border-left: 3px solid var(--accent);
+    padding: 28px 32px;
+    margin: 0 0 64px;
+    border-radius: 0 8px 8px 0;
+    box-shadow: 0 2px 8px rgba(160, 93, 54, 0.05);
+  }
+  .tldr .label {
+    font-family: "Noto Serif TC", serif;
+    font-size: 13px;
+    color: var(--accent-deep);
+    letter-spacing: 0.25em;
+    margin-bottom: 12px;
+  }
+  .tldr p {
+    margin: 0;
+    font-size: 17px;
+    line-height: 1.95;
+    color: var(--ink);
+  }
+  /* Sections */
+  section {
+    margin-bottom: 72px;
+  }
+  h2 {
+    font-family: "Noto Serif TC", serif;
+    font-weight: 600;
+    font-size: 26px;
+    margin: 0 0 8px;
+    color: var(--ink);
+    letter-spacing: 0.02em;
+  }
+  h2 .num {
+    color: var(--accent);
+    font-weight: 400;
+    margin-right: 12px;
+  }
+  h2 + .subtitle {
+    color: var(--ink-mute);
+    font-size: 14px;
+    margin-bottom: 32px;
+    letter-spacing: 0.02em;
+  }
+  h3 {
+    font-family: "Noto Serif TC", serif;
+    font-weight: 500;
+    font-size: 19px;
+    margin: 36px 0 12px;
+    color: var(--ink);
+    border-left: 2px solid var(--accent-soft);
+    padding-left: 14px;
+  }
+  h4 {
+    font-family: "Noto Sans TC", sans-serif;
+    font-weight: 500;
+    font-size: 15px;
+    color: var(--accent-deep);
+    margin: 24px 0 8px;
+    letter-spacing: 0.05em;
+  }
+  p {
+    margin: 0 0 16px;
+    color: var(--ink);
+  }
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0 24px;
+    font-size: 14px;
+    background: var(--bg-card);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  th {
+    background: var(--bg-soft);
+    color: var(--ink);
+    font-weight: 500;
+    text-align: left;
+    padding: 12px 14px;
+    font-size: 13px;
+    letter-spacing: 0.03em;
+    border-bottom: 1px solid var(--line);
+  }
+  td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink-soft);
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+  td strong { color: var(--ink); font-weight: 500; }
+  td.num { font-variant-numeric: tabular-nums; }
+  td.hot { color: var(--accent-deep); font-weight: 500; }
+  td.fire { color: var(--accent-deep); font-weight: 600; }
+  /* Lists */
+  ul, ol {
+    padding-left: 22px;
+    margin: 0 0 20px;
+  }
+  ul li, ol li {
+    margin-bottom: 8px;
+    color: var(--ink-soft);
+  }
+  ul li::marker {
+    color: var(--accent);
+  }
+  .checklist {
+    list-style: none;
+    padding-left: 0;
+  }
+  .checklist li {
+    position: relative;
+    padding-left: 28px;
+    margin-bottom: 10px;
+  }
+  .checklist li::before {
+    content: "☐";
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--accent);
+    font-size: 16px;
+  }
+  /* Highlight box */
+  .insight {
+    background: linear-gradient(180deg, var(--accent-soft) 0%, var(--bg-card) 100%);
+    padding: 20px 24px;
+    border-radius: 8px;
+    margin: 20px 0 24px;
+    font-size: 15px;
+  }
+  .insight .lbl {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--accent-deep);
+    margin-right: 8px;
+    text-transform: uppercase;
+  }
+  /* Phase blocks */
+  .phase {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+  }
+  .phase h3 {
+    border: none;
+    padding: 0;
+    margin-top: 0;
+  }
+  .phase .goal {
+    color: var(--ink-mute);
+    font-style: italic;
+    font-size: 14px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed var(--line);
+  }
+  /* Trap blocks */
+  .trap {
+    margin: 16px 0;
+    padding: 16px 20px;
+    background: var(--bg-card);
+    border-left: 3px solid var(--warn);
+    border-radius: 0 6px 6px 0;
+  }
+  .trap-title {
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  /* Summary card */
+  .scorecard {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 36px;
+    margin: 32px 0;
+  }
+  .scorecard h3 {
+    border: none;
+    padding: 0;
+    margin: 0 0 24px;
+    text-align: center;
+    font-size: 22px;
+  }
+  .grades {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .grade {
+    text-align: center;
+    padding: 16px 8px;
+    background: var(--bg-soft);
+    border-radius: 8px;
+  }
+  .grade .label {
+    font-size: 12px;
+    color: var(--ink-mute);
+    margin-bottom: 6px;
+    letter-spacing: 0.05em;
+  }
+  .grade .score {
+    font-family: "Noto Serif TC", serif;
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--accent-deep);
+  }
+  .actions-3 {
+    margin-top: 24px;
+  }
+  .actions-3 .h {
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    color: var(--accent-deep);
+    margin-bottom: 14px;
+  }
+  .actions-3 ol { padding-left: 24px; }
+  .actions-3 ol li { color: var(--ink); margin-bottom: 8px; }
+  /* Footer */
+  footer {
+    margin-top: 80px;
+    padding-top: 32px;
+    border-top: 1px solid var(--line);
+    color: var(--ink-mute);
+    font-size: 13px;
+    line-height: 1.9;
+  }
+  footer h4 {
+    color: var(--ink-soft);
+    margin: 16px 0 6px;
+  }
+  /* Responsive */
+  @media (max-width: 640px) {
+    .wrap { padding: 32px 18px 64px; }
+    .hero h1 { font-size: 28px; }
+    h2 { font-size: 22px; }
+    table { font-size: 12.5px; }
+    th, td { padding: 9px 10px; }
+    .grades { grid-template-columns: repeat(2, 1fr); }
+    .scorecard { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="kicker">IG Health Check Report</div>
+    <h1>強強滾一家 IG 健檢報告</h1>
+    <div class="meta">
+      帳號 · <a href="https://www.instagram.com/strongstrongroll/" target="_blank">@strongstrongroll</a><br />
+      健檢日期 · 2026-04-29<br />
+      資料樣本 · 個人檔案 + 8 則近半年代表性貼文/Reels 的互動數實測
+    </div>
+  </header>
+
+  <div class="tldr">
+    <div class="label">TL;DR</div>
+    <p>這是一個體質非常健康、商業變現潛力被低估的「中段班 KOL 帳號」。互動率高於同級平均、業配能做出比原生內容更紅的成績、留言裡看得到真實情感連結，但發文節奏、商業包裝、平台延伸三件事還沒被當成「公司」在跑。把這三件事打開，下一個 18 個月裡 17.4 萬 → 30 萬 是合理目標。</p>
+  </div>
+
+  <section>
+    <h2><span class="num">01</span>整體經營體質</h2>
+    <div class="subtitle">帳號基本面 · 互動率實測 · 體質診斷</div>
+
+    <h3>帳號基本面</h3>
+    <table>
+      <thead><tr><th>指標</th><th>現值</th><th>同級對標</th><th>評價</th></tr></thead>
+      <tbody>
+        <tr><td>粉絲數</td><td class="num">17.4 萬</td><td>13–20 萬</td><td>中段班 KOL</td></tr>
+        <tr><td>貼文總數</td><td class="num">369</td><td>600–1,200</td><td><strong>產出密度低，但「平均一篇值 470 個粉絲」</strong></td></tr>
+        <tr><td>追蹤中</td><td class="num">468</td><td>300–800</td><td>健康</td></tr>
+        <tr><td>已驗證 ✅</td><td>是</td><td>約 30% 同級有</td><td>加分</td></tr>
+        <tr><td>精選動態</td><td>10+ 個系列化</td><td>3–6 個</td><td><strong>內容資產化做得好</strong></td></tr>
+        <tr><td>平台延伸</td><td>Threads + Podcast</td><td>多數只有 IG</td><td>有開但延伸力沒長出來</td></tr>
+      </tbody>
+    </table>
+
+    <h3>互動率實測 · 8 篇樣本</h3>
+    <p style="font-size:13px;color:var(--ink-mute)">互動率 = (讚 + 留言) / 粉絲數。同級台灣 KOL 標準：1.5–3% 為平均，5–7% 為頂段。</p>
+    <table>
+      <thead><tr><th>貼文</th><th>形式</th><th>上線</th><th>讚</th><th>留言</th><th>互動率</th></tr></thead>
+      <tbody>
+        <tr><td>紙箱育兒（電動工具）</td><td>輪播</td><td>2026-04-20</td><td class="num">7,585</td><td class="num">559</td><td class="num hot">4.7%</td></tr>
+        <tr><td>露營三天</td><td>輪播</td><td>2026-03-25</td><td class="num">13,000</td><td class="num">180</td><td class="num hot">7.6%</td></tr>
+        <tr><td>happymoon 團購</td><td>輪播</td><td>2026-03-01</td><td class="num">2,918</td><td class="num">1,512</td><td class="num">2.5%（轉換型）</td></tr>
+        <tr><td>互助會水族館</td><td>Reel</td><td>2026-04-06</td><td class="num">4,697</td><td class="num">55</td><td class="num">2.7%</td></tr>
+        <tr><td>老歌系列（V 接住挫敗）</td><td>Reel</td><td>2026-02-26</td><td class="num">6,034</td><td class="num">247</td><td class="num hot">3.6%</td></tr>
+        <tr><td>氣球遇雨大叔</td><td>Reel</td><td>2026-03-11</td><td class="num">26,000</td><td class="num">255</td><td class="num fire">15.1% 🔥</td></tr>
+        <tr><td>麥當勞瑪利歐（業配）</td><td>Reel</td><td>2026-04-02</td><td class="num">96,000</td><td class="num">1,819</td><td class="num fire">56.2%</td></tr>
+        <tr><td>Sony BRAVIA（業配）</td><td>Reel</td><td>2025-04-09</td><td class="num">233,000</td><td class="num">1,082</td><td class="num fire">134.5%</td></tr>
+      </tbody>
+    </table>
+
+    <div class="insight">
+      <span class="lbl">解讀</span>
+      中位數互動率 4.1%，已穩穩站在「同級頂段班」。<strong>業配 &gt; 原生內容</strong>是極罕見訊號，代表業配執行力被市場肯定。「暖心 + 故事」型內容（氣球、瑪利歐、Sony）是真正的爆款引擎。
+    </div>
+
+    <h3>體質診斷</h3>
+    <p><strong>作品產量不大，但每一篇的「人均影響力」很強，這是一個「精煉型」帳號。</strong>你不是流量怪獸，你是品質工坊。所以下一階段的成長關鍵不是「發更多」，是「把每一篇的市場價值收完」。</p>
+  </section>
+
+  <section>
+    <h2><span class="num">02</span>內容策略診斷</h2>
+    <div class="subtitle">主題分布 · 做得好的事 · 可以更好的事</div>
+
+    <h3>內容主題分布（近 12 篇）</h3>
+    <table>
+      <thead><tr><th>類型</th><th>佔比</th><th>代表作</th><th>觀察</th></tr></thead>
+      <tbody>
+        <tr><td>父職情感 + 反思</td><td>~30%</td><td>老歌系列、氣球遇雨、火山情緒</td><td><strong>情感濃度最高，互動率最穩</strong></td></tr>
+        <tr><td>親子日常神奇瞬間</td><td>~25%</td><td>鳥停在身上、互助會水族館</td><td>容易被分享，演算法朋友</td></tr>
+        <tr><td>創意手作 / 玩</td><td>~20%</td><td>紙箱育兒、麥當勞瑪利歐、公仔幕後</td><td><strong>創意密度最高，最容易破圈</strong></td></tr>
+        <tr><td>業配 / 團購</td><td>~20%</td><td>Sony、麥當勞、happymoon、BLUETTI</td><td>業配做得比原生內容還好看</td></tr>
+        <tr><td>旅遊 / 節慶</td><td>~5%</td><td>露營、聖誕、過年</td><td>補充用，沒有變成系列</td></tr>
+      </tbody>
+    </table>
+
+    <h3>做得好的三件事</h3>
+    <h4>① 文案敘事極強</h4>
+    <p>你的貼文文案是「短篇故事」格式，不是「IG 文案」格式。氣球那篇開頭「那天氣球真的有嚇到我」一路鋪到「謝謝妳那天有妳真好」，是完整的三幕劇。這是 90% 同級 KOL 沒有的能力——也是粉絲願意停下來看完的核心原因。</p>
+
+    <h4>② 業配創意工作流非常成熟</h4>
+    <p>從 Sony BRAVIA（攝影棚到客廳）到麥當勞（爸爸演瑪利歐）都看到一樣的執行品質：把產品「織進故事裡」而不是「貼在故事旁」。對品牌端來說，這就是「為什麼要找你不找別人」的原因。</p>
+
+    <h4>③ 系列化精選動態做得很扎實</h4>
+    <p>爸爸融化、阿忠喜歡的、桌布系列、里程碑戰舞、爸爸塗鴉集、第 1&2 屆問問題——這 10 個 highlights 等於是把帳號變成一本可翻閱的書，新粉絲落地時可以快速理解你是誰，這是被低估的留存機制。</p>
+
+    <h3>可以更好的三件事</h3>
+    <h4>① 系列化做得不夠徹底</h4>
+    <p>只有「老歌系列」「桌布系列」是有名字的固定 segment，但它們的更新節奏沒有被當作節目在排。建議至少有 1 個固定週次的系列（例如 #週五不插電 已經在 hashtag 裡用過，可以讓它真的變成週五的事）。</p>
+
+    <h4>② 業配密度的觀感管理</h4>
+    <p>近期 12 篇裡有 3–4 篇與商業合作直接相關（麥當勞、團購、BLUETTI 限動、Sony）。對粉絲來說目前還在容忍範圍，但已經接近上限。建議「每 1 篇商業內容 = 配 2 篇高情感原生內容」當作節奏紀律。</p>
+
+    <h4>③ Bio 和 CTA 是業務漏斗的破口</h4>
+    <p>現在的 bio 只有 hashtag、Podcast、聯絡 email。對品牌主來說沒有：媒體包連結、可量化的成績（如「累積觸及 8 千萬」）、明確「找我合作」的 CTA。這是商業價值被低估的直接原因之一。</p>
+  </section>
+
+  <section>
+    <h2><span class="num">03</span>商業變現潛力</h2>
+    <div class="subtitle">報價建議 · 案例驗證 · 結構缺口</div>
+
+    <h3>級距 + 內容力 → 報價建議</h3>
+    <table>
+      <thead><tr><th>合作形式</th><th>同級平均</th><th>你的建議區間</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td>IG Reels 業配（單支）</td><td class="num">100k–180k</td><td class="hot">150k–220k</td><td>Sony、麥當勞已證明你能做到爆款</td></tr>
+        <tr><td>圖文貼文 / Carousel</td><td class="num">60k–120k</td><td class="hot">80k–140k</td><td>文案敘事是溢價來源</td></tr>
+        <tr><td>限動（單則）</td><td class="num">12k–25k</td><td class="hot">18k–30k</td><td>配套用，不單獨賣便宜</td></tr>
+        <tr><td>雙平台廣告授權 / 月</td><td class="num">30k–80k</td><td class="hot">50k–100k</td><td>Reels 上架後超有再行銷價值，要堅持收</td></tr>
+        <tr><td>「業配創意提案」整包</td><td>罕見</td><td class="fire">300k–500k</td><td><strong>這是你應該要開的新品項</strong></td></tr>
+      </tbody>
+    </table>
+
+    <div class="insight">
+      <span class="lbl">關鍵洞察</span>
+      你的麥當勞案例是「爸爸演瑪利歐 + 完整三段腳本 + 留下原生內容感」，這套東西在 4A 廣告公司的報價是六位數起跳。你可以把「策略 + 腳本 + 拍攝 + 後製 + 發佈 + 限動配套」打包成一個 SKU，賣 30 萬以上。
+    </div>
+
+    <h3>vault 實際案例驗證</h3>
+    <table>
+      <thead><tr><th>案例</th><th>報價</th><th>建議</th></tr></thead>
+      <tbody>
+        <tr><td>麥當勞短影片</td><td>已完成、110 萬觀看</td><td><strong>下次報價可以拉 50–80%</strong></td></tr>
+        <tr><td>BLUETTI Reels + 授權</td><td class="num">170k 未稅</td><td>合理區間中段，下次提到 200k 可以</td></tr>
+        <tr><td>Sony Bravia</td><td>等對方提案</td><td><strong>不要先開價</strong>（23 萬讚是議價籌碼）</td></tr>
+        <tr><td>逐鹿天下</td><td class="num">120k 未稅</td><td>地方店家偏高，可考慮包月或包多家</td></tr>
+      </tbody>
+    </table>
+
+    <h3>變現結構的潛在缺口</h3>
+    <ul>
+      <li><strong>沒有 media kit / sales deck</strong>：每次品牌主來問都要重新解釋自己。一份精美的 PDF 介紹 + 兩三個案例集，可以讓報價合理化、減少議價空間。</li>
+      <li><strong>團購是低 ROI 高勞力</strong>：happymoon 那篇 2,918 讚 / 1,512 留言（全是要關鍵字），執行成本很高。建議團購收斂到一年 2–3 次大檔。</li>
+      <li><strong>Podcast 還沒被當成商業籌碼</strong>：Bio 寫了 @darkpotato.podcast 但沒看到雙向引流。Podcast 可以變成「IG 業配的延伸授權」加價選項。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="num">04</span>競品 / 同級對標</h2>
+    <div class="subtitle">10–20 萬粉絲 親子/家庭/育兒類 KOL</div>
+
+    <table>
+      <thead><tr><th>構面</th><th>你</th><th>同級平均</th><th>差異</th></tr></thead>
+      <tbody>
+        <tr><td>粉絲基數</td><td class="num">17.4 萬</td><td>10–20 萬</td><td>持平</td></tr>
+        <tr><td>互動率（中位數）</td><td class="num">4.1%</td><td>1.5–3%</td><td class="hot">大贏（高 30–50%）</td></tr>
+        <tr><td>業配執行力</td><td>業配 &gt; 原生</td><td>業配 &lt; 原生</td><td class="hot">大贏（業界少見）</td></tr>
+        <tr><td>發文頻率</td><td>1–2 篇/週</td><td>3–5 篇/週</td><td>小輸</td></tr>
+        <tr><td>系列化內容</td><td>1–2 個</td><td>3–5 個</td><td>小輸</td></tr>
+        <tr><td>平台延伸</td><td>Threads + Podcast</td><td>約 30% 有</td><td class="hot">小贏（但延伸力沒打開）</td></tr>
+        <tr><td>媒體包 / Sales 物料</td><td>沒有</td><td>約 50% 有</td><td>小輸</td></tr>
+        <tr><td>視覺辨識度</td><td>「強強滾爸爸」清楚</td><td>不一定</td><td class="hot">小贏</td></tr>
+      </tbody>
+    </table>
+
+    <h3>同級 KOL 通常做但你還沒做的事</h3>
+    <ul>
+      <li><strong>Reels 系列化命名</strong>（每個系列有 hashtag + 開頭片頭），方便演算法歸類</li>
+      <li><strong>每月 / 每季「成績單」貼文</strong>（給品牌看的數字 → 變相是 sales tool）</li>
+      <li><strong>跟其他親子 KOL 互動 collab</strong>（露營那篇 tag 了 @lycas_lucy.w 等，是好的開始）</li>
+      <li><strong>粉絲社群分流</strong>（IG → LINE 群 / Discord / Threads 私訊群）</li>
+      <li><strong>業配 case study 內容化</strong>（公仔幕後篇是好的開始，可以系統化做）</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="num">05</span>未來成長藍圖</h2>
+    <div class="subtitle">17.4 萬 → 30 萬 的路徑</div>
+
+    <div class="phase">
+      <h3>Phase 1 · 0–3 個月｜把現在的事「規格化」</h3>
+      <div class="goal">目標：不增加工作量的前提下，讓每一篇的市場價值收滿。</div>
+      <ul class="checklist">
+        <li>製作 media kit PDF（封面 + 帳號數據 + 3 個業配案例 + 報價區間 + 聯絡方式）</li>
+        <li>業配報價統一往上拉 20–50%（Sony、麥當勞已是議價籌碼）</li>
+        <li>每篇高表現內容上線後 7 天內，剪一支 30 秒精選版做限動 + 進精選動態</li>
+        <li>Bio 改寫：加上「累積觀看 / 業配代表作 / 媒體包連結」</li>
+        <li>整理「業配創意提案 SKU」：基本版 / 完整版 / 旗艦版三個價位帶</li>
+      </ul>
+    </div>
+
+    <div class="phase">
+      <h3>Phase 2 · 3–9 個月｜把產出節奏化</h3>
+      <div class="goal">目標：穩定產出 → 演算法權重 → 穩定觸及。</div>
+      <ul class="checklist">
+        <li>固定 2 個系列 + 1 個週次節目（建議 #週五不插電 每週五）</li>
+        <li>業配比例紀律：每 1 商業 = 2 原生（明文化）</li>
+        <li>跟 3–5 個同級親子 KOL 建立固定 collab（每季 1–2 次）</li>
+        <li>Threads 變成 IG 內容延伸出口（長故事、業配幕後、爸爸觀點短文）</li>
+        <li>Podcast ↔ IG 雙向引流，互相導流</li>
+        <li>粉絲分流到 LINE / 群組（3–6 個月內養出 2,000–5,000 人核心社群）</li>
+      </ul>
+    </div>
+
+    <div class="phase">
+      <h3>Phase 3 · 9–18 個月｜從「被找」變成「會選」</h3>
+      <div class="goal">目標：把帳號從「KOL」升級到「個人品牌 / 內容工作室」。</div>
+      <ul class="checklist">
+        <li>業配創意提案 SKU 落地，開始拒絕 &lt; 200k 的單案 Reels</li>
+        <li>實體小型活動延伸（互助會 → 強強滾一家粉絲日，門票 500–1,500 / 人）</li>
+        <li>內容資產商品化（爸爸塗鴉集 → 桌曆 / 月曆 / 桌布訂閱）</li>
+        <li>主流媒體訪談 1–2 次（親子天下、Cheers、生活風格刊物）</li>
+        <li>目標：Q4 2027 前粉絲 25 萬、年度業配營收破 600 萬</li>
+      </ul>
+    </div>
+
+    <h3>路徑學習：要警惕的三個陷阱</h3>
+    <div class="trap">
+      <div class="trap-title">陷阱一 · 用業配填飽肚子，原生內容掉品質</div>
+      <p style="margin:0;font-size:14px;color:var(--ink-soft)">這是 95% 中段班 KOL 卡關的原因。你目前還沒掉進去，但業配密度確實在升高，要警覺。</p>
+    </div>
+    <div class="trap">
+      <div class="trap-title">陷阱二 · 粉絲漲到 25 萬後互動率掉到 1%</div>
+      <p style="margin:0;font-size:14px;color:var(--ink-soft)">原因通常是「粉絲組成稀釋」+「內容沒升級」。預防方法是 Phase 2 的系列化，把高黏著粉絲固化下來。</p>
+    </div>
+    <div class="trap">
+      <div class="trap-title">陷阱三 · 拒絕成長為「公司」</div>
+      <p style="margin:0;font-size:14px;color:var(--ink-soft)">個人 KOL 的天花板是「一個人能做的事」，個人品牌的天花板是「一個人能設計、一群人能執行的事」。剪輯師孟欣已在團隊，下一步是「業務 + 提案撰寫」這個角色。</p>
+    </div>
+  </section>
+
+  <div class="scorecard">
+    <h3>健檢總結 · 一頁式</h3>
+    <div class="grades">
+      <div class="grade"><div class="label">體質</div><div class="score">A−</div></div>
+      <div class="grade"><div class="label">內容</div><div class="score">A</div></div>
+      <div class="grade"><div class="label">商業</div><div class="score">B+</div></div>
+      <div class="grade"><div class="label">對標</div><div class="score">A−</div></div>
+      <div class="grade"><div class="label">成長</div><div class="score">B+</div></div>
+    </div>
+    <div class="actions-3">
+      <div class="h">最該做的 3 件事</div>
+      <ol>
+        <li><strong>一週內</strong>：做出 media kit PDF</li>
+        <li><strong>一個月內</strong>：把業配報價往上 20–50%、整理出「業配創意提案 SKU」</li>
+        <li><strong>三個月內</strong>：固定 1 個週次系列節目（建議 #週五不插電）</li>
+      </ol>
+    </div>
+  </div>
+
+  <footer>
+    <h4>資料來源</h4>
+    <p style="margin:0">個人檔案數據直接從 <a href="https://www.instagram.com/strongstrongroll/" target="_blank" style="color:var(--accent-deep)">@strongstrongroll</a> 擷取於 2026-04-29；互動率樣本 8 篇（2025-04 至 2026-04）；業配對照 vault 內 <code>Brand/強強滾一家-業配.md</code>。</p>
+
+    <h4>限制</h4>
+    <p style="margin:0">未取用 IG Insights 後台數據（無觸及率/完播率/粉絲組成）；同級對手為市場常見值；報價建議僅供談判參考。</p>
+
+    <h4>下次健檢建議（3 個月後）</h4>
+    <p style="margin:0">附 IG Insights 截圖；抓 3–5 個指定對手做精準橫向比較；評估 Phase 1 的 5 個動作執行率。</p>
+  </footer>
+
+</div>
+</body>
+</html>
