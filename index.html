@@ -640,6 +640,49 @@
   }
   .annotation { color: var(--ink-mute); font-size: 0.9em; }
 
+  /* —— 等待中可摺疊區塊 —— */
+  .waiting-fold {
+    margin-top: 48px;
+  }
+  .waiting-fold-head {
+    width: 100%;
+    background: transparent;
+    border: 0;
+    border-top: 1px solid var(--thread);
+    padding: 14px 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    color: var(--ink-mute);
+    font-family: 'Poppins', 'Noto Sans TC', sans-serif;
+    text-align: left;
+    transition: color 0.15s ease;
+  }
+  .waiting-fold-head:hover { color: var(--ink-soft); }
+  .waiting-fold-head .wfh-label {
+    font-weight: 500;
+    font-size: 0.92em;
+    letter-spacing: 0.02em;
+  }
+  .waiting-fold-head .wfh-count {
+    font-size: 0.82em;
+    font-style: italic;
+    font-weight: 400;
+    opacity: 0.7;
+  }
+  .waiting-fold-head .wfh-chev {
+    margin-left: auto;
+    font-size: 0.92em;
+    transition: transform 0.2s ease;
+  }
+  .waiting-fold.open .wfh-chev { transform: rotate(180deg); }
+  .waiting-fold-body {
+    display: none;
+    padding-top: 18px;
+  }
+  .waiting-fold.open .waiting-fold-body { display: block; }
+
   /* —— Ledger Lines (待剪想法) —— */
   .ideas-group { margin-top: 48px; }
   .ideas-list {
@@ -1136,8 +1179,9 @@ const state = {
 };
 
 function loadPrefs() {
-  try { return Object.assign({ groupBy:'kind', sort:'updated', statuses:['active','waiting','hold'] }, JSON.parse(localStorage.getItem(PREFS_KEY) || '{}')); }
-  catch { return { groupBy:'kind', sort:'updated', statuses:['active','waiting','hold'] }; }
+  const defaults = { groupBy:'kind', sort:'updated', statuses:['active','waiting','hold'], expandWaiting:false };
+  try { return Object.assign({}, defaults, JSON.parse(localStorage.getItem(PREFS_KEY) || '{}')); }
+  catch { return { ...defaults }; }
 }
 function savePrefs() { localStorage.setItem(PREFS_KEY, JSON.stringify(state.prefs)); }
 
@@ -1872,16 +1916,20 @@ function renderIdeasSection() {
 // ——— Render dashboard body ———
 function renderBody() {
   const filtered = getFilteredItems();
-  const sorted = sortItems(filtered);
+  // 等待中的單獨抽出來，丟到底下的可摺疊區塊（預設收合）
+  const activeItems  = filtered.filter(it => statusBucket(it.status) !== 'waiting');
+  const waitingItems = filtered.filter(it => statusBucket(it.status) === 'waiting');
+
+  const sorted = sortItems(activeItems);
   const groups = groupItems(sorted);
   const container = document.getElementById('cardsArea');
   if (!container) return;
 
   let html = '';
-  if (groups.length === 0) {
+  let idx = 0;
+  if (groups.length === 0 && waitingItems.length === 0) {
     html = `<div class="card-body-empty" style="padding:48px;text-align:center;">（沒有符合條件的項目）</div>`;
   } else {
-    let idx = 0;
     for (const g of groups) {
       html += `<div class="group-section">
         <div class="group-header"><h2>${escapeHtml(g.key)}</h2><span class="count">${g.items.length}</span></div>
@@ -1889,6 +1937,24 @@ function renderBody() {
       </div>`;
     }
   }
+
+  // 等待中可摺疊區塊（預設收合，狀態存 localStorage）
+  if (waitingItems.length > 0) {
+    const sortedWaiting = sortItems(waitingItems);
+    const expanded = state.prefs.expandWaiting === true;
+    const cardsHtml = sortedWaiting.map(it => renderCard(it, idx++)).join('');
+    html += `<div class="group-section waiting-fold ${expanded ? 'open' : ''}" id="waitingFold">
+      <button class="waiting-fold-head" onclick="toggleWaitingFold()">
+        <span class="wfh-label">等待中</span>
+        <span class="wfh-count">${sortedWaiting.length}</span>
+        <span class="wfh-chev">▾</span>
+      </button>
+      <div class="waiting-fold-body">
+        <div class="cards-grid">${cardsHtml}</div>
+      </div>
+    </div>`;
+  }
+
   // Ideas ledger — always rendered at bottom
   html += renderIdeasSection();
 
@@ -2005,6 +2071,14 @@ window.toggleStatus = function(k) {
 window.hardRefresh = function() {
   sessionStorage.removeItem(MD_CACHE_KEY);
   loadAll();
+};
+
+window.toggleWaitingFold = function() {
+  const el = document.getElementById('waitingFold');
+  if (!el) return;
+  const open = el.classList.toggle('open');
+  state.prefs.expandWaiting = open;
+  savePrefs();
 };
 
 // ——— Calendar (unified: card click + toolbar click 都走 openMasterCal) ———
